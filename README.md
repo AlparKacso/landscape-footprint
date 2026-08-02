@@ -41,7 +41,7 @@ prototype/               the app — no build step, no dependencies, no network 
   data/                  the four CSVs shipped with the challenge
   src/core/              adapters in, canonical Context Slice out
   src/engine/            rulepack + scoring + dispositions, runs headless
-  src/workspace/         the two pages, the treemap, the blast radius, the assistant
+  src/workspace/         the two pages, the treemap, the blast radius, the Discovery Agent
   tools/check.mjs        re-derives every headline number from the raw files
 1_Increment_Breakdown.html
 2_Deployment_Design.html
@@ -77,7 +77,7 @@ The **Discovery Agent** writes words, and only words: the headline and decision 
 decision, the sentence at the top of the Position card, and the explanation of either page at the
 register you choose. Everything it writes is marked *Discovery Agent generated insight*. Everything it wrote is marked with what it was written *from* — and the mark is
 careful to say that the wording is the model's while the arithmetic is not, because blurring that
-would undo the claim the whole artifact rests on. The assistant is composed from live state each
+would undo the claim the whole artifact rests on. The Discovery Agent is composed from live state each
 time it opens rather than cached, so it can never describe a position the page is not showing.
 
 ## What it deliberately does not do

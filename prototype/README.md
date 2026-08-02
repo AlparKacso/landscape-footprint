@@ -49,6 +49,14 @@ The spine is an evidence model with **four states, not two**:
 
 Collapsing the last two into "unused" is the fastest way to produce a confident, wrong retirement list. 175 of 366 objects have no usage row; 32 more are tables that `usage.csv` cannot cover by construction. Both are shown on the face of the output rather than in a footnote.
 
+## The wizard, in three steps
+
+**Load → Rules → Narrative.** Each step is named after what is on it.
+
+- **Load** — files matched to adapters by column signature, not filename, as they arrive. What each file matched on and what it will be used as are both on the row, and either can be corrected there. There is no separate confirmation screen; the matching is not a judgement anyone needs to make twice.
+- **Rules** — *how every call is made.* One strip walking the same 106 objects through evidence → rule → confidence → call, so the derivation is legible in the counts. Two real objects are walked end to end; all eleven rules are one click away. Not called "Scoring", because the scores are the one thing this step deliberately does not show.
+- **Narrative** — where the Discovery Agent writes, and where it does not, as a closed list of three places.
+
 ## What it deliberately does not do
 
 A risk dial, a per-object browser, on-screen risk scores, effort estimates in days, a picture of all
@@ -96,7 +104,7 @@ A model writes words, and only words. Three places, all labelled wherever they a
 - `src/workspace/assistant.js` — the **Discovery Agent**, behind *Ask the Discovery Agent*. It reads either page back to you at the register you pick: for the board, for the programme, or for the engineer. Same content, different audience; it is not a verbosity dial, because nobody knows which verbosity they are. Each *what this did for you* closes on a highlighted line saying what it is worth in value-discovery terms.
 - `positionStatement()` in `src/workspace/app.js` — the sentence at the top of the Position card. Clause structure and connective wording are the model's; the clauses drop out when a count is zero, and every figure is read from the graph. It carries the mark for the same reason the other two do: it is prose making a claim about the customer's estate.
 
-The assistant is **composed from live state every time it opens**, never cached whole. A summary describing the neutral position while the page showed a greenfield reading would destroy the credibility of both — so the phrasing is model-written and kept in the file, and every number in it is read from the graph at the moment you open it.
+The Discovery Agent is **composed from live state every time it opens**, never cached whole. A summary describing the neutral position while the page showed a greenfield reading would destroy the credibility of both — so the phrasing is model-written and kept in the file, and every number in it is read from the graph at the moment you open it.
 
 Everything the agent wrote carries the mark **Discovery Agent generated insight**, plus a line saying what it was written *from*. A disclaimer says "do not sue us"; provenance says "here is what to check", which is the only version worth putting in front of someone about to fund something.
 
