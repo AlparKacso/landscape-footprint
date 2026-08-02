@@ -197,6 +197,11 @@
 
 <input type="file" id="file-input" accept=".csv,text/csv" multiple hidden>
 
-<script type="module" src="src/workspace/app.js"></script>
+<!-- The version is not decoration. GitHub Pages caches index.html and app.js for
+     ten minutes each, independently, so without it a visitor can hold a new page
+     and a stale script — and the stale script then looks for elements the new
+     page no longer has. Bumping this on deploy means a visitor always gets a
+     matched pair: old page with old script, or new with new, never one of each. -->
+<script type="module" src="src/workspace/app.js?v=3"></script>
 </body>
 </html>

@@ -22,6 +22,17 @@ import { STEPS, ROLES, renderStepper, renderUpload, renderMap, renderModel, rend
 
 const $ = (id) => document.getElementById(id);
 
+// Wiring is deliberately defensive. index.html and app.js are two separate
+// files behind a CDN that caches each for ten minutes independently, so a
+// visitor can briefly hold a new page and an old script. A control that is not
+// there should cost you that control, not the whole page — the alternative is
+// a blank screen and an error blaming something else entirely.
+const on = (id, event, handler, opts) => {
+  const el = $(id);
+  if (el) el.addEventListener(event, handler, opts);
+  else console.warn(`[wire] #${id} is not in the document — handler skipped.`);
+};
+
 const state = {
   page: 'extract',
   hasRun: false,
@@ -888,35 +899,35 @@ function wire() {
     b.addEventListener('click', () => goto(b.dataset.page));
   }
   document.querySelector('[data-page="extract"]').addEventListener('dblclick', clearAll);
-  $('clear-all').addEventListener('click', clearAll);
-  $('go-wizard').addEventListener('click', () => {
+  on('clear-all', 'click', clearAll);
+  on('go-wizard', 'click', () => {
     goto('extract');
     state.wizard.open = true;
     renderWizard();
   });
 
-  $('start-wizard').addEventListener('click', () => {
+  on('start-wizard', 'click', () => {
     state.wizard.open = true;
     renderWizard();
     $('sec-wizard').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
-  $('wiz-back').addEventListener('click', () => {
+  on('wiz-back', 'click', () => {
     if (state.wizard.step > 0) { state.wizard.step -= 1; renderWizard(); }
   });
-  $('wiz-next').addEventListener('click', wizardNext);
+  on('wiz-next', 'click', wizardNext);
 
-  $('wiz-body').addEventListener('click', (e) => {
+  on('wiz-body', 'click', (e) => {
     if (e.target.closest('#use-shipped')) return useShipped();
     if (e.target.closest('#dropzone')) $('file-input').click();
   });
-  $('wiz-body').addEventListener('change', (e) => {
+  on('wiz-body', 'change', (e) => {
     const sel = e.target.closest('[data-map]');
     if (!sel) return;
     state.wizard.mapping[Number(sel.dataset.map)] = sel.value;
     renderWizard();
   });
-  $('file-input').addEventListener('change', (e) => acceptFiles(e.target.files));
+  on('file-input', 'change', (e) => acceptFiles(e.target.files));
 
   const dz = () => $('dropzone');
   document.addEventListener('dragover', (e) => {
@@ -935,7 +946,7 @@ function wire() {
 
   // The transition path. The one control on the page, and the only thing that
   // can change a call without a person typing.
-  $('lens-seg').addEventListener('click', (e) => {
+  on('lens-seg', 'click', (e) => {
     const btn = e.target.closest('[data-lens]');
     if (!btn || btn.dataset.lens === state.lens) return;
     state.lens = btn.dataset.lens;
@@ -948,30 +959,30 @@ function wire() {
     integrity.querySelector('.sec-head').setAttribute('aria-expanded', String(!collapsed));
   });
 
-  $('filters').addEventListener('click', (e) => {
+  on('filters', 'click', (e) => {
     const btn = e.target.closest('[data-filter]');
     if (!btn) return;
     state.filter = btn.dataset.filter;
     renderFilters();
     renderBoard();
   });
-  $('board').addEventListener('click', (e) => {
+  on('board', 'click', (e) => {
     const header = e.target.closest('[data-sort]');
     if (header) return applySort(header.dataset.sort);
     const row = e.target.closest('[data-pack]');
     if (row) openModal('pack', row.dataset.pack);
   });
-  $('board').addEventListener('keydown', (e) => {
+  on('board', 'keydown', (e) => {
     const header = e.target.closest('[data-sort]');
     if (header && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); applySort(header.dataset.sort); }
   });
-  $('tiles').addEventListener('click', (e) => {
+  on('tiles', 'click', (e) => {
     const tile = e.target.closest('[data-tile]');
     if (tile) openModal('tile', tile.dataset.tile);
   });
   // The treemap tiles are the decisions. Clicking one lands on the same modal
   // the list row does.
-  $('position').addEventListener('click', (e) => {
+  on('position', 'click', (e) => {
     if (e.target.closest('#export')) return doExport();
     const call = e.target.closest('[data-call]');
     if (call) {
@@ -985,7 +996,7 @@ function wire() {
     const tile = e.target.closest('[data-pack]');
     if (tile) openModal('pack', tile.dataset.pack);
   });
-  $('position').addEventListener('keydown', (e) => {
+  on('position', 'keydown', (e) => {
     const tile = e.target.closest('[data-pack]');
     if (tile && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openModal('pack', tile.dataset.pack); }
   });
@@ -1001,7 +1012,7 @@ function wire() {
   treemapObserver = new ResizeObserver(renderTreemapHost);
   treemapObserver.observe($('treemap-host'));
 
-  $('modal-body').addEventListener('click', (e) => {
+  on('modal-body', 'click', (e) => {
     const set = e.target.closest('[data-override]');
     if (set) {
       const pack = state.packages.find((p) => p.id === state.modal?.id);
@@ -1013,15 +1024,15 @@ function wire() {
     }
     if (e.target.closest('#revert')) { delete state.overrides[state.modal.id]; render(); }
   });
-  $('prev').addEventListener('click', () => step(-1));
-  $('next').addEventListener('click', () => step(1));
-  $('modal-close').addEventListener('click', closeModal);
-  $('scrim').addEventListener('click', closeModal);
+  on('prev', 'click', () => step(-1));
+  on('next', 'click', () => step(1));
+  on('modal-close', 'click', closeModal);
+  on('scrim', 'click', closeModal);
 
-  $('ai-cta').addEventListener('click', openAssistant);
-  $('ai-close').addEventListener('click', closeAssistant);
-  $('ai-scrim').addEventListener('click', closeAssistant);
-  $('ai-audience').addEventListener('click', (e) => {
+  on('ai-cta', 'click', openAssistant);
+  on('ai-close', 'click', closeAssistant);
+  on('ai-scrim', 'click', closeAssistant);
+  on('ai-audience', 'click', (e) => {
     const btn = e.target.closest('[data-audience]');
     if (!btn || btn.dataset.audience === state.ai.audience) return;
     state.ai.audience = btn.dataset.audience;
@@ -1076,8 +1087,18 @@ async function boot() {
 }
 
 boot().catch((err) => {
-  document.querySelector('#page-extract').innerHTML =
-    `<div class="callout"><span class="i">!</span><span><b>Could not load the extract.</b> ${esc(err.message)}<br>
-     This page reads the CSVs over fetch, so it needs a local server: <code>python3 tools/serve.py 8000 .</code></span></div>`;
+  // Two very different failures used to print the same sentence. A fetch that
+  // never landed really is the file:// problem; anything else is not, and
+  // telling someone to start a server when the server is fine sends them a long
+  // way in the wrong direction.
+  const isFetch = err instanceof TypeError && /fetch|load|network/i.test(err.message)
+    || /Could not load .*\.csv/.test(err.message);
+  document.querySelector('#page-extract').innerHTML = isFetch
+    ? `<div class="callout"><span class="i">!</span><span><b>Could not read the extract.</b> ${esc(err.message)}<br>
+       This page reads the CSVs over <code>fetch</code>, which browsers block on a <code>file://</code> origin.
+       Serve it instead: <code>python3 tools/serve.py 8010 .</code></span></div>`
+    : `<div class="callout"><span class="i">!</span><span><b>The page failed to start.</b> ${esc(err.message)}<br>
+       If this is a deployed copy, the most likely cause is a stale cached script sitting next to a newer page —
+       reload with <b>\u2318\u21E7R</b> (or <b>Ctrl\u21E7R</b>) to force a fresh fetch.</span></div>`;
   console.error(err);
 });

@@ -86,9 +86,17 @@ automatic, and it takes about a minute after a commit lands.
 
 ```bash
 node prototype/tools/check.mjs        # must pass before anything ships
+# if prototype/index.html changed, bump ?v= on the module entry at the bottom of it
 git add -A && git commit -m "…"
 git push origin main
 ```
+
+That `?v=` matters. Pages caches `index.html` and `app.js` for ten minutes **each,
+independently**, so without it a visitor can end up holding a new page and a stale
+script — which then looks for elements the new page no longer has, and the app dies on
+boot. Bumping the version guarantees a matched pair. Wiring is defensive as a second
+line of defence, and a boot failure now says *reload with ⌘⇧R* rather than blaming the
+server.
 
 Then check the **live URL**, not localhost — `fetch` behaves differently on a `file://` origin, and
 the "this page needs a local server" notice only removes itself when the CSVs actually load.
