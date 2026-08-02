@@ -83,10 +83,11 @@ decisions, the interface — is indifferent to which side is feeding it.
 
 Every score and disposition comes from `src/engine/rulepack.json`. They are deterministic and replayable, so "why does it say retire?" has an answer made of the customer's own rows.
 
-A model writes words, and only words. Two places, both labelled wherever they appear:
+A model writes words, and only words. Three places, all labelled wherever they appear:
 
 - `data/packages.json` — the headline, decision and watch-out per decision. Cached to disk on purpose: a live API call inside a ten-minute demo is a single point of failure for no benefit. Regenerate with `node tools/generate-packages.mjs`.
 - `src/workspace/assistant.js` — the assistant behind **Explain this page**, which reads either page back to you at the register you pick: for the board, for the programme, or for the engineer. Same content, different audience; it is not a verbosity dial, because nobody knows which verbosity they are.
+- `positionStatement()` in `src/workspace/app.js` — the sentence at the top of the Position card. Clause structure and connective wording are the model's; the clauses drop out when a count is zero, and every figure is read from the graph. It carries the mark for the same reason the other two do: it is prose making a claim about the customer's estate.
 
 The assistant is **composed from live state every time it opens**, never cached whole. A summary describing the neutral position while the page showed a greenfield reading would destroy the credibility of both — so the phrasing is model-written and kept in the file, and every number in it is read from the graph at the moment you open it.
 

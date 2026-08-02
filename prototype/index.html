@@ -111,6 +111,15 @@
           <!-- Built once, updated in place. The treemap host has to be a stable
                node so its ResizeObserver survives a re-render. -->
           <div class="card position" id="position">
+            <!-- The statement below is prose about the customer's estate, so it
+                 is marked like every other sentence a model wrote. The mark has
+                 to be precise about what is and is not the model's: the wording
+                 is, the arithmetic is not, and blurring that would undo the
+                 claim the whole artifact rests on. -->
+            <div class="ai-block-head">
+              <span class="ai-mark"><i aria-hidden="true"></i>AI generated</span>
+              <span class="ai-block-src">wording written by a model &middot; every figure in it computed from your extract</span>
+            </div>
             <p class="position-line" id="position-line"></p>
             <div class="treemap-host" id="treemap-host"></div>
             <div class="split-key" id="calls"></div>
@@ -202,6 +211,6 @@
      and a stale script — and the stale script then looks for elements the new
      page no longer has. Bumping this on deploy means a visitor always gets a
      matched pair: old page with old script, or new with new, never one of each. -->
-<script type="module" src="src/workspace/app.js?v=4"></script>
+<script type="module" src="src/workspace/app.js?v=5"></script>
 </body>
 </html>
