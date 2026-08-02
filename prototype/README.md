@@ -100,7 +100,7 @@ Every score and disposition comes from `src/engine/rulepack.json`. They are dete
 
 A model writes words, and only words. Three places, all labelled wherever they appear:
 
-- `data/packages.json` — the headline, decision and watch-out per decision. Cached to disk on purpose: a live API call inside a ten-minute demo is a single point of failure for no benefit. Regenerate with `node tools/generate-packages.mjs`.
+- `data/packages.json` — the headline, decision and watch-out per decision. Cached to disk on purpose: a live API call inside a seven-minute pitch is a single point of failure for no benefit. Regenerate with `node tools/generate-packages.mjs`.
 - `src/workspace/assistant.js` — the **Discovery Agent**, behind *Ask the Discovery Agent*. It reads either page back to you at the register you pick: for the board, for the programme, or for the engineer. Same content, different audience; it is not a verbosity dial, because nobody knows which verbosity they are. Each *what this did for you* closes on a highlighted line saying what it is worth in value-discovery terms.
 - `positionStatement()` in `src/workspace/app.js` — the sentence at the top of the Position card. Clause structure and connective wording are the model's; the clauses drop out when a count is zero, and every figure is read from the graph. It carries the mark for the same reason the other two do: it is prose making a claim about the customer's estate.
 

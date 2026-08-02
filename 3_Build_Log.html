@@ -45,6 +45,14 @@ th{background:var(--soft);font-size:10.5px;text-transform:uppercase;letter-spaci
 .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;background:var(--soft);padding:1px 5px;border-radius:4px}
 .foot{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:var(--ink3);font-size:10.5px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 
+/* the three versions, side by side */
+.vers{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 16px}
+.ver{flex:1;min-width:200px;border:1px solid var(--line);border-radius:9px;padding:12px 14px;background:var(--soft)}
+.ver .vn{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--accent)}
+.ver .vt{font-weight:650;margin:3px 0 4px}
+.ver .vb{font-size:12px;color:var(--ink2)}
+.ver.keep{background:#fff;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+
 /* the hours table stays editable: click an activity or note, pick a block */
 .hours td{vertical-align:middle}
 .hours .act{outline:none;border-radius:3px;padding:0 2px;margin:0 -2px;display:block;font-weight:600}
@@ -61,6 +69,8 @@ th{background:var(--soft);font-size:10.5px;text-transform:uppercase;letter-spaci
 }
 .hours .blk:hover{border-color:var(--accent)}
 .hours .totrow td{font-weight:700;background:var(--soft)}
+.hours .phrow td{background:#e8ebfd;font-weight:700;color:var(--accent2);font-size:11px;
+  text-transform:uppercase;letter-spacing:.5px}
 .editnote{font-size:10.5px;color:var(--ink3);margin:-6px 0 14px}
 
 /* ---------- editing ---------- */
@@ -78,7 +88,7 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
 @media print{
   body{background:#fff}
   .page{box-shadow:none;margin:0;max-width:none;padding:0;border-radius:0}
-  h2{break-after:avoid} table,tr,li,.callout,.fig{break-inside:avoid}
+  h2{break-after:avoid} table,tr,li,.callout,.fig,.ver{break-inside:avoid}
   a{color:var(--ink)}
   .editnote{display:none}
   .bar{display:none}
@@ -97,7 +107,7 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
 <div class="page" id="doc">
   <div class="eyebrow">Deliverable 4 · Build Log</div>
   <h1>Build log</h1>
-  <p class="dek">What I built, what I tried, what failed, what I cut &mdash; and where the hours went, in ten-minute blocks. 8-hour cap.</p>
+  <p class="dek">Three prototypes, one shipped. What I built, what I cut, and where the eight hours went.</p>
   <div class="meta">
     <span><b>Stack:</b> plain ES modules in the browser, no build step, no dependencies</span>
     <span><b>AI assist:</b> Claude Code (profiling, build, copy)</span>
@@ -105,123 +115,192 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
   </div>
 
   <div class="kfig">
-    <div class="fig"><div class="n" id="figTime">4h 20m</div><div class="l">of the 8h cap used</div></div>
-    <div class="fig"><div class="n">366</div><div class="l">objects scored in ~25 ms</div></div>
+    <div class="fig"><div class="n" id="figTime">8h</div><div class="l">of the 8h cap used</div></div>
+    <div class="fig"><div class="n">3</div><div class="l">prototypes built, one shipped</div></div>
     <div class="fig"><div class="n">11</div><div class="l">decisions from 106 custom objects</div></div>
     <div class="fig"><div class="n">0</div><div class="l">numbers written by a model</div></div>
   </div>
 
+  <h2>How this was built</h2>
+  <p>
+    Not in one sitting. The eight hours ran across six days in five or six short sessions, and that
+    matters to what came out: almost every removal in this log happened because I left the prototype
+    alone and came back to it. Living with a feature for ten minutes settles arguments that reasoning
+    about it does not, and coming back the next day settles more.
+  </p>
+  <p>
+    I also did not build one prototype. I built three, and the third is a deliberate merge of the
+    first two.
+  </p>
+
+  <div class="vers">
+    <div class="ver">
+      <div class="vn">V1 · 30 Jul</div>
+      <div class="vt">Steered build</div>
+      <div class="vb">Full depth. It worked, and it was too complex to pitch — a customer would have
+        had to hold evidence, basis, score, confidence, risk tolerance, transition type and usage
+        assumption in their head at once. Seven weighting concepts to reach one call.</div>
+    </div>
+    <div class="ver">
+      <div class="vn">V2 · 30 Jul</div>
+      <div class="vt">Autonomous control</div>
+      <div class="vb">Built by Claude Code with no steering from me, as a check on my own judgement.
+        Much simpler, weaker underneath — but it was right about some things I had over-built.</div>
+    </div>
+    <div class="ver keep">
+      <div class="vn">V3 · 31 Jul → 2 Aug</div>
+      <div class="vt">Shipped</div>
+      <div class="vb">Roughly 60% of V1, a little of V2, and a lot of subtraction. V1 as the
+        underlying model, stripped and enhanced until it was explainable in a seven-minute pitch.</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <b>The rule I cut against.</b> Every keep / drop / add decision was scored on one question:
+    <b>does this help the customer take the decision?</b> Not "is it clever", not "was it hard to
+    build". That rule is why a working risk engine came out and a four-state evidence model stayed
+    in — and it is the reason the shipped version is smaller than the one I had at hour three.
+  </div>
+
+  <p>
+    The honest version of the AI story is here rather than in a claim about tooling. Working with an
+    agent produced depth quickly, and the depth was real — but it also produced a decision model with
+    more moving parts than the problem needs. The work that mattered was the stripping: pulling the
+    logic back until it was defensible, explainable and still worth something. That judgement is not
+    something the agent supplied, and it is most of what the second and third passes were.
+  </p>
+
   <h2>What I built</h2>
   <ul>
-    <li><strong>An Extract Wizard</strong> &mdash; a page where a customer loads their own four files and watches what happens to them. Files are matched to adapters by <em>column signature</em>, not filename, because a Basis team exports <span class="mono">ZOBJ_DUMP_PRD1_0714.CSV</span>, never <span class="mono">objects.csv</span>. Three visible steps: load (where each file is identified and mapped as it arrives), watch the scoring, see exactly where AI is involved.</li>
-    <li><strong>A rules engine, not a model.</strong> Every score and every call comes from one editable rulepack file, so &ldquo;why does it say retire?&rdquo; is answered with a named rule and rows from the customer&rsquo;s own extract. Five calls: <span class="tag t-remediate">Remediate</span> <span class="tag t-invest">Investigate</span> <span class="tag t-workshop">Workshop</span> <span class="tag t-retire">Retire</span> <span class="tag t-retain">Carry as-is</span>. An LLM writes the summary sentences and nothing else.</li>
-    <li><strong>A four-state evidence model</strong> &mdash; the spine of the whole thing. <em>Measured and running</em>, <em>measured at zero</em>, <em>never measured</em>, and <em>cannot be measured</em>, because tables have no execution counts. Only the first two are observations.</li>
-    <li><strong>The Landscape Footprint</strong> &mdash; Position first, drawn as a treemap of the eleven decisions sized by object count and coloured by call; then Scope; then the decisions and the object inventory on two tabs. Empty until the wizard has been run once.</li>
-    <li><strong>One control that changes the answer</strong> &mdash; the transition type, reading the same evidence as no-path, brownfield, greenfield or selective. It does not only reorder: where the route genuinely changes what you would do, it changes the call and shows the sentence that justifies the change.</li>
-    <li><strong>A Discovery Agent</strong> on both pages, behind one button &mdash; named for the vision paper's first agent type, working in the phase it names first. It explains what the page in front of you is saying, at the register you pick &mdash; for the board, for the programme, for the engineer. Composed from live numbers every time it opens rather than cached, so it cannot describe a position the page is not showing, and marked as model-written wherever it appears.</li>
-    <li><strong>A human override</strong> on every call, with the rule&rsquo;s original proposal kept beside it and a one-click reset.</li>
-    <li><strong>A verification harness</strong> that re-derives every headline number from the raw files and fails loudly on drift.</li>
+    <li><strong>An Extract Wizard</strong> — a page where a customer loads their own four files and
+      watches what happens to them. Files are matched to adapters by <em>column signature</em>, not
+      filename, because a Basis team exports <span class="mono">ZOBJ_DUMP_PRD1_0714.CSV</span>, never
+      <span class="mono">objects.csv</span>. Three steps: load, rules, and where AI is involved.</li>
+    <li><strong>A rules engine, not a model.</strong> Every score and every call comes from one
+      editable rulepack file, so "why does it say retire?" is answered with a named rule and rows from
+      the customer's own extract. Five calls: <span class="tag t-remediate">Remediate</span>
+      <span class="tag t-invest">Investigate</span> <span class="tag t-workshop">Workshop</span>
+      <span class="tag t-retire">Retire</span> <span class="tag t-retain">Carry as-is</span>.</li>
+    <li><strong>A four-state evidence model</strong> — the spine. <em>Measured and running</em>,
+      <em>measured at zero</em>, <em>never measured</em>, and <em>cannot be measured</em>, because
+      tables have no execution counts. Only the first two are observations.</li>
+    <li><strong>The Landscape Footprint</strong> — Position first, drawn as a treemap of the eleven
+      decisions sized by object count and coloured by call; then Scope; then the decisions. Each
+      decision opens a modal with its objects, its blast radius as a graph, and an editable call.</li>
+    <li><strong>One control that changes the answer</strong> — the transition type, reading the same
+      evidence as no-path, brownfield, greenfield or selective. It does not only reorder: where the
+      route genuinely changes what you would do, it changes the call and shows the sentence why.
+      Seven of forty-four route/decision combinations move.</li>
+    <li><strong>A Discovery Agent</strong> on both pages — named for the vision paper's first agent
+      type. It explains the page at the register you pick: for the board, the programme, the engineer.
+      Composed from live numbers every time it opens rather than cached, so it cannot describe a
+      position the page is not showing, and marked as model-written wherever it appears.</li>
+    <li><strong>A verification harness</strong> that re-derives every headline number from the raw
+      files and fails loudly on drift.</li>
   </ul>
 
-  <h2>What I tried &amp; what I learned from the data</h2>
+  <h2>What the data changed about the design</h2>
   <ul>
-    <li><strong>Profiled all four files before designing anything.</strong> That is where the shape came from, rather than from a guess about what would look good.</li>
-    <li><strong>The finding that reframed everything:</strong> 207 objects have no usage row, which reads as fatal until you split it. <strong>61% of SAP&rsquo;s own standard code is unmeasured against 16% of the custom code</strong>, and every object measured at zero is custom. The blind spot sits almost entirely in code nobody was deciding about.</li>
-    <li><strong>Three transaction codes point at programs the inventory does not contain</strong> &mdash; one labelled &ldquo;Legacy pricing tool (decommissioned?)&rdquo;, another &ldquo;Temporary fix 2014&rdquo;. The third runs 3,860 times a month across 74 users and holds the most recent execution date in the whole extract. People can run these today; nobody can say who owns them.</li>
-    <li><strong>Two vendor scorecards are both live</strong>, each with its own transaction code, at 1,229 and 2,515 runs a month. Somebody built a replacement and the original never left.</li>
-    <li><strong>SAP&rsquo;s own code never calls custom code</strong> &mdash; not once across 326 dependencies. Retiring custom code will not break SAP; what stops you is people using it, which is a far easier thing to check.</li>
-    <li><strong>Rejected the obvious dead-code test.</strong> Nothing uses it, it uses nothing, no usage row &mdash; that returns 105 objects, and 101 of them are SAP&rsquo;s. Confidently useless. Everything scores on converging signals instead.</li>
-    <li><strong>Made the evidence basis load-bearing rather than descriptive.</strong> Retire is reachable only from a rule resting on a structural fact or an actual measurement; anything built on inference or on a missing record proposes Investigate and names what would settle it. The engine throws on start-up if a rule breaks that, so a live edit cannot quietly lose it.</li>
+    <li><strong>I profiled all four files before designing anything.</strong> The shape came from the
+      data, not from a guess about what would look good.</li>
+    <li><strong>The finding that reframed everything:</strong> 207 objects have no usage row, which
+      reads as fatal until you split it. <strong>61% of SAP's own standard code is unmeasured against
+      16% of the custom code</strong>, and every object measured at zero is custom. The blind spot
+      sits almost entirely in code nobody was deciding about.</li>
+    <li><strong>Three transaction codes point at programs the inventory does not contain</strong> —
+      one labelled "Legacy pricing tool (decommissioned?)", another "Temporary fix 2014". The third
+      runs 3,860 times a month across 74 users. People can run these today; nobody can say who owns
+      them.</li>
+    <li><strong>SAP's own code never calls custom code</strong> — not once across 326 dependencies.
+      Retiring custom code will not break SAP; what stops you is people using it, which is far easier
+      to check.</li>
+    <li><strong>I rejected the obvious dead-code test.</strong> Nothing uses it, it uses nothing, no
+      usage row — that returns 105 objects, and 101 of them are SAP's. Everything scores on converging
+      signals instead.</li>
+    <li><strong>The evidence basis is load-bearing, not descriptive.</strong> Retire is reachable only
+      from a rule resting on a structural fact or an actual measurement. Anything built on inference
+      or a missing record proposes Investigate and names what would settle it. The engine throws on
+      start-up if a rule breaks that.</li>
   </ul>
 
   <div class="callout warn">
-    <b>A number worth stating carefully.</b> It is tempting to say &ldquo;52 of 106 custom objects run zero times a month&rdquo;. That is three different findings wearing one coat: <strong>17</strong> are measured at zero, <strong>17</strong> were never measured at all, and <strong>18</strong> are tables, which cannot carry an execution count by construction. Collapsing them is the fastest route to a confident, wrong retirement list &mdash; which is exactly why the evidence model has four states and not two.
+    <b>A number worth stating carefully.</b> It is tempting to say "52 of 106 custom objects run zero
+    times a month". That is three findings wearing one coat: <strong>17</strong> are measured at zero,
+    <strong>17</strong> were never measured at all, and <strong>18</strong> are tables, which cannot
+    carry an execution count by construction. Collapsing them is the fastest route to a confident,
+    wrong retirement list — which is why the evidence model has four states and not two.
   </div>
 
-  <h2>What failed / what I cut (and why)</h2>
-  <ul>
-    <li><strong>Cut: a force-directed graph</strong> of the full dependency network. 366 nodes and 326 edges looks impressive and decides nothing &mdash; and it is the category the Celonis vision paper spends four pages distinguishing itself from. The graph survives only inside a single decision, answering one question: if we act on this, what else moves?</li>
-    <li><strong>Cut: effort and cost estimates</strong> in days or euros. The extract carries no size, complexity or line-count signal, so any figure would be invented &mdash; and one invented number undermines every real one on the same screen. It is an explicit <em>Next</em> item once source code is in scope.</li>
-    <li><strong>Cut, then reversed: file upload.</strong> Dropped early, on the argument that the adapter seam proves composability without a drop zone. Using the prototype showed that was right in principle and wrong in practice: the seam is invisible, and a customer cannot be asked to trust a pipeline they never see run. It came back as an entire page.</li>
-    <li><strong>Cut: a charting library.</strong> A twenty-box diagram does not need one, and a hand-drawn layout renders identically every time &mdash; repeatability beats physics when you are presenting live.</li>
-    <li><strong>Failed: sorting by call opened backwards</strong>, putting Carry-as-is above Remediate. Ranked columns now open most-urgent-first, size columns largest-first.</li>
-    <li><strong>Failed, then cut on purpose: the risk score.</strong> It was computed and never shown, so reweighting a signal appeared to do nothing &mdash; found by rehearsing a live modification against the clock. The first fix was to display it. The better fix, made later, was to take it off the screen for good: &ldquo;risk 72&rdquo; buys a question that costs five minutes of a ten-minute demo and lands on facts the rule&rsquo;s own rationale already states in sentences. The score still orders the rows; it no longer makes claims.</li>
-    <li><strong>Failed: the transition control rebuilt itself on every render</strong>, detaching the button under the cursor &mdash; the same mistake the settings panel made, in a new place. Built once, and only the selected state moves now.</li>
-    <li><strong>Failed twice, on the deployed copy only: a split cache.</strong> GitHub Pages caches every file for ten minutes <em>independently</em>. The first time, a visitor held a new <span class="mono">index.html</span> beside a stale <span class="mono">app.js</span>, which went looking for an element the new page no longer had and died on boot &mdash; and the error handler blamed the local server, the one thing that was fine. The second time was quieter: a fresh <span class="mono">app.js</span> beside a stale <span class="mono">wizard.js</span>, showing the previous deploy's step labels with nothing visibly wrong.</li>
-    <li><strong>Fixed properly the second time.</strong> Versioning the <span class="mono">&lt;script&gt;</span> tag only ever busted the entry and left every sibling module on an unversioned URL &mdash; which is why the first fix did not prevent the second failure. <span class="mono">index.html</span> now carries an <b>import map</b> pinning all twelve modules plus the entry, so one bump busts the whole graph; verified from the browser's own performance timeline that thirteen of thirteen modules fetch with the version attached. Still no build step, and browsers without import-map support fall back to unversioned URLs rather than to something broken. <span class="mono">tools/bump.mjs</span> rewrites all thirteen numbers at once, because thirteen hand-edits that must agree will agree twelve times out of thirteen at the worst possible moment.</li>
-    <li><strong>The sharper half of the same bug.</strong> The data files were unversioned too, and a stale <span class="mono">rulepack.json</span> beside new code would have produced scores built from yesterday's weights &mdash; wrong rather than merely old, and silently. The CSVs, the rulepack and the cached narrative now fetch with <span class="mono">cache: 'no-cache'</span>, so they revalidate. Found by asserting that every fetched resource carried a version, and noticing which one did not.</li>
-    <li><strong>Failed: the treemap rendered blank on first view.</strong> It measures its container, which has no box at all while the page is hidden, and a <span class="mono">ResizeObserver</span> does not fire for a display:none&nbsp;&rarr;&nbsp;visible transition &mdash; there was nothing to observe. Reading the width synchronously right after the page is shown forces layout and returns the real number.</li>
-    <li><strong>Failed: the settings panel closed on every change</strong> &mdash; clicking an option re-rendered the panel and destroyed the element under the cursor. Separately, a cached script could make a correct live edit look like it had done nothing, which would have been an ugly moment in front of an interviewer. Both fixed.</li>
-    <li><strong>Merged the mapping step into the load step.</strong> Files are matched to adapters by column signature the moment they arrive &mdash; the mapping is not a judgement anyone makes, so a whole screen asking them to confirm it was ceremony. The override that mattered moved onto the file row: every file shows what it matched on and what it will be used as, and either can be changed in place. Four steps became three.</li>
-    <li><strong>Rebuilt the scoring step around one picture.</strong> It was three stat cards and a rules table running off the bottom of the step &mdash; every number present, no sense of how any of them followed from the others. It is now a four-stage strip walking the same 106 objects through evidence, rule, confidence and call, and the derivation is visible in the figures themselves: confidence <em>High 87</em> is exactly structural 21 plus measured 66. Two real objects are then walked end to end, one reaching Retire on a measurement and one reaching Investigate on an absence, which is the whole argument in two rows. The eleven named rules fold into the stage they belong to behind a <em>see all</em> disclosure rather than sitting underneath as a section &mdash; still one click from the whole rulepack, and no longer the tallest thing on the step. <strong>906px to 526px</strong>, showing more rather than less.</li>
-    <li><strong>Failed: the pipeline strip rendered at double height.</strong> Four stage cards in a four-column grid &mdash; except the three arrows between them are grid items too, so seven children wrapped onto two rows. Caught by measuring the step rather than looking at it.</li>
-    <li><strong>Cut: a &ldquo;less / medium / more&rdquo; detail slider</strong> on the Discovery Agent, which was the original idea. Nobody knows which verbosity they are. Replaced with audience &mdash; for the board / the programme / the engineer &mdash; which is a question anyone can answer in the moment, and which hands you a slide sentence on demand.</li>
-    <li><strong>Rejected: a live API call from the Discovery Agent.</strong> Same reasoning as the cached decision narrative, plus a sharper one: a cached summary sitting next to a position that moves with the route lever would have contradicted the page the first time anyone switched to greenfield. Composing it from live state at open time solves both, and keeps &ldquo;no numbers written by a model&rdquo; literally true.</li>
-    <li><strong>Deferred visual polish.</strong> The brief says it is not graded, so the budget went to the decision logic and to keeping the thing genuinely modifiable live &mdash; every weight and threshold sits in one readable file.</li>
-  </ul>
-
-  <h2>The second pass, and what it cost</h2>
+  <h2>Cut because of the clock</h2>
   <p>
-    The first build worked and was too big to pitch. Demoing it made that obvious in a way that
-    reading it did not: every question a listener asked was about the machinery rather than the
-    estate. So there was a second pass, and it was mostly subtraction.
+    These are the scope calls the eight-hour cap made for me. None of them is a change of mind; each
+    is something I would build with more time, and all are sequenced in the Increment Breakdown rather
+    than quietly dropped.
   </p>
-  <ul>
-    <li><strong>Removed the risk dial</strong> and everything that served it &mdash; commitment thresholds, held-versus-committed state, the &ldquo;what it would take to commit the rest&rdquo; line. Nobody in a steering meeting says &ldquo;I accept a risk score of seventy&rdquo;, and a dial that can be turned up until the tool recommends deleting unmeasured code is not a safeguard. What it protected became a property of the engine instead: <strong>nothing is retired on evidence weaker than a measurement</strong>, asserted at run time. The two rules that sat behind the dial now propose Investigate, which is what their own rationale text always said. <b>The default output is identical</b> &mdash; 24 actionable, 34 held &mdash; so nothing was traded away for the simplification.</li>
-    <li><strong>Removed the usage-evidence switch from the interface.</strong> It is a question for the customer&rsquo;s team, not a control for a reader to guess at. It stays in the rulepack, and the assumption is stated on the face of the output.</li>
-    <li><strong>Removed the card view</strong> (the list already worked, and the modal carried the prose) and <strong>the risk score</strong> from the object rows.</li>
-    <li><strong>Promoted the transition type</strong> from a hidden setting to the one control on the page, and made it consequential: it now changes the call where the route genuinely changes what you would do, with the justifying sentence attached. Seven of forty-four route/decision combinations move. Choosing a greenfield build turns 62 of the 106 objects into build-buy-or-drop decisions and makes the clean-core problem disappear into a requirements list.</li>
-    <li><strong>Replaced the position bar chart with a treemap.</strong> A bar shows the split and hides the shape; it would tell you 51 objects carry forward without telling you that 33 of them are one decision and 18 another, resting on completely different evidence.</li>
-    <li><strong>Added, then removed, an object inventory and a detail drawer.</strong> Built because &ldquo;where is my object&rdquo; is the first question anyone with a stake asks. Cut on the next read-through: a browsable list of 106 rows is precisely the artifact the eleven decisions exist to replace, and offering one beside them invites re-litigating the grouping one object at a time. The objects are still all there, inside the decision that funds them, where each one carries a reason.</li>
-  </ul>
-  <h2>Everything cut, and why</h2>
+  <table>
+    <thead><tr><th style="width:34%">Left out</th><th>Why, and where it went</th></tr></thead>
+    <tbody>
+      <tr><td><b>A live connection to the source system</b></td><td>Needs SAP access and a landing zone. The prototype reads a file extract instead, which is what a first engagement would have anyway. Sequenced as <em>Next</em>.</td></tr>
+      <tr><td><b>The other two productive systems</b></td><td>The position covers one of three. Extending is adapter work, not new logic — but it is real work. Sequenced as <em>Next</em>.</td></tr>
+      <tr><td><b>An effort or cost model</b></td><td>Two reasons, and the data one is the stronger: the extract carries no size, complexity or line-count signal, so any figure would be invented. Needs source code in scope. Sequenced as <em>Later</em>.</td></tr>
+      <tr><td><b>Agents that act on a committed decision</b></td><td>Today the agent explains; it does not open a ticket or drive a remediation. That is the obvious next increment and it needs a system of record to write into.</td></tr>
+      <tr><td><b>Visual polish</b> beyond the sampled design tokens</td><td>The brief says it is not graded, so the budget went to the decision logic and to keeping the thing genuinely modifiable live.</td></tr>
+      <tr><td><b>A charting library</b></td><td>A dependency and a build step to draw twenty boxes. A hand-drawn layout renders identically every time, which matters more when presenting live.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Cut on judgement</h2>
   <p>
-    Most of this was built first and removed after using it. Living with a feature for ten minutes
-    settles arguments that reasoning about it does not &mdash; and the honest version of this log
-    shows the reversals rather than only the things that survived.
+    Most of this was built first and removed after using it. The reversals are the point — a log that
+    lists only what survived is not a log.
   </p>
-  <div class="scroll">
-    <table>
-      <thead><tr><th style="width:31%">Cut</th><th style="width:13%">Fate</th><th>Why</th></tr></thead>
-      <tbody>
-        <tr><td><b>Risk-tolerance dial</b> (0&ndash;100) and everything downstream: commit thresholds, held-vs-committed state, the &ldquo;what it would take to commit the rest&rdquo; line</td><td>built &rarr; cut</td><td>Nobody in a steering meeting says &ldquo;I accept 70&rdquo;. It gated findings behind a number the customer cannot source, and turned up far enough it recommended deleting unmeasured code. Replaced by a hard engine guarantee. <b>Identical default output.</b></td></tr>
-        <tr><td><b>Usage-evidence switch</b> in the interface</td><td>built &rarr; cut</td><td>A question for the customer's team, not a control for the reader. Survives as one string in the rulepack, stated on the face of the output.</td></tr>
-        <tr><td><b>View-settings popover</b></td><td>built &rarr; cut</td><td>With the other two gone it held one control &mdash; and hiding the single consequential lever in a popover was the wrong trade. It moved onto the page.</td></tr>
-        <tr><td><b>Card view</b> for the decisions</td><td>built &rarr; cut</td><td>Duplicated the list; the prose it showed was already in the modal.</td></tr>
-        <tr><td><b>Risk scores on screen</b></td><td>built &rarr; cut</td><td>&ldquo;Why 72?&rdquo; buys a question that costs five minutes and lands on facts the rule's own rationale states in a sentence. Still used for ordering.</td></tr>
-        <tr><td><b>Object inventory tab</b> and <b>per-object detail drawer</b></td><td>built &rarr; cut</td><td>A browsable list of 106 rows is the artifact the eleven decisions exist to replace. Offering one beside them invites re-litigating the grouping object by object. Every object is still reachable inside the decision that funds it.</td></tr>
-        <tr><td><b>Mapping step</b> in the wizard</td><td>built &rarr; cut</td><td>The matching is deterministic and happens on upload. A screen to confirm a conclusion already reached is ceremony; the override moved onto the file row.</td></tr>
-        <tr><td><b>Bar charts</b> in the scoring strip</td><td>built &rarr; cut</td><td>Four stacked bars of the same 106 objects side by side read as four near-identical grey smears. The counts already carried it.</td></tr>
-        <tr><td><b>Standalone &ldquo;rules that fired&rdquo; section</b></td><td>built &rarr; folded in</td><td>Load-bearing transparency, but it was the tallest thing on the step. Folded into the stage it belongs to behind a <em>see all</em> disclosure &mdash; one click, no permanent cost.</td></tr>
-        <tr><td><b>Landing page</b> for the published site</td><td>built &rarr; cut</td><td>An interstitial between a reviewer and the thing they came to look at earns nothing. The URL now opens the prototype directly.</td></tr>
-        <tr><td><b>Detail slider</b> (less / medium / more) on the Discovery Agent</td><td>designed &rarr; replaced</td><td>Nobody knows which verbosity they are. Became audience: for the board, the programme, the engineer.</td></tr>
-        <tr><td><b>Live API call</b> from the Discovery Agent</td><td>rejected</td><td>A network round trip inside a ten-minute demo is a single point of failure for no benefit &mdash; and a cached summary would have contradicted the page the first time anyone switched transition path. Composing from live state at open time solves both.</td></tr>
-        <tr><td><b>Risk matrix</b> and the <b>per-object engine</b> from the parallel build</td><td>rejected</td><td>The matrix restates fan-in and executions as a picture. The engine called 61 of 106 objects &ldquo;decommission&rdquo; on <span class="mono">exec &lt; 50 &amp;&amp; users &lt;= 2</span> &mdash; the confident, wrong retirement list this whole model exists to prevent.</td></tr>
-        <tr><td><b>Force-directed graph</b> of all 366 objects</td><td>cut early</td><td>Impressive, inert, and the exact category the vision paper distinguishes Celonis from. The graph survives only inside one decision.</td></tr>
-        <tr><td><b>Effort and cost estimates</b></td><td>cut early</td><td>The extract carries no size or complexity signal. One invented number undermines every real one on the same screen.</td></tr>
-        <tr><td><b>Charting library</b></td><td>cut early</td><td>A hand-drawn layout renders identically every time. Repeatability beats physics when you are presenting live.</td></tr>
-        <tr><td><b>&ldquo;Context Model&rdquo; as a wizard step name</b>, and as the thing the interface claimed to build</td><td>renamed</td><td>The context model is the whole interpretation every screen downstream reads &mdash; not a page you pass through. And the prototype builds a <em>context slice</em>, not the Celonis Context Model, which spans business objects as well as technical ones. Having been careful about that distinction in the README, the app should not have undone it on its first screen.</td></tr>
-        <tr><td><b>&ldquo;Scoring&rdquo; as the replacement step name</b></td><td>rejected</td><td>My own suggestion, and wrong: the scores are the one thing that step deliberately does not show. The step is called <b>Rules</b>, because what is on it is a rule deciding.</td></tr>
-      </tbody>
-    </table>
-  </div>
+  <table>
+    <thead><tr><th style="width:30%">Cut</th><th style="width:14%">Fate</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b>V1's decision model</b> — seven stacked weighting concepts to reach one call</td><td>built &rarr; stripped</td><td>The biggest cut in the project, and it was mostly my own build. It looked like value and would have lost the room. V3 keeps the evidence model and the rulepack and drops everything layered on top.</td></tr>
+      <tr><td><b>Risk-tolerance dial</b> (0&ndash;100) and everything downstream: commit thresholds, held-vs-committed state</td><td>built &rarr; cut</td><td>No Head of Transformation says "I accept 70". It gated findings behind a number the customer cannot source, and turned up far enough it recommended deleting unmeasured code. Replaced by a hard engine guarantee. <b>Identical default output</b> — 24 actionable, 34 held.</td></tr>
+      <tr><td><b>Usage-evidence switch</b> in the interface</td><td>built &rarr; cut</td><td>A question for the customer's team, not a control for the reader to guess at. Survives as one string in the rulepack, stated on the face of the output.</td></tr>
+      <tr><td><b>View-settings popover</b></td><td>built &rarr; cut</td><td>With the other two gone it held one control — and hiding the single consequential lever in a popover was the wrong trade. It moved onto the page.</td></tr>
+      <tr><td><b>Risk scores on screen</b></td><td>built &rarr; cut</td><td>"Why 72?" buys a question that costs five minutes of a seven-minute pitch and lands on facts the rule's own rationale states in a sentence. Still used for ordering.</td></tr>
+      <tr><td><b>Object inventory tab</b> and <b>per-object detail drawer</b></td><td>added from V2 &rarr; cut</td><td>Taken from V2 because "where is my object" is the first question anyone asks. Cut on the next read-through: a browsable list of 106 rows is exactly the artifact the eleven decisions exist to replace, and offering one beside them invites re-litigating the grouping one object at a time.</td></tr>
+      <tr><td><b>Mapping step</b> in the wizard</td><td>built &rarr; cut</td><td>The matching is deterministic and happens on upload. A screen to confirm a conclusion already reached is ceremony; the override moved onto the file row. Four steps became three.</td></tr>
+      <tr><td><b>Card view</b> for the decisions, <b>bar charts</b> in the scoring strip</td><td>built &rarr; cut</td><td>The card view duplicated the list. The bars were four stacked views of the same 106 objects, reading as four near-identical grey smears. The counts already carried it.</td></tr>
+      <tr><td><b>Standalone "rules that fired" section</b></td><td>built &rarr; folded in</td><td>Load-bearing transparency, but the tallest thing on the step. Folded into the stage it belongs to behind a <em>see all</em> disclosure — one click, no permanent cost.</td></tr>
+      <tr><td><b>Detail slider</b> (less / medium / more) on the Discovery Agent</td><td>designed &rarr; replaced</td><td>My original spec. Nobody knows which verbosity they are. Became audience — for the board, the programme, the engineer — which is a question anyone can answer, and which hands you a slide sentence.</td></tr>
+      <tr><td><b>Live API call</b> from the Discovery Agent</td><td>rejected</td><td>A network round trip inside a live pitch is a single point of failure for no benefit — and a cached summary would have contradicted the page the first time anyone switched transition path. Composing from live state at open time solves both.</td></tr>
+      <tr><td><b>V2's risk matrix</b> and its <b>per-object engine</b></td><td>rejected</td><td>The matrix restates fan-in and executions as a picture the decision modal already answers with attribution. The engine called 61 of 106 objects "decommission" on <span class="mono">exec &lt; 50 &amp;&amp; users &lt;= 2</span> — the confident, wrong retirement list this whole model exists to prevent. V2's positioning sentence was worth taking, and was.</td></tr>
+      <tr><td><b>Force-directed graph</b> of all 366 objects</td><td>cut early</td><td>Impressive, inert, and the exact category the vision paper distinguishes Celonis from. The graph survives only inside one decision, answering one question: if we act on this, what else moves?</td></tr>
+      <tr><td><b>Landing page</b> for the published site</td><td>built &rarr; cut</td><td>An interstitial between a reviewer and the thing they came to look at earns nothing.</td></tr>
+      <tr><td><b>"Context Model"</b> as a wizard step name</td><td>renamed</td><td>The prototype builds a <em>context slice</em>, not the Celonis Context Model, which spans business objects as well as technical ones. Having been careful about that in the README, the app should not have undone it on its first screen. The step is called <b>Rules</b>, because what is on it is a rule deciding.</td></tr>
+    </tbody>
+  </table>
 
-  <div class="callout">
-    <b>On where the AI actually sits.</b> Up to this point the AI story was entirely a negative claim &mdash; nothing is decided by a model &mdash; which proves judgement and shows no point of view. The assistant turns it positive without weakening it: the rules decide, a model explains, and everything the model wrote is labelled with what it was written from. The engine is unchanged; the number of model-written numbers on screen is still zero.
-  </div>
-
-  <div class="callout">
-    <b>What I looked at and did not take.</b> A parallel build of the same brief produced a risk matrix
-    (business criticality against blast radius) and a much simpler per-object engine. The matrix was
-    not ported: it restates fan-in and executions as a picture, and the decision modal already answers
-    the same question with attribution and a named rule. The engine was not ported on principle &mdash;
-    it calls 61 of 106 custom objects &ldquo;decommission&rdquo; on <span class="mono">exec &lt; 50 &amp;&amp; users &lt;= 2</span>,
-    which is precisely the confident, wrong retirement list the four-state evidence model exists to
-    prevent. The headline sentence was worth taking, and was; the drawer was taken, used, and then cut for the reason above.
-  </div>
+  <h3>Bugs worth recording</h3>
+  <ul>
+    <li><strong>A split cache, twice, on the deployed copy only.</strong> GitHub Pages caches every
+      file for ten minutes <em>independently</em>. A visitor held a new <span class="mono">index.html</span>
+      beside a stale <span class="mono">app.js</span>, which died on boot — and the error handler blamed
+      the local server, the one thing that was fine. Versioning the <span class="mono">&lt;script&gt;</span>
+      tag only busted the entry, so it happened again with a stale <span class="mono">wizard.js</span>.
+      Fixed properly with an <b>import map</b> pinning all twelve modules plus the entry, and
+      <span class="mono">bump.mjs</span> to rewrite all thirteen numbers at once.</li>
+    <li><strong>The sharper half of the same bug.</strong> The data files were unversioned too, and a
+      stale <span class="mono">rulepack.json</span> beside new code would have produced scores from
+      yesterday's weights — wrong rather than merely old, and silently. They now fetch with
+      <span class="mono">cache: 'no-cache'</span>.</li>
+    <li><strong>The treemap rendered blank on first view.</strong> It measures its container, which has
+      no box while the page is hidden, and a <span class="mono">ResizeObserver</span> does not fire for
+      a display:none&nbsp;&rarr;&nbsp;visible transition. Reading the width synchronously after the page
+      is shown forces layout and returns the real number.</li>
+    <li><strong>Controls that rebuilt themselves on every render</strong> — the settings panel, then the
+      transition control — detached the button under the cursor, so clicking an option looked like it
+      had done nothing. Built once now; only the selected state moves.</li>
+    <li><strong>Sorting by call opened backwards</strong>, putting Carry-as-is above Remediate. Ranked
+      columns now open most-urgent-first.</li>
+  </ul>
 
   <h2>Where the hours went</h2>
-  <p class="editnote">Ten-minute blocks. Click any activity or note to edit it, and pick the time from the dropdown &mdash; changes save in this browser.</p>
+  <p class="editnote">Ten-minute blocks, across six days. Click any activity or note to edit it, and pick the time from the dropdown — changes save in this browser.</p>
   <table class="hours">
     <thead><tr><th style="width:78%">Activity</th><th>Time</th></tr></thead>
     <tbody id="hoursBody"></tbody>
@@ -229,40 +308,59 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
   </table>
 
   <div class="callout">
-    <b>Scope I consciously left on the table:</b> a live connection to the source system, the other two productive systems, an effort model, and agents that act on a committed decision rather than only proposing it. All are sequenced in the Increment Breakdown as Next or Later &mdash; not forgotten, and not quietly dropped.
+    <b>What the split says.</b> Nearly a third of the budget went to planning, validating and pivoting
+    rather than building — including the decision to throw most of V1's decision model away. On a
+    challenge with a hard cap that is the uncomfortable allocation, and it is the one I would make
+    again: the build was fast, and choosing what not to ship was the expensive part.
   </div>
 
-  <div class="foot"><span>Landscape Footprint &mdash; Build Log</span><span id="footTime"></span></div>
+  <div class="foot"><span>Landscape Footprint — Build Log</span><span id="footTime"></span></div>
 </div>
 
 <script>
 /* The hours table is the one live part of this document: ten-minute blocks,
-   editable in place, saved in this browser. Everything else is prose. */
+   grouped into the three phases the work actually ran in, editable in place
+   and saved in this browser. Everything else is prose. */
 const BLOCKS = [10,20,30,40,50,60,70,80,90];
 const DEFAULT_ROWS = [
-  { act:"Read the brief and the vision paper; profiled all four files; sent the questions mail",
+  { ph:"Plan, validate, pivot",
+    act:"Read the brief and the vision paper; profiled all four files; sent the questions mail",
     sub:"366 objects, 207 with no usage row. Every gap became a question paired with the assumption I proceed on.", mins:80 },
-  { act:"Decided the shape; built the context graph and the four-state evidence model",
-    sub:"A decision list with stated confidence, not a 366-node map.", mins:30 },
-  { act:"Rulepack, converging-signal scoring, five calls, decision packages",
-    sub:"Every weight in one editable file. 106 objects grouped into 11 decisions, each object in exactly one.", mins:30 },
-  { act:"Verification harness, written before the UI existed",
-    sub:"Caught my own error: seven write paths across six objects, not seven objects.", mins:10 },
-  { act:"The board — coverage, blast radius, integrity panel, the two controls",
-    sub:"Built in the Celonis Studio design language.", mins:40 },
-  { act:"Extract Wizard, the two-page split, human override, Position",
-    sub:"Driven by clicking through a working build rather than by a plan.", mins:50 },
-  { act:"Handbook, two demo-breaking bug fixes, and this log",
-    sub:"Reworded for a non-technical reader; kept the precise numbers precise.", mins:20 },
-  { act:"Second pass — stripped the risk dial, made the route change the calls, added the treemap",
-    sub:"Driven by demoing the first build and watching where a reader would stall. Same default numbers, one control instead of two.", mins:70 },
-  { act:"Third pass — the Discovery Agent, its provenance marks, and the wizard trimmed to match",
-    sub:"Composed from live state so it tracks the route lever. Customer answers folded in: the extract has more gaps than the three we can see.", mins:60 },
-  { act:"Fourth pass — merged the mapping step away, named the agent, and pinned the module graph",
-    sub:"Three wizard steps named after what is on them. Two cache failures on the deployed copy traced and closed properly.", mins:50 },
+  { ph:"Plan, validate, pivot",
+    act:"Reviewed V1 against a pitch, and decided most of it had to come out",
+    sub:"It worked and it was unpitchable. Wrote the strip-and-keep spec rather than adding anything.", mins:40 },
+  { ph:"Plan, validate, pivot",
+    act:"Planned V3 — keep, drop, add, scored against customer value",
+    sub:"V1 as the underlying model, V2 read for the few things it did better.", mins:30 },
+
+  { ph:"Build",
+    act:"V1 — context graph, four-state evidence model, rulepack, scoring, 11 decisions",
+    sub:"A decision list with stated confidence, not a 366-node map. Every weight in one editable file.", mins:60 },
+  { ph:"Build",
+    act:"V2 — a second prototype built autonomously, with no steering, as a control",
+    sub:"Cheap check on my own judgement. Two ideas came back from it; the engine underneath did not.", mins:30 },
+  { ph:"Build",
+    act:"V3 — the merged build: Extract Wizard, the two-page split, the decision modal, treemap, override",
+    sub:"Driven by clicking through a working build rather than by a plan.", mins:70 },
+  { ph:"Build",
+    act:"Discovery Agent, its provenance marks, and the wizard compacted to match",
+    sub:"Composed from live state so it tracks the route lever. Customer answers folded in.", mins:50 },
+  { ph:"Build",
+    act:"Verification harness, written before the UI existed",
+    sub:"Caught my own error: seven write paths across six objects, not seven objects.", mins:20 },
+  { ph:"Build",
+    act:"The four written deliverables, generated alongside the build",
+    sub:"Drafted in parallel with the prototype rather than after it, which is most of how this fit in the cap.", mins:20 },
+  { ph:"Build",
+    act:"Deploy, and two cache failures on the live copy traced and closed properly",
+    sub:"Pinned the whole module graph, not just the entry, and made the data files revalidate.", mins:20 },
+
+  { ph:"Adjust and pitch",
+    act:"Manual pass over all five documents, and the pitch slide",
+    sub:"Reworded by hand for a non-technical reader; kept the precise numbers precise. Seven-minute pitch.", mins:60 },
 ];
 
-const STORE = 'celonis-buildlog-doc-v3';
+const STORE = 'celonis-buildlog-doc-v4';
 let rows = (()=>{ try{ const r=localStorage.getItem(STORE); if(r) return JSON.parse(r); }catch(e){} return structuredClone(DEFAULT_ROWS); })();
 const save = () => localStorage.setItem(STORE, JSON.stringify(rows));
 const esc = s => String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
@@ -270,7 +368,16 @@ const hm = m => { const h=Math.floor(m/60), r=m%60; return h ? (r?`${h}h ${r}m`:
 const total = () => rows.reduce((s,r)=>s+(Number(r.mins)||0),0);
 
 function render(){
-  document.getElementById('hoursBody').innerHTML = rows.map((r,i)=>`
+  /* A phase header row is emitted whenever the phase changes, and carries that
+     phase's own subtotal — so editing a block updates both numbers at once. */
+  let html = '', seen = null;
+  rows.forEach((r,i) => {
+    if(r.ph !== seen){
+      seen = r.ph;
+      const sub = rows.filter(x => x.ph === r.ph).reduce((s,x)=>s+(Number(x.mins)||0),0);
+      html += `<tr class="phrow"><td>${esc(r.ph)}</td><td>${hm(sub)}</td></tr>`;
+    }
+    html += `
     <tr data-i="${i}">
       <td>
         <span class="act" contenteditable="plaintext-only" data-f="act">${esc(r.act)}</span>
@@ -281,11 +388,13 @@ function render(){
           ${BLOCKS.map(b=>`<option value="${b}"${b===Number(r.mins)?' selected':''}>${hm(b)}</option>`).join('')}
         </select>
       </td>
-    </tr>`).join('');
+    </tr>`;
+  });
+  document.getElementById('hoursBody').innerHTML = html;
   const t = total();
   document.getElementById('totalCell').textContent = hm(t);
   document.getElementById('figTime').textContent = hm(t);
-  document.getElementById('footTime').textContent = `8h cap · ${hm(t)} used · ${t/10} ten-minute blocks`;
+  document.getElementById('footTime').textContent = `8h cap · ${hm(t)} used · ${t/10} ten-minute blocks · 6 days`;
 }
 
 const body = document.getElementById('hoursBody');
