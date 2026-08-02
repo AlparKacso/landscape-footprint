@@ -227,11 +227,11 @@ export function renderNarrative(stats, sample) {
           answer every time, and <code>tools/check.mjs</code> re-derives it from the raw files to prove it.</p>
       </div>
       <div class="mcard is-ai">
-        <h4>Model-written &mdash; words, in three places</h4>
+        <h4>The Discovery Agent &mdash; words, in three places</h4>
         <ol class="ai-places">
           <li>The headline, decision and watch-out on each of the ${stats.packages} decisions.</li>
           <li>The sentence at the top of the Landscape Footprint.</li>
-          <li>The assistant, which explains either page at the register you pick.</li>
+          <li>The Discovery Agent, which explains either page at the register you pick.</li>
         </ol>
       </div>
     </div>

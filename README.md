@@ -73,9 +73,9 @@ Every score, call and grouping comes from `prototype/src/engine/rulepack.json`. 
 deterministic and replayable, so "why does it say retire?" has an answer made of the customer's own
 rows.
 
-A model writes words, and only words: the headline and decision sentence per decision, the sentence
-at the top of the Position card, and the assistant that reads either page back to you at the
-register you choose. Everything it wrote is marked with what it was written *from* — and the mark is
+The **Discovery Agent** writes words, and only words: the headline and decision sentence per
+decision, the sentence at the top of the Position card, and the explanation of either page at the
+register you choose. Everything it writes is marked *Discovery Agent generated insight*. Everything it wrote is marked with what it was written *from* — and the mark is
 careful to say that the wording is the model's while the arithmetic is not, because blurring that
 would undo the claim the whole artifact rests on. The assistant is composed from live state each
 time it opens rather than cached, so it can never describe a position the page is not showing.

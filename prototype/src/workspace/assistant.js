@@ -1,10 +1,11 @@
-// The assistant.
+// The Discovery Agent.
 //
-// Everything else in this prototype is deterministic on purpose, and the AI
-// boundary has so far been a negative claim: no score, no call and no grouping
-// is model-written. That proves restraint. It does not show where a model
-// actually pays, and "where does AI pay" is the whole question the capability
-// exists inside.
+// Named after the vision paper's own first agent type, and sitting in the phase
+// it names first: value discovery. Everything else in this prototype is
+// deterministic on purpose, and the AI boundary has so far been a negative
+// claim — no score, no call and no grouping is written by a model. That proves
+// restraint. It does not show where a model actually pays, and "where does AI
+// pay" is the whole question the capability exists inside.
 //
 // It pays here. The page in front of a Head of Transformation carries four
 // files, eleven decisions, five calls, four evidence states and a transition
@@ -47,6 +48,10 @@ const from = (level, min) => RANK[level] >= RANK[min];
 
 const p = (html) => `<p>${html}</p>`;
 const b = (v) => `<b>${v}</b>`;
+
+// Every "what this did for you" closes on what it is worth, not on what
+// happened. A description of a pipeline is not a reason to fund one.
+const value = (html) => `<p class="ai-value"><span class="ai-value-tag">Why this matters</span>${html}</p>`;
 
 // ---------------------------------------------------------------- facts
 //
@@ -125,6 +130,10 @@ function extractDid(f, level) {
       else; every claim on screen is a sentence built from your rows, not a number that would invite
       &ldquo;why 72?&rdquo;.`));
   }
+
+  out.push(value(`The value discovery normally starts with a six-week assessment and a consultant's
+    spreadsheet. It has just started instead with your own extract, in the time it took to read this
+    page — and every claim in it can be traced to a row you already own.`));
 
   return out;
 }
@@ -212,6 +221,11 @@ function footprintDid(f, level) {
       is still inference.`));
   }
 
+  out.push(value(`This is the business case, before the programme has spent anything. You can take
+    ${b(f.acting)} scope decisions to a steering committee today and put a price on the
+    ${b(f.byCall[DISPOSITION.INVESTIGATE])} still open — which is a stronger position than any
+    assessment that returns one number and no way to check it.`));
+
   return out;
 }
 
@@ -291,7 +305,7 @@ export function renderAssistant(page, audience, ctx) {
     title: spec.title,
     body: `${body}
       <footer class="ai-prov">
-        <b>Where this came from.</b> The wording is model-written and kept in
+        <b>Where this came from.</b> The Discovery Agent's wording is kept in
         <span class="mono">src/workspace/assistant.js</span>; every figure in it is read from your
         extract at the moment you opened this, not generated. No score, no call and no grouping on
         this page was produced by a model — those come from

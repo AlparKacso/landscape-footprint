@@ -782,14 +782,14 @@ function renderModal() {
       <td style="width:132px">${callChip(o.proposed)}</td>
     </tr>`).join('');
 
-  // The three sentences below are the only model-written text on this screen, so
+  // The three sentences below are the only Discovery-Agent text on this screen, so
   // they are fenced and labelled rather than blended into the rest. The package,
   // its members, its call and its confidence are not the model's.
   $('modal-body').innerHTML = `
     ${pack.headline || pack.decision || pack.watchOut ? `<div class="ai-block">
       <div class="ai-block-head">
-        <span class="ai-mark"><i aria-hidden="true"></i>AI generated</span>
-        <span class="ai-block-src">written from this decision's own rule output</span>
+        <span class="ai-mark"><i aria-hidden="true"></i>Discovery Agent generated insight</span>
+        <span class="ai-block-src">written by the Discovery Agent from this decision's own rule output</span>
       </div>
       ${pack.headline ? `<p class="modal-lede">${esc(pack.headline)}</p>` : ''}
       ${pack.decision ? `<div class="callout callout--ok"><span class="i">→</span><span><b>Decision:</b> ${esc(pack.decision)}</span></div>` : ''}

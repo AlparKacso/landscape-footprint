@@ -117,8 +117,8 @@
                  is, the arithmetic is not, and blurring that would undo the
                  claim the whole artifact rests on. -->
             <div class="ai-block-head">
-              <span class="ai-mark"><i aria-hidden="true"></i>AI generated</span>
-              <span class="ai-block-src">wording written by a model &middot; every figure in it computed from your extract</span>
+              <span class="ai-mark"><i aria-hidden="true"></i>Discovery Agent generated insight</span>
+              <span class="ai-block-src">wording from the Discovery Agent &middot; every figure in it computed from your extract</span>
             </div>
             <p class="position-line" id="position-line"></p>
             <div class="treemap-host" id="treemap-host"></div>
@@ -183,13 +183,13 @@
      on both pages, and says something different on each. -->
 <button class="ai-cta" id="ai-cta" hidden aria-haspopup="dialog">
   <span class="ai-cta-mark" aria-hidden="true"></span>
-  <span class="ai-cta-label">Explain this page</span>
+  <span class="ai-cta-label">Ask the Discovery Agent</span>
 </button>
 
 <div class="modal-scrim" id="ai-scrim" hidden></div>
 <div class="modal modal--ai" id="ai-modal" hidden role="dialog" aria-modal="true" aria-labelledby="ai-title">
   <header>
-    <span class="ai-mark"><i aria-hidden="true"></i>AI generated</span>
+    <span class="ai-mark"><i aria-hidden="true"></i>Discovery Agent generated insight</span>
     <div class="grow"></div>
     <button class="icon" id="ai-close" aria-label="Close">×</button>
   </header>
@@ -211,6 +211,6 @@
      and a stale script — and the stale script then looks for elements the new
      page no longer has. Bumping this on deploy means a visitor always gets a
      matched pair: old page with old script, or new with new, never one of each. -->
-<script type="module" src="src/workspace/app.js?v=10"></script>
+<script type="module" src="src/workspace/app.js?v=11"></script>
 </body>
 </html>
