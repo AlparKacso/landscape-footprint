@@ -581,7 +581,10 @@ button.tile:focus-visible { outline: 2px solid var(--primary); outline-offset: 1
 /* ---------- position ---------- */
 
 .position { padding: 18px 20px; }
-.position-line { font-size: 16px; line-height: 1.6; margin: 0 0 16px; max-width: 96ch; }
+/* Full width of the card, not held to a reading measure — the same call the
+   page lede makes above. This is a statement of position, read once in a
+   glance, not a paragraph anyone settles in to read. */
+.position-line { font-size: 16px; line-height: 1.6; margin: 0 0 16px; }
 .position-line b { font-weight: 640; }
 .position-line .position-aside {
   display: block; margin-top: 7px; font-size: 13.5px; color: var(--ink-2);
