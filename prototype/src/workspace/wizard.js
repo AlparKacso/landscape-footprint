@@ -14,6 +14,7 @@ import { DISPOSITION_LABEL } from '../engine/dispose.js';
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const plural = (n, one, many = one + 's') => `${n} ${n === 1 ? one : many}`;
+const b = (v) => `<b>${v}</b>`;
 
 export const ROLES = ['objects', 'usage', 'dependencies', 'transactions'];
 
@@ -104,91 +105,144 @@ export function renderMap(w) {
 }
 
 // --- step 3 -----------------------------------------------------------------
+//
+// One picture instead of three stat cards and a table. The same 106 custom
+// objects are counted at all four stages, so the strip reads as one population
+// changing shape rather than four unrelated charts — and the derivation is on
+// the face of it: the evidence decides which rule fires, the rule declares what
+// it rests on, and that basis is what Confidence shows. Two real objects are
+// then walked end to end, because a worked example convinces where a schematic
+// does not.
+
+const seg = (cls, n, total, label) =>
+  (n ? `<span class="${cls}" style="width:${(n / total) * 100}%" title="${esc(label)}: ${n}"></span>` : '');
+
+const keyOf = (items) => `<div class="pipe-key">${items.filter((i) => i.n)
+  .map((i) => `<span><i class="${i.cls}"></i>${esc(i.label)} <b>${i.n}</b></span>`).join('')}</div>`;
+
+function stage(n, title, note, items, total) {
+  return `<div class="pipe-stage">
+    <div class="pipe-head"><span class="pipe-n">${n}</span>${esc(title)}</div>
+    <p class="pipe-note">${note}</p>
+    <div class="pipe-bar">${items.map((i) => seg(i.cls, i.n, total, i.label)).join('')}</div>
+    ${keyOf(items)}
+  </div>`;
+}
 
 export function renderModel(stats) {
-  const ev = stats.evidence;
-  const evRows = [EVIDENCE.ACTIVE, EVIDENCE.DEAD, EVIDENCE.UNMEASURED, EVIDENCE.UNMEASURABLE]
-    .map((k) => `<tr><td>${esc(EVIDENCE_LABEL[k])}</td><td class="obj">${ev[k]}</td></tr>`).join('');
+  const total = stats.customObjects;
+  const at = (map) => (k) => map[k] ?? 0;
 
-  const ruleRows = stats.rules
-    .map((r) => `<tr><td class="obj">${esc(r.id)}</td><td class="why">${esc(r.basis)}</td><td class="obj">${r.count}</td>
-      <td>${r.disposition ? `<span class="badge badge--${r.disposition}">${esc(DISPOSITION_LABEL[r.disposition])}</span>` : ''}</td></tr>`)
-    .join('');
+  const evidence = [
+    [EVIDENCE.ACTIVE, 'e-active', 'Running'],
+    [EVIDENCE.DEAD, 'e-dead', 'Measured, never ran'],
+    [EVIDENCE.UNMEASURED, 'e-unmeasured', 'Not measured'],
+    [EVIDENCE.UNMEASURABLE, 'e-unmeasurable', 'Cannot be measured'],
+  ].map(([k, cls, label]) => ({ cls, label, n: at(stats.customEvidence)(k) }));
+
+  const basis = [
+    ['structural', 'b-1', 'A structural fact'],
+    ['measured', 'b-2', 'A measurement'],
+    ['inferred', 'b-3', 'An inference'],
+    ['unmeasured', 'b-4', 'An absence'],
+  ].map(([k, cls, label]) => ({ cls, label, n: at(stats.customBasis)(k) }));
+
+  const confidence = [
+    ['high', 'b-2', 'High'],
+    ['medium', 'b-3', 'Medium'],
+    ['low', 'b-4', 'Low'],
+  ].map(([k, cls, label]) => ({ cls, label, n: at(stats.customConfidence)(k) }));
+
+  const calls = ['remediate', 'retire', 'rebuild', 'investigate', 'retain']
+    .map((k) => ({ cls: `s-${k}`, label: DISPOSITION_LABEL[k], n: at(stats.customCalls)(k) }));
+
+  const worked = stats.worked.map((o) => `<tr>
+    <td class="obj">${esc(o.name)}</td>
+    <td><span class="ev-pill ${o.evidence === 'measured-dead' ? 'e-dead' : 'e-unmeasured'}">${esc(EVIDENCE_LABEL[o.evidence])}</span></td>
+    <td class="mono-sm">${esc(o.rule)}</td>
+    <td class="mono-sm">${esc(o.basis)} &rarr; ${esc(o.confidence)}</td>
+    <td><span class="badge badge--${esc(o.proposed)}">${esc(DISPOSITION_LABEL[o.proposed])}</span></td>
+  </tr>`).join('');
+
+  const rules = stats.rules.map((r) => `<div class="rulerow">
+    <span class="rule-id">${esc(r.id)}</span>
+    <span class="rule-basis">${esc(r.basis)}</span>
+    <span class="rule-n">${r.count}</span>
+    <span class="badge badge--${esc(r.disposition)}">${esc(DISPOSITION_LABEL[r.disposition])}</span>
+  </div>`).join('');
 
   return `
-    <p class="wiz-lede">From here it is one deterministic algorithm. The scoring, the call on each object and the grouping into decisions all come from rules in <code>src/engine/rulepack.json</code>. The same extract always produces the same answer, and every answer can name the rule that produced it. <b>No model is involved in any of it.</b></p>
+    <p class="wiz-lede">One deterministic algorithm, and this is all of it &mdash; the same ${b(total)} custom
+      objects, read left to right. <b>No model touches any of it.</b></p>
 
-    <div class="model-grid">
-      <div class="mcard">
-        <h4>1 · Context Slice</h4>
-        <p>The four tables become one graph. Nothing downstream ever sees a CSV row again.</p>
-        <dl>
-          <div><dt>Entities</dt><dd>${stats.objects}</dd></div>
-          <div><dt>Typed edges</dt><dd>${stats.edges}</dd></div>
-          <div><dt>Entry points</dt><dd>${stats.transactions}</dd></div>
-          <div><dt>Not in inventory</dt><dd class="bad">${stats.phantoms}</dd></div>
-        </dl>
-      </div>
-
-      <div class="mcard">
-        <h4>2 · Evidence state</h4>
-        <p>Four states, and only the first two are observations. A missing usage row and a measured zero are different findings.</p>
-        <table class="mini-table"><tbody>${evRows}</tbody></table>
-      </div>
-
-      <div class="mcard">
-        <h4>3 · Derived signals</h4>
-        <p>No single signal decides anything &mdash; the obvious orphan test returns ${stats.orphanTrap} objects, of which ${stats.orphanTrapStandard} are SAP standard.</p>
-        <dl>
-          <div><dt>Reachable from a t-code</dt><dd>${stats.reachable}</dd></div>
-          <div><dt>Write into standard</dt><dd class="bad">${stats.writesStandard}</dd></div>
-          <div><dt>Version forks</dt><dd>${stats.forks}</dd></div>
-          <div><dt>Max blast radius</dt><dd>${stats.maxBlast}</dd></div>
-        </dl>
-      </div>
+    <div class="pipe">
+      ${stage(1, 'Evidence', 'Whether it runs. Only the first two are observations.', evidence, total)}
+      <span class="pipe-arrow" aria-hidden="true">&rarr;</span>
+      ${stage(2, 'Rule', 'First match wins. Each names what it rests on.', basis, total)}
+      <span class="pipe-arrow" aria-hidden="true">&rarr;</span>
+      ${stage(3, 'Confidence', 'That basis, restated. Nothing else feeds it.', confidence, total)}
+      <span class="pipe-arrow" aria-hidden="true">&rarr;</span>
+      ${stage(4, 'The call', 'The only output. Each can name its rule.', calls, total)}
     </div>
 
-    <h4 class="wiz-h">Rules that fired</h4>
-    <p class="wiz-lede">Ordered, first match wins. Each rule declares the evidence it rests on, and that is load-bearing: <b>Retire is only reachable from a measurement or a structural fact</b>. Anything resting on inference or on a missing record proposes Investigate instead, and names what would settle it.</p>
-    <div class="card" style="overflow-x:auto"><table class="findings">
-      <thead><tr><th>Rule</th><th>Basis</th><th>Objects</th><th>Call</th></tr></thead>
-      <tbody>${ruleRows}</tbody>
-    </table></div>`;
+    <div class="guarantee">
+      <b>Retire is only reachable from the first two.</b> Anything resting on an inference or a missing
+      record proposes Investigate and names what would settle it, so nothing is ever retired on evidence
+      weaker than a measurement &mdash; the engine refuses to start if a rule breaks that. And no single
+      signal decides anything: the obvious orphan test returns ${stats.orphanTrap} objects, of which
+      ${stats.orphanTrapStandard} are SAP's own.
+    </div>
+
+    <h4 class="wiz-h">Two of your objects, end to end</h4>
+    <div class="card" style="overflow-x:auto"><table class="findings worked">
+      <thead><tr><th>Object</th><th>Evidence</th><th>Rule that fired</th><th>Basis &rarr; confidence</th><th>Call</th></tr></thead>
+      <tbody>${worked}</tbody>
+    </table></div>
+    <p class="mini">Both look like retirements. Only the first was measured, so only the first is one.</p>
+
+    <h4 class="wiz-h">All ${stats.rules.length} rules that fired</h4>
+    <div class="rulegrid">${rules}</div>`;
 }
 
 // --- step 4 -----------------------------------------------------------------
+//
+// The shortest step, and the one that has to land hardest: everything that
+// decided anything was deterministic, and here is the complete list of what a
+// model wrote. Naming all three places is the point — a boundary you state
+// exhaustively is checkable, and one you gesture at is not.
 
 export function renderNarrative(stats, sample) {
   return `
-    <p class="wiz-lede">106 custom objects is a list, and nobody funds a list. The grouping into decisions is part of the same deterministic algorithm &mdash; priority-ordered and exclusive, so every object lands in exactly one decision and the counts add up to the estate. A model gets involved after that, and only to put it into words.</p>
+    <p class="wiz-lede">${stats.customObjects} custom objects is a list, and nobody funds a list. Sorting
+      them into ${stats.packages} decisions is part of the same deterministic algorithm &mdash;
+      priority-ordered and exclusive, so every object lands in exactly one and the counts add up to the
+      estate. A model gets involved only after that, and only to put it into words.</p>
 
     <div class="split-two">
       <div class="mcard">
-        <h4>Deterministic — everything that decides</h4>
-        <p>${stats.customObjects} custom objects sorted into ${stats.packages} decisions by rule, not by similarity. Every score, every call, every grouping. Reproducible: the same extract gives the same answer every time, and <code>tools/check.mjs</code> re-derives it from the raw files to prove it.</p>
+        <h4>Deterministic &mdash; everything that decides</h4>
+        <p style="margin-bottom:0">Every score, every call, every grouping. The same extract gives the same
+          answer every time, and <code>tools/check.mjs</code> re-derives it from the raw files to prove it.</p>
       </div>
       <div class="mcard is-ai">
-        <h4>Model-written — words only</h4>
-        <p>Two things. A headline, decision and watch-out per decision, cached to <code>data/packages.json</code>. And the assistant, which explains either page at the register you pick &mdash; composed from live numbers at the moment you open it, so it can never describe a position the page is not showing.</p>
-        <p style="margin-bottom:0">Both are labelled wherever they appear. The running page never calls an API, so no demo depends on a network.</p>
+        <h4>Model-written &mdash; words, in three places</h4>
+        <ol class="ai-places">
+          <li>The headline, decision and watch-out on each of the ${stats.packages} decisions.</li>
+          <li>The sentence at the top of the Landscape Footprint.</li>
+          <li>The assistant, which explains either page at the register you pick.</li>
+        </ol>
       </div>
     </div>
 
-    ${sample ? `
-    <h4 class="wiz-h">What that looks like</h4>
-    <div class="card sample">
+    ${sample ? `<div class="card sample">
       <div class="sample-head">
         <span class="badge badge--count">${plural(sample.count, 'object')}</span>
         <b>${esc(sample.title)}</b>
         <span class="tag-det">grouped by rule</span>
       </div>
-      <p class="sample-ai">${esc(sample.headline)}</p>
-      <p class="sample-ai"><b>Decision:</b> ${esc(sample.decision)}</p>
-      <div class="sample-note">The two lines above are the model's. The package, its members, its call and its confidence are not.</div>
-    </div>` : ''}
-
-    <div class="callout" style="margin-top:16px">
-      <span class="i" aria-hidden="true">i</span>
-      <span>If the model were doing the deciding, none of it could be audited &mdash; and the one question a Head of Transformation always asks is why. Keeping the model on the words, and labelling every word it wrote, is what keeps the answer defensible.</span>
-    </div>`;
+      <p class="sample-ai">${esc(sample.decision)}</p>
+      <div class="sample-note">That sentence is the model's. The decision, its members, its call and its
+        confidence are not &mdash; and wherever a model wrote something, the page says so and says what it
+        was written from.</div>
+    </div>` : ''}`;
 }

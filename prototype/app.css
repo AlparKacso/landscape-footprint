@@ -534,6 +534,94 @@ button.tile:focus-visible { outline: 2px solid var(--primary); outline-offset: 1
 }
 .sample-note { font-size: 12px; color: var(--ink-3); font-style: italic; }
 
+/* ---------- the wizard's pipeline strip ---------- */
+
+/* Four stages, one population. Every bar is the same 106 custom objects seen a
+   different way, which is why they are the same width and stacked identically —
+   the shape changing across the strip is the whole point. */
+.pipe {
+  /* Seven children, not four: the three arrows are grid items too, and a
+     four-column track sent them onto a second row and doubled the height. */
+  display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+  align-items: stretch; gap: 0; margin-bottom: 14px;
+}
+.pipe-stage {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 12px 13px 11px; background: var(--surface); min-width: 0;
+}
+.pipe-arrow {
+  align-self: center; color: var(--ink-3); font-size: 15px; padding: 0 9px;
+}
+.pipe-head { display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 640; }
+.pipe-n {
+  width: 18px; height: 18px; border-radius: 50%; flex: none; display: grid; place-items: center;
+  background: var(--ink); color: #fff; font-size: 10.5px; font-weight: 700;
+}
+.pipe-note { margin: 5px 0 9px; font-size: 12px; line-height: 1.5; color: var(--ink-2); min-height: 34px; }
+.pipe-bar { display: flex; height: 15px; border-radius: 4px; overflow: hidden; background: var(--bg); }
+.pipe-bar span { display: block; }
+.pipe-key { display: flex; flex-direction: column; gap: 3px; margin-top: 9px; }
+.pipe-key span { display: flex; align-items: center; gap: 7px; font-size: 11.5px; color: var(--ink-2); }
+.pipe-key i { width: 9px; height: 9px; border-radius: 2px; flex: none; }
+.pipe-key b { margin-left: auto; font-family: var(--mono); color: var(--ink); }
+
+/* Evidence keeps the coverage strip's palette; the two "we do not know" states
+   stay hatched so they read as gaps on a black-and-white print too. */
+.pipe-bar .e-active, .pipe-key i.e-active { background: var(--risk-low); }
+.pipe-bar .e-dead, .pipe-key i.e-dead { background: var(--risk-med); }
+.pipe-bar .e-unmeasured, .pipe-key i.e-unmeasured { background: repeating-linear-gradient(45deg, #c8d0dc, #c8d0dc 3px, #dde3ea 3px, #dde3ea 6px); }
+.pipe-bar .e-unmeasurable, .pipe-key i.e-unmeasurable { background: repeating-linear-gradient(45deg, #aab6c6, #aab6c6 3px, #c3ccd8 3px, #c3ccd8 6px); }
+
+/* Basis and confidence share one ramp on purpose — confidence is that basis
+   restated, and using the same four tones makes the derivation visible rather
+   than asserted. Strongest evidence darkest. */
+.pipe-bar .b-1, .pipe-key i.b-1 { background: var(--ink); }
+.pipe-bar .b-2, .pipe-key i.b-2 { background: #5b6b84; }
+.pipe-bar .b-3, .pipe-key i.b-3 { background: #a7b2c2; }
+.pipe-bar .b-4, .pipe-key i.b-4 { background: repeating-linear-gradient(45deg, #c8d0dc, #c8d0dc 3px, #e8ecf1 3px, #e8ecf1 6px); }
+
+.pipe-bar .s-remediate, .pipe-key i.s-remediate { background: var(--risk-high); }
+.pipe-bar .s-retire, .pipe-key i.s-retire { background: var(--risk-low); }
+.pipe-bar .s-rebuild, .pipe-key i.s-rebuild { background: var(--primary); }
+.pipe-bar .s-retain, .pipe-key i.s-retain { background: #9AA7BA; }
+.pipe-bar .s-investigate, .pipe-key i.s-investigate { background: var(--call-investigate-hatch); }
+
+.guarantee {
+  border: 1px solid var(--border); border-left: 3px solid var(--risk-low);
+  background: var(--risk-low-bg); border-radius: var(--radius);
+  padding: 10px 13px; font-size: 12.5px; line-height: 1.6; color: #0a5c40;
+}
+.guarantee b { color: #08492f; }
+
+.worked td { vertical-align: middle; }
+.worked .mono-sm { font-family: var(--mono); font-size: 11.5px; color: var(--ink-2); }
+.ev-pill {
+  font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 5px; white-space: nowrap;
+  color: var(--ink-2); background: var(--bg);
+}
+.ev-pill.e-dead { background: var(--risk-med-bg); color: var(--risk-med); }
+.ev-pill.e-unmeasured { background: var(--bg); color: var(--ink-2); border: 1px dashed var(--border-strong); }
+
+/* Eleven rules as a dense two-column list rather than a table that runs off the
+   bottom of the step. Same information, a third of the height. */
+.rulegrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 2px 18px; }
+.rulerow {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 2px; border-bottom: 1px solid var(--border); font-size: 12px;
+}
+.rule-id { font-family: var(--mono); font-size: 11.5px; color: var(--ink); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.rule-basis { color: var(--ink-3); font-size: 11px; white-space: nowrap; }
+.rule-n { font-family: var(--mono); color: var(--ink-2); width: 22px; text-align: right; }
+
+.ai-places { margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.6; color: var(--ink-2); }
+.ai-places li { margin-bottom: 3px; }
+
+@media (max-width: 1080px) {
+  .pipe { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .pipe-arrow { display: none; }
+  .pipe-note { min-height: 0; }
+}
+
 /* ---------- empty state ---------- */
 
 .empty-state {

@@ -117,7 +117,35 @@ function modelStats() {
     byRule[o.rule] ??= { id: o.rule, basis: o.basis, count: 0, disposition: o.proposed };
     byRule[o.rule].count += 1;
   }
+
+  // The wizard's pipeline strip walks the same 106 custom objects through four
+  // stages, so every stage has to be counted over the same population. Mixing
+  // the 366-object evidence split with the 106-object call split would make a
+  // picture that quietly changes denominator halfway across.
+  const tally = (list, key) => {
+    const out = {};
+    for (const o of list) out[o[key]] = (out[o[key]] ?? 0) + 1;
+    return out;
+  };
+  const customEvidence = {};
+  for (const k of [EVIDENCE.ACTIVE, EVIDENCE.DEAD, EVIDENCE.UNMEASURED, EVIDENCE.UNMEASURABLE]) {
+    customEvidence[k] = custom.filter((o) => o.evidence === k).length;
+  }
+
+  // Two real objects, walked end to end. One reaches Retire on a measurement;
+  // the other has every appearance of a retirement and reaches Investigate
+  // because nothing about it was measured. Those two rows are the argument.
+  const worked = [
+    custom.find((o) => o.rule === 'measured-dead-unreferenced'),
+    custom.find((o) => o.rule === 'unmeasured-unreferenced-custom'),
+  ].filter(Boolean);
+
   return {
+    customEvidence,
+    customBasis: tally(custom, 'basis'),
+    customConfidence: tally(custom, 'confidence'),
+    customCalls: tally(custom, 'proposed'),
+    worked,
     objects: all.length,
     customObjects: custom.length,
     edges: g.edges.length,
