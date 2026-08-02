@@ -558,33 +558,37 @@ button.tile:focus-visible { outline: 2px solid var(--primary); outline-offset: 1
   background: var(--ink); color: #fff; font-size: 10.5px; font-weight: 700;
 }
 .pipe-note { margin: 5px 0 9px; font-size: 12px; line-height: 1.5; color: var(--ink-2); min-height: 34px; }
-.pipe-bar { display: flex; height: 15px; border-radius: 4px; overflow: hidden; background: var(--bg); }
-.pipe-bar span { display: block; }
-.pipe-key { display: flex; flex-direction: column; gap: 3px; margin-top: 9px; }
+/* All four lists are capped at the tallest (five calls) so the cards stay level
+   and compact; anything longer scrolls inside the card rather than stretching
+   the whole strip. */
+.pipe-key {
+  display: flex; flex-direction: column; gap: 3px; margin-top: 2px;
+  max-height: 118px; overflow-y: auto;
+}
 .pipe-key span { display: flex; align-items: center; gap: 7px; font-size: 11.5px; color: var(--ink-2); }
 .pipe-key i { width: 9px; height: 9px; border-radius: 2px; flex: none; }
 .pipe-key b { margin-left: auto; font-family: var(--mono); color: var(--ink); }
 
 /* Evidence keeps the coverage strip's palette; the two "we do not know" states
    stay hatched so they read as gaps on a black-and-white print too. */
-.pipe-bar .e-active, .pipe-key i.e-active { background: var(--risk-low); }
-.pipe-bar .e-dead, .pipe-key i.e-dead { background: var(--risk-med); }
-.pipe-bar .e-unmeasured, .pipe-key i.e-unmeasured { background: repeating-linear-gradient(45deg, #c8d0dc, #c8d0dc 3px, #dde3ea 3px, #dde3ea 6px); }
-.pipe-bar .e-unmeasurable, .pipe-key i.e-unmeasurable { background: repeating-linear-gradient(45deg, #aab6c6, #aab6c6 3px, #c3ccd8 3px, #c3ccd8 6px); }
+.pipe-key i.e-active { background: var(--risk-low); }
+.pipe-key i.e-dead { background: var(--risk-med); }
+.pipe-key i.e-unmeasured { background: repeating-linear-gradient(45deg, #c8d0dc, #c8d0dc 3px, #dde3ea 3px, #dde3ea 6px); }
+.pipe-key i.e-unmeasurable { background: repeating-linear-gradient(45deg, #aab6c6, #aab6c6 3px, #c3ccd8 3px, #c3ccd8 6px); }
 
 /* Basis and confidence share one ramp on purpose — confidence is that basis
    restated, and using the same four tones makes the derivation visible rather
    than asserted. Strongest evidence darkest. */
-.pipe-bar .b-1, .pipe-key i.b-1 { background: var(--ink); }
-.pipe-bar .b-2, .pipe-key i.b-2 { background: #5b6b84; }
-.pipe-bar .b-3, .pipe-key i.b-3 { background: #a7b2c2; }
-.pipe-bar .b-4, .pipe-key i.b-4 { background: repeating-linear-gradient(45deg, #c8d0dc, #c8d0dc 3px, #e8ecf1 3px, #e8ecf1 6px); }
+.pipe-key i.b-1 { background: var(--ink); }
+.pipe-key i.b-2 { background: #5b6b84; }
+.pipe-key i.b-3 { background: #a7b2c2; }
+.pipe-key i.b-4 { background: repeating-linear-gradient(45deg, #c8d0dc, #c8d0dc 3px, #e8ecf1 3px, #e8ecf1 6px); }
 
-.pipe-bar .s-remediate, .pipe-key i.s-remediate { background: var(--risk-high); }
-.pipe-bar .s-retire, .pipe-key i.s-retire { background: var(--risk-low); }
-.pipe-bar .s-rebuild, .pipe-key i.s-rebuild { background: var(--primary); }
-.pipe-bar .s-retain, .pipe-key i.s-retain { background: #9AA7BA; }
-.pipe-bar .s-investigate, .pipe-key i.s-investigate { background: var(--call-investigate-hatch); }
+.pipe-key i.s-remediate { background: var(--risk-high); }
+.pipe-key i.s-retire { background: var(--risk-low); }
+.pipe-key i.s-rebuild { background: var(--primary); }
+.pipe-key i.s-retain { background: #9AA7BA; }
+.pipe-key i.s-investigate { background: var(--call-investigate-hatch); }
 
 .guarantee {
   border: 1px solid var(--border); border-left: 3px solid var(--risk-low);
@@ -604,13 +608,24 @@ button.tile:focus-visible { outline: 2px solid var(--primary); outline-offset: 1
 
 /* Eleven rules as a dense two-column list rather than a table that runs off the
    bottom of the step. Same information, a third of the height. */
-.rulegrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 2px 18px; }
-.rulerow {
-  display: flex; align-items: center; gap: 10px;
-  padding: 6px 2px; border-bottom: 1px solid var(--border); font-size: 12px;
+.rules-more { margin-top: 10px; border-top: 1px solid var(--border); padding-top: 8px; }
+.rules-more summary {
+  font-size: 11.5px; font-weight: 600; color: var(--accent);
+  cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 5px;
 }
-.rule-id { font-family: var(--mono); font-size: 11.5px; color: var(--ink); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-.rule-basis { color: var(--ink-3); font-size: 11px; white-space: nowrap; }
+.rules-more summary::-webkit-details-marker { display: none; }
+.rules-more summary::before { content: "\203A"; font-size: 14px; line-height: 1; transition: transform .12s; }
+.rules-more[open] summary::before { transform: rotate(90deg); }
+.rules-more summary:hover { text-decoration: underline; }
+/* Opening it must not stretch the strip, so the list scrolls inside the card. */
+.rulegrid { display: flex; flex-direction: column; margin-top: 6px; max-height: 168px; overflow-y: auto; }
+.rulerow {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 1px; border-bottom: 1px solid var(--border); font-size: 11.5px;
+}
+.rulerow:last-child { border-bottom: 0; }
+.rule-id { font-family: var(--mono); font-size: 11px; color: var(--ink); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rule-basis { color: var(--ink-3); font-size: 10.5px; white-space: nowrap; }
 .rule-n { font-family: var(--mono); color: var(--ink-2); width: 22px; text-align: right; }
 
 .ai-places { margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.6; color: var(--ink-2); }

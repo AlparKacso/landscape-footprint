@@ -114,18 +114,17 @@ export function renderMap(w) {
 // then walked end to end, because a worked example convinces where a schematic
 // does not.
 
-const seg = (cls, n, total, label) =>
-  (n ? `<span class="${cls}" style="width:${(n / total) * 100}%" title="${esc(label)}: ${n}"></span>` : '');
-
-const keyOf = (items) => `<div class="pipe-key">${items.filter((i) => i.n)
-  .map((i) => `<span><i class="${i.cls}"></i>${esc(i.label)} <b>${i.n}</b></span>`).join('')}</div>`;
-
-function stage(n, title, note, items, total) {
+// No bars. Four stacked bars of the same 106 objects side by side turned out to
+// be four near-identical grey smears — the counts do the work, and the coloured
+// dot beside each one is enough to tie a row back to its call or its state.
+// The list scrolls rather than stretching the card, so all four stay level.
+function stage(n, title, note, items, extra = '') {
   return `<div class="pipe-stage">
     <div class="pipe-head"><span class="pipe-n">${n}</span>${esc(title)}</div>
     <p class="pipe-note">${note}</p>
-    <div class="pipe-bar">${items.map((i) => seg(i.cls, i.n, total, i.label)).join('')}</div>
-    ${keyOf(items)}
+    <div class="pipe-key">${items.filter((i) => i.n)
+      .map((i) => `<span><i class="${i.cls}"></i>${esc(i.label)} <b>${i.n}</b></span>`).join('')}</div>
+    ${extra}
   </div>`;
 }
 
@@ -164,6 +163,10 @@ export function renderModel(stats) {
     <td><span class="badge badge--${esc(o.proposed)}">${esc(DISPOSITION_LABEL[o.proposed])}</span></td>
   </tr>`).join('');
 
+  // The named rules are the load-bearing transparency in this step, so they stay
+  // — folded into the stage they belong to rather than sitting underneath as a
+  // section of their own. Closed by default; one click and the whole rulepack is
+  // on screen, which is the question a sceptic asks and nobody else does.
   const rules = stats.rules.map((r) => `<div class="rulerow">
     <span class="rule-id">${esc(r.id)}</span>
     <span class="rule-basis">${esc(r.basis)}</span>
@@ -171,18 +174,23 @@ export function renderModel(stats) {
     <span class="badge badge--${esc(r.disposition)}">${esc(DISPOSITION_LABEL[r.disposition])}</span>
   </div>`).join('');
 
+  const rulesDisclosure = `<details class="rules-more">
+    <summary>See all ${stats.rules.length} rules</summary>
+    <div class="rulegrid">${rules}</div>
+  </details>`;
+
   return `
     <p class="wiz-lede">One deterministic algorithm, and this is all of it &mdash; the same ${b(total)} custom
       objects, read left to right. <b>No model touches any of it.</b></p>
 
     <div class="pipe">
-      ${stage(1, 'Evidence', 'Whether it runs. Only the first two are observations.', evidence, total)}
+      ${stage(1, 'Evidence', 'Whether it runs. Only the first two are observations.', evidence)}
       <span class="pipe-arrow" aria-hidden="true">&rarr;</span>
-      ${stage(2, 'Rule', 'First match wins. Each names what it rests on.', basis, total)}
+      ${stage(2, 'Rule', 'First match wins. Each names what it rests on.', basis, rulesDisclosure)}
       <span class="pipe-arrow" aria-hidden="true">&rarr;</span>
-      ${stage(3, 'Confidence', 'That basis, restated. Nothing else feeds it.', confidence, total)}
+      ${stage(3, 'Confidence', 'That basis, restated. Nothing else feeds it.', confidence)}
       <span class="pipe-arrow" aria-hidden="true">&rarr;</span>
-      ${stage(4, 'The call', 'The only output. Each can name its rule.', calls, total)}
+      ${stage(4, 'The call', 'The only output. Each can name its rule.', calls)}
     </div>
 
     <div class="guarantee">
@@ -198,10 +206,7 @@ export function renderModel(stats) {
       <thead><tr><th>Object</th><th>Evidence</th><th>Rule that fired</th><th>Basis &rarr; confidence</th><th>Call</th></tr></thead>
       <tbody>${worked}</tbody>
     </table></div>
-    <p class="mini">Both look like retirements. Only the first was measured, so only the first is one.</p>
-
-    <h4 class="wiz-h">All ${stats.rules.length} rules that fired</h4>
-    <div class="rulegrid">${rules}</div>`;
+    <p class="mini">Both look like retirements. Only the first was measured, so only the first is one.</p>`;
 }
 
 // --- step 4 -----------------------------------------------------------------
