@@ -1,0 +1,21 @@
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+import { parseCsv } from '../src/core/parse.js';
+import { buildGraph } from '../src/core/graph.js';
+import { attachEvidence } from '../src/core/evidence.js';
+import { scoreAll } from '../src/engine/score.js';
+import { disposeAll } from '../src/engine/dispose.js';
+import { buildPackages } from '../src/engine/packages.js';
+const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const read = f => parseCsv(readFileSync(join(root,'data',f),'utf8'));
+const extract = { objects:read('objects.csv'), usage:read('usage.csv'), dependencies:read('dependencies.csv'), transactions:read('transactions.csv') };
+const rules = JSON.parse(readFileSync(join(root,'src/engine/rulepack.json'),'utf8'));
+const g = buildGraph(extract); attachEvidence(g, extract); scoreAll(g, rules); disposeAll(g, rules);
+const packs = buildPackages(g, rules);
+let total=0;
+for (const p of packs){ total+=p.count;
+  console.log(`${p.id.padEnd(24)} n=${String(p.count).padStart(3)} basis=${p.basis.padEnd(11)} conf=${p.confidence.padEnd(6)} blast=${String(p.blastRadius).padStart(3)} tcodes=${p.tcodes} prop=${p.proposed}`);
+  console.log('     ' + p.objects.slice(0,6).map(o=>o.name).join(', ') + (p.count>6?` +${p.count-6} more`:''));
+}
+console.log('total custom assigned:', total);

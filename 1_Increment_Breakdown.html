@@ -1,0 +1,281 @@
+<meta charset="utf-8"><title>Increment Breakdown — Landscape Footprint</title>
+<style>/* shared house style for the case-study documents, in the Celonis Studio palette */
+:root{
+  --accent:#2b4ee6; --accent2:#1e3aaf; --ink:#0b1f3a; --ink2:#5b6b84; --ink3:#8a97a8;
+  --line:#e2e6ed; --soft:#f7f8fa;
+  --retire:#0e7a54; --remediate:#d64545; --retain:#5b6b84; --invest:#b3701a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font:13.2px/1.62 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  color:var(--ink); background:#e7ecf3; -webkit-font-smoothing:antialiased;
+}
+.page{
+  max-width:900px; margin:26px auto; background:#fff; padding:52px 60px 46px;
+  box-shadow:0 12px 40px #0b1f3a1f; border-radius:6px;
+}
+.eyebrow{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:25px;line-height:1.2;margin:6px 0 4px;letter-spacing:-.3px}
+.dek{color:var(--ink2);font-size:14px;margin:0 0 20px}
+.meta{display:flex;gap:18px;flex-wrap:wrap;color:var(--ink3);font-size:11.5px;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:9px 0;margin:0 0 24px}
+.meta b{color:var(--ink2);font-weight:600}
+h2{font-size:15px;margin:26px 0 8px;padding-bottom:6px;border-bottom:2px solid var(--accent);display:inline-block}
+h3{font-size:13px;margin:16px 0 4px;color:var(--accent2)}
+p{margin:0 0 10px}
+ul,ol{margin:0 0 12px;padding-left:20px}
+li{margin:4px 0}
+strong{font-weight:650}
+.lead{font-size:14px;color:var(--ink)}
+.callout{background:var(--soft);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:13px 16px;margin:14px 0;font-size:12.8px}
+.callout b{color:var(--accent2)}
+.callout.warn{border-left-color:var(--invest);background:#fdf3e4}
+.callout.warn b{color:var(--invest)}
+table{border-collapse:collapse;width:100%;font-size:12px;margin:12px 0}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink2);font-weight:700}
+td .h{font-weight:650;display:block;margin-bottom:2px}
+.tag{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:5px;white-space:nowrap}
+.t-now{background:#2b4ee618;color:var(--accent2)} .t-next{background:#0e7a5418;color:var(--retire)} .t-later{background:#8a97a818;color:var(--ink2)}
+.t-retire{background:#0e7a5415;color:var(--retire)} .t-remediate{background:#d6454515;color:var(--remediate)}
+.t-retain{background:#5b6b8415;color:var(--retain)} .t-invest{background:#b3701a15;color:var(--invest)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.kfig{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 16px}
+.fig{flex:1;min-width:120px;background:var(--soft);border:1px solid var(--line);border-radius:9px;padding:11px 13px}
+.fig .n{font-size:22px;font-weight:750;letter-spacing:-.5px;line-height:1}
+.fig .l{font-size:10.5px;color:var(--ink2);margin-top:4px}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;background:var(--soft);padding:1px 5px;border-radius:4px}
+.foot{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:var(--ink3);font-size:10.5px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+/* ---------- editing ---------- */
+.bar .fitbadge{font-size:11px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;padding:3px 9px;border-radius:999px;background:#f7f8fa;color:#8a97a8;border:1px solid #e2e6ed}
+.bar .fitbadge.ok{background:#e6f7ef;color:#0e7a54;border-color:transparent}
+.bar .fitbadge.bad{background:#fdecec;color:#d64545;border-color:transparent}
+.bar{max-width:900px;margin:16px auto -10px;display:flex;gap:8px;align-items:center;padding:0 6px}
+.bar .btn{appearance:none;border:1px solid #cfd6e0;background:#fff;color:var(--ink);font:inherit;font-size:12px;
+  padding:5px 12px;border-radius:999px;cursor:pointer}
+.bar .btn:hover{border-color:var(--ink3)}
+.bar .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.bar .sp{flex:1}
+.bar .state{font-size:11px;color:var(--ink3);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+body.editing .page{box-shadow:0 0 0 2px #2b4ee633,0 12px 40px #0b1f3a1f}
+body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-radius:3px}
+
+
+/* ---------- one page ----------
+   Both of these are meant to land on a single A4 sheet, so print gets its own
+   tighter scale rather than a shrunken copy of the screen layout. */
+@media print{
+  body{font-size:10.2px;line-height:1.4}
+  h1{font-size:19px;margin:4px 0 3px}
+  .dek{font-size:11px;margin:0 0 9px}
+  .eyebrow{font-size:9.5px}
+  .meta{font-size:9px;padding:5px 0;margin:0 0 11px;gap:6px 14px}
+  .lead{font-size:11px}
+  h2{font-size:11.5px;margin:10px 0 4px;padding-bottom:2px;border-bottom-width:1.5px}
+  h3{font-size:10.5px;margin:7px 0 3px}
+  p{margin:0 0 5px}
+  ul,ol{margin:0 0 6px;padding-left:15px}
+  li{margin:1.5px 0}
+  .stop li{margin:2px 0}
+  table{font-size:9.2px;margin:6px 0}
+  th,td{padding:4px 6px}
+  th{font-size:8.4px;letter-spacing:.3px}
+  td .h{margin-bottom:1px}
+  .tag{font-size:8.4px;padding:0 5px}
+  .callout{padding:7px 10px;margin:7px 0;font-size:9.5px;border-radius:0 6px 6px 0}
+  .grid2{gap:13px}
+  .mono{font-size:9px;padding:0 3px}
+  .foot{margin-top:13px;padding-top:7px;font-size:8.6px}
+  .kfig{gap:7px;margin:5px 0 11px}
+  .fig{padding:8px 10px}
+  .fig .n{font-size:17px}
+  .fig .l{font-size:9px;margin-top:2px}
+  /* nothing may split across a page that does not exist */
+  .page{page-break-inside:avoid}
+}
+
+@page{size:A4;margin:14mm}
+@media print{
+  body{background:#fff}
+  .page{box-shadow:none!important;margin:0;max-width:none;padding:0;border-radius:0}
+  h2{break-after:avoid} table,tr,li,.callout,.fig{break-inside:avoid}
+  a{color:var(--ink)}
+  .bar{display:none}
+}
+</style>
+
+<div class="bar">
+  <button class="btn" id="edit" aria-pressed="true">Editing · on</button>
+  <button class="btn" id="print">Print / PDF</button>
+  <div class="sp"></div>
+  <span class="fitbadge" id="fit">&nbsp;</span>
+  <span class="state" id="state">saved in this browser</span>
+  <button class="btn" id="reset">Reset to original</button>
+</div>
+
+<div class="page" id="doc">
+  <div class="eyebrow">Deliverable 2 · Increment Breakdown</div>
+  <h1>From one customer&rsquo;s footprint to a product line</h1>
+  <p class="dek">Where the Landscape Footprint capability goes next &mdash; Now / Next / Later, separated into what stays custom to this customer, what becomes reusable product, and what could eventually stand alone.</p>
+  <div class="meta"><span><b>Capability:</b> AI System Transformation &mdash; Landscape Footprint</span><span><b>Frame:</b> Modernize with Celonis Process Intelligence</span><span><b>Status:</b> prototype on one of three productive systems</span></div>
+
+  <p class="lead">The prototype already earns its keep for <strong>this</strong> customer: it turns a raw metadata extract into eleven funded decisions across all 106 custom objects, each carrying the evidence behind it and how far that evidence goes. The interesting question is what compounds. The three tracks below are the three value tiers the brief asks for, and they deliberately run on different clocks.</p>
+
+  <table>
+    <thead><tr>
+      <th style="width:12%"></th>
+      <th style="width:29.3%">(a) Custom for this customer<br><span style="font-weight:400;text-transform:none;letter-spacing:0">Their S/4 programme</span></th>
+      <th style="width:29.3%">(b) Reusable product<br><span style="font-weight:400;text-transform:none;letter-spacing:0">A Studio app on the Context Model</span></th>
+      <th style="width:29.3%">(c) Standalone offering<br><span style="font-weight:400;text-transform:none;letter-spacing:0">Something sellable cold</span></th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="tag t-now">NOW</span><div style="font-size:10px;color:var(--ink3);margin-top:5px">weeks 0&ndash;4</div></td>
+        <td>
+          <span class="h">Commit what the evidence already supports.</span> Six objects writing into standard finance and sales documents, actionable today because they hold whether or not anyone runs the code. Thirteen retirements on measured evidence. Three transaction codes pointing at programs the inventory does not contain, as week-one questions.
+        </td>
+        <td>
+          <span class="h">Freeze the two contracts.</span> The rulepack (every weight and threshold in one file) and the four adapter signatures &mdash; <span class="mono">objects · usage · dependencies · transactions</span> &mdash; matched on columns, not filenames. The engine already runs headless; this makes it a module rather than a demo.
+        </td>
+        <td>
+          <span class="h">&mdash;</span> Nothing yet, and resisting the urge is the point: a sample of one is not a product. Instrument instead. Every time an expert overrides a call, that is the signal the rulepack needs, and the prototype already records both.
+        </td>
+      </tr>
+      <tr>
+        <td><span class="tag t-next">NEXT</span><div style="font-size:10px;color:var(--ink3);margin-top:5px">1&ndash;3 months</div></td>
+        <td>
+          <span class="h">Close the evidence gap, then widen the scope.</span> Run SCMON / UPL over a full business cycle so the 34 objects currently held become decidable &mdash; they are held because the engine will not retire anything it cannot point at a measurement for, so measurement is the only thing that releases them; recalibrate the thresholds against their real usage rather than my defaults; extend from one productive system to all three. Then tie the committed retirements to test-scope reduction.
+        </td>
+        <td>
+          <span class="h">Read the Context Model instead of seeding one.</span> Adapters for SAP Readiness Check and the Custom Code Migration app, and &mdash; more importantly &mdash; write the footprint back as a technical-layer slice so the decisions live where everything else does. Configurable rulepacks per customer.
+        </td>
+        <td>
+          <span class="h">A fixed-fee readiness scan.</span> Point it at a prospect&rsquo;s extract, return a position in days: what is decided, what is held, and what it would cost to find out. Honest about its own limits, which is what makes it sellable before any platform commitment.
+        </td>
+      </tr>
+      <tr>
+        <td><span class="tag t-later">LATER</span><div style="font-size:10px;color:var(--ink3);margin-top:5px">3&ndash;12 months</div></td>
+        <td>
+          <span class="h">A standing capability, not a one-off study.</span> Continuous re-scoring through cutover: new custom objects flagged as they are created, decisions re-opened when the evidence under them goes stale, progress tracked against the committed backlog.
+        </td>
+        <td>
+          <span class="h">Agents that act, not only propose.</span> A remediation agent drafting clean-core fixes for the objects writing into standard tables; a test agent generating coverage for what survives. Both hand off through the Orchestration Engine and write back what they did.
+        </td>
+        <td>
+          <span class="h">Decision provenance as a product.</span> The pattern &mdash; a call, its evidence, its confidence, and the named thing that would change it &mdash; is not SAP-specific. Application-portfolio rationalisation and cloud migration have the same problem. Plus an anonymised benchmark no single engagement can produce.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="grid2">
+    <div>
+      <h3>The line between custom and product</h3>
+      <p>What is <strong>customer-specific</strong> is <em>the rulepack and the narrative</em>: which weights, which thresholds, which naming conventions matter here, and the sentences a steering committee reads. What is <strong>reusable</strong> is <em>the engine</em>: the adapters, the graph, the evidence model, the scoring. The prototype is built so the two never entangle &mdash; the engine reads a rulepack it knows nothing about in advance, and the adapters match on structure rather than on this customer&rsquo;s filenames. That is the same argument the vision paper makes for the Context Model: system-agnostic, composable, decoupled from any one landscape.</p>
+    </div>
+    <div>
+      <h3>What earns a standalone offering</h3>
+      <p style="margin-top:0"><b>One correction to make honestly.</b> The footprint runs on a Context Model &mdash; the prototype only gets away without one because it seeds its own slice from four CSVs. So a standalone scan is not "the footprint without Celonis"; it is a scan that <em>leaves a Context Model behind</em>. That is a better business anyway: a scan that ends in a PDF is consulting, and a scan that ends in a populated technical layer is a land motion.</p>
+      <p>A capability graduates only when it delivers value <strong>before</strong> a platform commitment. The readiness scan qualifies: it needs an extract and nothing else, and returns a position a Head of Transformation can act on. The evidence-confidence model qualifies for a different reason &mdash; decisions that carry their own confidence and name the evidence that would change them are useful far outside SAP. Continuous re-scoring does not qualify: it only matters once you are already on the platform, so it stays product.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <b>The through-line.</b> One engine, three tiers, three clocks. Custom moves at the customer&rsquo;s programme pace; product moves at the roadmap&rsquo;s; standalone moves only when a capability can prove itself cold. Keeping them on separate clocks is what stops a bespoke script being mistaken for a product &mdash; and what stops a genuine product being buried inside one account.
+  </div>
+
+  <div class="callout warn">
+    <b>What I am not claiming.</b> This runs on one of three productive systems, on a snapshot rather than a year of observation, and against a transition type the customer has not settled. Every number above is what the extract supports, not a forecast &mdash; and nothing in it is retired on evidence weaker than a measurement, which is why the actionable number is as small as it is. The Next column exists precisely because the honest version of Now is smaller than anyone would like.
+  </div>
+
+  <div class="foot"><span>Landscape Footprint &mdash; Increment Breakdown</span><span>AI System Transformation · Celonis</span></div>
+</div>
+
+<script>
+/* Every document in this set is fully editable: click anywhere and type.
+   The page is saved to this browser as you go, so a reload keeps your wording.
+   Pasting is forced to plain text so a copy from Word cannot drag its own
+   styling in and break the layout. */
+(function(){
+  const doc = document.getElementById('doc');
+  const KEY = 'celonis-doc-' + document.title.replace(/\W+/g,'-');
+  const ORIGINAL = doc.innerHTML;
+
+  const stored = localStorage.getItem(KEY);
+  if(stored) doc.innerHTML = stored;
+
+
+  /* These two are meant to be one A4 sheet. Editing can quietly push them onto a
+     second page, so measure the real print layout and say so before PDF time. */
+  const A4 = { w: Math.round(182*96/25.4), h: Math.round(269*96/25.4) };
+  const fitEl = document.getElementById('fit');
+  function printCss(){
+    let out = '';
+    for(const sheet of document.styleSheets){
+      let rules; try{ rules = sheet.cssRules; }catch(e){ continue; }
+      for(const r of rules){
+        if(r.type === CSSRule.MEDIA_RULE && r.media.mediaText.includes('print')){
+          for(const inner of r.cssRules) out += inner.cssText + '\n';
+        }
+      }
+    }
+    return out;
+  }
+  function checkFit(){
+    const probe = document.createElement('style');
+    probe.textContent = printCss() + `\n#doc{width:${A4.w}px!important;max-width:none!important;margin:0!important;padding:0!important}`;
+    document.head.appendChild(probe);
+    const h = doc.getBoundingClientRect().height;
+    probe.remove();
+    const over = Math.round(h - A4.h);
+    fitEl.textContent = over <= 0 ? `fits one page \u00b7 ${Math.round(-over/96*25.4)}mm spare`
+                                  : `over by ${Math.round(over/96*25.4)}mm`;
+    fitEl.className = 'fitbadge' + (over <= 0 ? ' ok' : ' bad');
+  }
+
+  const state = document.getElementById('state');
+  let t;
+  function persist(){
+    // A <select> keeps its choice in the DOM property, not the markup, so mirror
+    // it onto the attribute before serialising or the selection is lost.
+    doc.querySelectorAll('select').forEach(s => [...s.options].forEach(o => o.toggleAttribute('selected', o.value === s.value)));
+    localStorage.setItem(KEY, doc.innerHTML);
+    checkFit();
+    state.textContent = 'saved';
+    clearTimeout(t);
+    t = setTimeout(() => state.textContent = 'saved in this browser', 1200);
+  }
+
+  const setMode = on => {
+    doc.contentEditable = on;
+    document.body.classList.toggle('editing', on);
+    const b = document.getElementById('edit');
+    b.textContent = on ? 'Editing · on' : 'Editing · off';
+    b.setAttribute('aria-pressed', String(on));
+  };
+  setMode(true);
+  checkFit();
+
+  document.getElementById('edit').addEventListener('click', () => setMode(doc.contentEditable !== 'true'));
+  document.getElementById('print').addEventListener('click', () => { setMode(false); print(); });
+  document.getElementById('reset').addEventListener('click', () => {
+    if(!confirm('Discard your edits and restore the original wording?')) return;
+    localStorage.removeItem(KEY);
+    doc.innerHTML = ORIGINAL;
+    // Anything on the page holding its own state resets itself here.
+    document.dispatchEvent(new CustomEvent('doc:reset'));
+    if(window.recalc) recalc();
+    state.textContent = 'reset';
+  });
+
+  doc.addEventListener('input', () => { clearTimeout(t); t = setTimeout(persist, 400); });
+  doc.addEventListener('change', () => { if(window.recalc) recalc(); persist(); });
+  doc.addEventListener('paste', e => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text');
+    document.execCommand('insertText', false, text);
+  });
+})();
+</script>

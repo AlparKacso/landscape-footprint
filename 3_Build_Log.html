@@ -1,0 +1,333 @@
+<meta charset="utf-8"><title>Build Log — Landscape Footprint</title>
+<style>/* house style for the case-study documents, in the Celonis Studio palette */
+:root{
+  --accent:#2b4ee6; --accent2:#1e3aaf; --ink:#0b1f3a; --ink2:#5b6b84; --ink3:#8a97a8;
+  --line:#e2e6ed; --soft:#f7f8fa;
+  --retire:#0e7a54; --remediate:#d64545; --retain:#5b6b84; --invest:#0f8b9e; --warn:#b3701a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font:13.2px/1.62 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  color:var(--ink); background:#e7ecf3; -webkit-font-smoothing:antialiased;
+}
+.page{
+  max-width:900px; margin:26px auto; background:#fff; padding:52px 60px 46px;
+  box-shadow:0 12px 40px #0b1f3a1f; border-radius:6px;
+}
+.eyebrow{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:25px;line-height:1.2;margin:6px 0 4px;letter-spacing:-.3px}
+.dek{color:var(--ink2);font-size:14px;margin:0 0 20px}
+.meta{display:flex;gap:18px;flex-wrap:wrap;color:var(--ink3);font-size:11.5px;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:9px 0;margin:0 0 24px}
+.meta b{color:var(--ink2);font-weight:600}
+h2{font-size:15px;margin:26px 0 8px;padding-bottom:6px;border-bottom:2px solid var(--accent);display:inline-block}
+h3{font-size:13px;margin:16px 0 4px;color:var(--accent2)}
+p{margin:0 0 10px}
+ul,ol{margin:0 0 12px;padding-left:20px}
+li{margin:4px 0}
+strong{font-weight:650}
+.callout{background:var(--soft);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:13px 16px;margin:14px 0;font-size:12.8px}
+.callout b{color:var(--accent2)}
+.callout.warn{border-left-color:var(--warn);background:#fdf3e4}
+.callout.warn b{color:var(--warn)}
+table{border-collapse:collapse;width:100%;font-size:12px;margin:12px 0}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink2);font-weight:700}
+.tag{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:5px;white-space:nowrap}
+.t-retire{background:#0e7a5415;color:var(--retire)} .t-remediate{background:#d6454515;color:var(--remediate)}
+.t-retain{background:#5b6b8415;color:var(--retain)} .t-invest{background:#0f8b9e15;color:var(--invest)}
+.t-workshop{background:#2b4ee615;color:var(--accent2)}
+.kfig{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 16px}
+.fig{flex:1;min-width:120px;background:var(--soft);border:1px solid var(--line);border-radius:9px;padding:11px 13px}
+.fig .n{font-size:22px;font-weight:750;letter-spacing:-.5px;line-height:1}
+.fig .l{font-size:10.5px;color:var(--ink2);margin-top:4px}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;background:var(--soft);padding:1px 5px;border-radius:4px}
+.foot{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:var(--ink3);font-size:10.5px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+/* the hours table stays editable: click an activity or note, pick a block */
+.hours td{vertical-align:middle}
+.hours .act{outline:none;border-radius:3px;padding:0 2px;margin:0 -2px;display:block;font-weight:600}
+.hours .act:focus{background:#e8ebfd}
+.hours .sub{display:block;color:var(--ink3);font-size:11px;margin-top:2px;outline:none;border-radius:3px;padding:0 2px;margin-left:-2px}
+.hours .sub:focus{background:var(--soft)}
+.hours .blk{
+  appearance:none;-webkit-appearance:none;font:inherit;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:11.5px;font-weight:700;color:var(--accent);background:#e8ebfd;border:1px solid transparent;
+  border-radius:5px;padding:2px 18px 2px 8px;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+  background-position:calc(100% - 10px) calc(50% + 1px),calc(100% - 6px) calc(50% + 1px);
+  background-size:4px 4px,4px 4px;background-repeat:no-repeat;
+}
+.hours .blk:hover{border-color:var(--accent)}
+.hours .totrow td{font-weight:700;background:var(--soft)}
+.editnote{font-size:10.5px;color:var(--ink3);margin:-6px 0 14px}
+
+/* ---------- editing ---------- */
+.bar{max-width:900px;margin:16px auto -10px;display:flex;gap:8px;align-items:center;padding:0 6px}
+.bar .btn{appearance:none;border:1px solid #cfd6e0;background:#fff;color:var(--ink);font:inherit;font-size:12px;
+  padding:5px 12px;border-radius:999px;cursor:pointer}
+.bar .btn:hover{border-color:var(--ink3)}
+.bar .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.bar .sp{flex:1}
+.bar .state{font-size:11px;color:var(--ink3);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+body.editing .page{box-shadow:0 0 0 2px #2b4ee633,0 12px 40px #0b1f3a1f}
+body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-radius:3px}
+
+@page{size:A4;margin:14mm}
+@media print{
+  body{background:#fff}
+  .page{box-shadow:none;margin:0;max-width:none;padding:0;border-radius:0}
+  h2{break-after:avoid} table,tr,li,.callout,.fig{break-inside:avoid}
+  a{color:var(--ink)}
+  .editnote{display:none}
+  .bar{display:none}
+  /* pickers print as plain text */
+  .hours .blk{appearance:none;background:none;border:0;color:var(--ink);padding:0;background-image:none;font-weight:700}
+}
+</style>
+<div class="bar">
+  <button class="btn" id="edit" aria-pressed="true">Editing · on</button>
+  <button class="btn" id="print">Print / PDF</button>
+  <div class="sp"></div>
+  <span class="state" id="state">saved in this browser</span>
+  <button class="btn" id="reset">Reset to original</button>
+</div>
+
+<div class="page" id="doc">
+  <div class="eyebrow">Deliverable 4 · Build Log</div>
+  <h1>Build log</h1>
+  <p class="dek">What I built, what I tried, what failed, what I cut &mdash; and where the hours went, in ten-minute blocks. 8-hour cap.</p>
+  <div class="meta">
+    <span><b>Stack:</b> plain ES modules in the browser, no build step, no dependencies</span>
+    <span><b>AI assist:</b> Claude Code (profiling, build, copy)</span>
+    <span><b>Data:</b> the four provided CSVs, read at load, unmodified</span>
+  </div>
+
+  <div class="kfig">
+    <div class="fig"><div class="n" id="figTime">4h 20m</div><div class="l">of the 8h cap used</div></div>
+    <div class="fig"><div class="n">366</div><div class="l">objects scored in ~25 ms</div></div>
+    <div class="fig"><div class="n">11</div><div class="l">decisions from 106 custom objects</div></div>
+    <div class="fig"><div class="n">0</div><div class="l">numbers written by a model</div></div>
+  </div>
+
+  <h2>What I built</h2>
+  <ul>
+    <li><strong>An Extract Wizard</strong> &mdash; a page where a customer loads their own four files and watches what happens to them. Files are matched to adapters by <em>column signature</em>, not filename, because a Basis team exports <span class="mono">ZOBJ_DUMP_PRD1_0714.CSV</span>, never <span class="mono">objects.csv</span>. Four visible steps: load, confirm the mapping, watch the scoring, see exactly where AI is involved.</li>
+    <li><strong>A rules engine, not a model.</strong> Every score and every call comes from one editable rulepack file, so &ldquo;why does it say retire?&rdquo; is answered with a named rule and rows from the customer&rsquo;s own extract. Five calls: <span class="tag t-remediate">Remediate</span> <span class="tag t-invest">Investigate</span> <span class="tag t-workshop">Workshop</span> <span class="tag t-retire">Retire</span> <span class="tag t-retain">Carry as-is</span>. An LLM writes the summary sentences and nothing else.</li>
+    <li><strong>A four-state evidence model</strong> &mdash; the spine of the whole thing. <em>Measured and running</em>, <em>measured at zero</em>, <em>never measured</em>, and <em>cannot be measured</em>, because tables have no execution counts. Only the first two are observations.</li>
+    <li><strong>The Landscape Footprint</strong> &mdash; Position first, drawn as a treemap of the eleven decisions sized by object count and coloured by call; then Scope; then the decisions and the object inventory on two tabs. Empty until the wizard has been run once.</li>
+    <li><strong>One control that changes the answer</strong> &mdash; the transition type, reading the same evidence as no-path, brownfield, greenfield or selective. It does not only reorder: where the route genuinely changes what you would do, it changes the call and shows the sentence that justifies the change.</li>
+    <li><strong>An assistant</strong> on both pages, behind one button. It explains what the page in front of you is saying, at the register you pick &mdash; for the board, for the programme, for the engineer. Composed from live numbers every time it opens rather than cached, so it cannot describe a position the page is not showing, and marked as model-written wherever it appears.</li>
+    <li><strong>An object drawer</strong> reachable from any row of the inventory: the evidence behind one object, what depends on it, what it writes into, and the decision it is funded under. Deliberately not reachable from inside a decision.</li>
+    <li><strong>A human override</strong> on every call, with the rule&rsquo;s original proposal kept beside it and a one-click reset.</li>
+    <li><strong>A verification harness</strong> that re-derives every headline number from the raw files and fails loudly on drift.</li>
+  </ul>
+
+  <h2>What I tried &amp; what I learned from the data</h2>
+  <ul>
+    <li><strong>Profiled all four files before designing anything.</strong> That is where the shape came from, rather than from a guess about what would look good.</li>
+    <li><strong>The finding that reframed everything:</strong> 207 objects have no usage row, which reads as fatal until you split it. <strong>61% of SAP&rsquo;s own standard code is unmeasured against 16% of the custom code</strong>, and every object measured at zero is custom. The blind spot sits almost entirely in code nobody was deciding about.</li>
+    <li><strong>Three transaction codes point at programs the inventory does not contain</strong> &mdash; one labelled &ldquo;Legacy pricing tool (decommissioned?)&rdquo;, another &ldquo;Temporary fix 2014&rdquo;. The third runs 3,860 times a month across 74 users and holds the most recent execution date in the whole extract. People can run these today; nobody can say who owns them.</li>
+    <li><strong>Two vendor scorecards are both live</strong>, each with its own transaction code, at 1,229 and 2,515 runs a month. Somebody built a replacement and the original never left.</li>
+    <li><strong>SAP&rsquo;s own code never calls custom code</strong> &mdash; not once across 326 dependencies. Retiring custom code will not break SAP; what stops you is people using it, which is a far easier thing to check.</li>
+    <li><strong>Rejected the obvious dead-code test.</strong> Nothing uses it, it uses nothing, no usage row &mdash; that returns 105 objects, and 101 of them are SAP&rsquo;s. Confidently useless. Everything scores on converging signals instead.</li>
+    <li><strong>Made the evidence basis load-bearing rather than descriptive.</strong> Retire is reachable only from a rule resting on a structural fact or an actual measurement; anything built on inference or on a missing record proposes Investigate and names what would settle it. The engine throws on start-up if a rule breaks that, so a live edit cannot quietly lose it.</li>
+  </ul>
+
+  <div class="callout warn">
+    <b>A number worth stating carefully.</b> It is tempting to say &ldquo;52 of 106 custom objects run zero times a month&rdquo;. That is three different findings wearing one coat: <strong>17</strong> are measured at zero, <strong>17</strong> were never measured at all, and <strong>18</strong> are tables, which cannot carry an execution count by construction. Collapsing them is the fastest route to a confident, wrong retirement list &mdash; which is exactly why the evidence model has four states and not two.
+  </div>
+
+  <h2>What failed / what I cut (and why)</h2>
+  <ul>
+    <li><strong>Cut: a force-directed graph</strong> of the full dependency network. 366 nodes and 326 edges looks impressive and decides nothing &mdash; and it is the category the Celonis vision paper spends four pages distinguishing itself from. The graph survives only inside a single decision, answering one question: if we act on this, what else moves?</li>
+    <li><strong>Cut: effort and cost estimates</strong> in days or euros. The extract carries no size, complexity or line-count signal, so any figure would be invented &mdash; and one invented number undermines every real one on the same screen. It is an explicit <em>Next</em> item once source code is in scope.</li>
+    <li><strong>Cut, then reversed: file upload.</strong> Dropped early, on the argument that the adapter seam proves composability without a drop zone. Using the prototype showed that was right in principle and wrong in practice: the seam is invisible, and a customer cannot be asked to trust a pipeline they never see run. It came back as an entire page.</li>
+    <li><strong>Cut: a charting library.</strong> A twenty-box diagram does not need one, and a hand-drawn layout renders identically every time &mdash; repeatability beats physics when you are presenting live.</li>
+    <li><strong>Failed: sorting by call opened backwards</strong>, putting Carry-as-is above Remediate. Ranked columns now open most-urgent-first, size columns largest-first.</li>
+    <li><strong>Failed, then cut on purpose: the risk score.</strong> It was computed and never shown, so reweighting a signal appeared to do nothing &mdash; found by rehearsing a live modification against the clock. The first fix was to display it. The better fix, made later, was to take it off the screen for good: &ldquo;risk 72&rdquo; buys a question that costs five minutes of a ten-minute demo and lands on facts the rule&rsquo;s own rationale already states in sentences. The score still orders the rows; it no longer makes claims.</li>
+    <li><strong>Failed: the transition control rebuilt itself on every render</strong>, detaching the button under the cursor &mdash; the same mistake the settings panel made, in a new place. Built once, and only the selected state moves now.</li>
+    <li><strong>Failed: the treemap rendered blank on first view.</strong> It measures its container, which has no box at all while the page is hidden, and a <span class="mono">ResizeObserver</span> does not fire for a display:none&nbsp;&rarr;&nbsp;visible transition &mdash; there was nothing to observe. Reading the width synchronously right after the page is shown forces layout and returns the real number.</li>
+    <li><strong>Failed: the settings panel closed on every change</strong> &mdash; clicking an option re-rendered the panel and destroyed the element under the cursor. Separately, a cached script could make a correct live edit look like it had done nothing, which would have been an ugly moment in front of an interviewer. Both fixed.</li>
+    <li><strong>Cut: a &ldquo;less / medium / more&rdquo; detail slider</strong> on the assistant, which was the original idea. Nobody knows which verbosity they are. Replaced with audience &mdash; for the board / the programme / the engineer &mdash; which is a question anyone can answer in the moment, and which hands you a slide sentence on demand.</li>
+    <li><strong>Rejected: a live API call from the assistant.</strong> Same reasoning as the cached decision narrative, plus a sharper one: a cached summary sitting next to a position that moves with the route lever would have contradicted the page the first time anyone switched to greenfield. Composing it from live state at open time solves both, and keeps &ldquo;no numbers written by a model&rdquo; literally true.</li>
+    <li><strong>Deferred visual polish.</strong> The brief says it is not graded, so the budget went to the decision logic and to keeping the thing genuinely modifiable live &mdash; every weight and threshold sits in one readable file.</li>
+  </ul>
+
+  <h2>The second pass, and what it cost</h2>
+  <p>
+    The first build worked and was too big to pitch. Demoing it made that obvious in a way that
+    reading it did not: every question a listener asked was about the machinery rather than the
+    estate. So there was a second pass, and it was mostly subtraction.
+  </p>
+  <ul>
+    <li><strong>Removed the risk dial</strong> and everything that served it &mdash; commitment thresholds, held-versus-committed state, the &ldquo;what it would take to commit the rest&rdquo; line. Nobody in a steering meeting says &ldquo;I accept a risk score of seventy&rdquo;, and a dial that can be turned up until the tool recommends deleting unmeasured code is not a safeguard. What it protected became a property of the engine instead: <strong>nothing is retired on evidence weaker than a measurement</strong>, asserted at run time. The two rules that sat behind the dial now propose Investigate, which is what their own rationale text always said. <b>The default output is identical</b> &mdash; 24 actionable, 34 held &mdash; so nothing was traded away for the simplification.</li>
+    <li><strong>Removed the usage-evidence switch from the interface.</strong> It is a question for the customer&rsquo;s team, not a control for a reader to guess at. It stays in the rulepack, and the assumption is stated on the face of the output.</li>
+    <li><strong>Removed the card view</strong> (the list already worked, and the modal carried the prose) and <strong>the risk score</strong> from the object rows.</li>
+    <li><strong>Promoted the transition type</strong> from a hidden setting to the one control on the page, and made it consequential: it now changes the call where the route genuinely changes what you would do, with the justifying sentence attached. Seven of forty-four route/decision combinations move. Choosing a greenfield build turns 62 of the 106 objects into build-buy-or-drop decisions and makes the clean-core problem disappear into a requirements list.</li>
+    <li><strong>Replaced the position bar chart with a treemap.</strong> A bar shows the split and hides the shape; it would tell you 51 objects carry forward without telling you that 33 of them are one decision and 18 another, resting on completely different evidence.</li>
+    <li><strong>Added an object inventory and a detail drawer</strong>, because &ldquo;where is my object&rdquo; is the first question anyone with a stake asks, and eleven decisions cannot answer it.</li>
+  </ul>
+  <div class="callout">
+    <b>On where the AI actually sits.</b> Up to this point the AI story was entirely a negative claim &mdash; nothing is decided by a model &mdash; which proves judgement and shows no point of view. The assistant turns it positive without weakening it: the rules decide, a model explains, and everything the model wrote is labelled with what it was written from. The engine is unchanged; the number of model-written numbers on screen is still zero.
+  </div>
+
+  <div class="callout">
+    <b>What I looked at and did not take.</b> A parallel build of the same brief produced a risk matrix
+    (business criticality against blast radius) and a much simpler per-object engine. The matrix was
+    not ported: it restates fan-in and executions as a picture, and the decision modal already answers
+    the same question with attribution and a named rule. The engine was not ported on principle &mdash;
+    it calls 61 of 106 custom objects &ldquo;decommission&rdquo; on <span class="mono">exec &lt; 50 &amp;&amp; users &lt;= 2</span>,
+    which is precisely the confident, wrong retirement list the four-state evidence model exists to
+    prevent. The headline sentence and the drawer were worth taking, and were.
+  </div>
+
+  <h2>Where the hours went</h2>
+  <p class="editnote">Ten-minute blocks. Click any activity or note to edit it, and pick the time from the dropdown &mdash; changes save in this browser.</p>
+  <table class="hours">
+    <thead><tr><th style="width:78%">Activity</th><th>Time</th></tr></thead>
+    <tbody id="hoursBody"></tbody>
+    <tfoot><tr class="totrow"><td>Total</td><td id="totalCell"></td></tr></tfoot>
+  </table>
+
+  <div class="callout">
+    <b>Scope I consciously left on the table:</b> a live connection to the source system, the other two productive systems, an effort model, and agents that act on a committed decision rather than only proposing it. All are sequenced in the Increment Breakdown as Next or Later &mdash; not forgotten, and not quietly dropped.
+  </div>
+
+  <div class="foot"><span>Landscape Footprint &mdash; Build Log</span><span id="footTime"></span></div>
+</div>
+
+<script>
+/* The hours table is the one live part of this document: ten-minute blocks,
+   editable in place, saved in this browser. Everything else is prose. */
+const BLOCKS = [10,20,30,40,50,60,70,80,90];
+const DEFAULT_ROWS = [
+  { act:"Read the brief and the vision paper; profiled all four files; sent the questions mail",
+    sub:"366 objects, 207 with no usage row. Every gap became a question paired with the assumption I proceed on.", mins:80 },
+  { act:"Decided the shape; built the context graph and the four-state evidence model",
+    sub:"A decision list with stated confidence, not a 366-node map.", mins:30 },
+  { act:"Rulepack, converging-signal scoring, five calls, decision packages",
+    sub:"Every weight in one editable file. 106 objects grouped into 11 decisions, each object in exactly one.", mins:30 },
+  { act:"Verification harness, written before the UI existed",
+    sub:"Caught my own error: seven write paths across six objects, not seven objects.", mins:10 },
+  { act:"The board — coverage, blast radius, integrity panel, the two controls",
+    sub:"Built in the Celonis Studio design language.", mins:40 },
+  { act:"Extract Wizard, the two-page split, human override, Position",
+    sub:"Driven by clicking through a working build rather than by a plan.", mins:50 },
+  { act:"Handbook, two demo-breaking bug fixes, and this log",
+    sub:"Reworded for a non-technical reader; kept the precise numbers precise.", mins:20 },
+  { act:"Second pass — stripped the risk dial, made the route change the calls, added the treemap, the object inventory and the drawer",
+    sub:"Driven by demoing the first build and watching where a reader would stall. Same default numbers, one control instead of two.", mins:70 },
+  { act:"Third pass — the assistant, the AI provenance marks, and the wizard trimmed to match",
+    sub:"Composed from live state so it tracks the route lever. Customer answers folded in: the extract has more gaps than the three we can see.", mins:60 },
+];
+
+const STORE = 'celonis-buildlog-doc-v3';
+let rows = (()=>{ try{ const r=localStorage.getItem(STORE); if(r) return JSON.parse(r); }catch(e){} return structuredClone(DEFAULT_ROWS); })();
+const save = () => localStorage.setItem(STORE, JSON.stringify(rows));
+const esc = s => String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const hm = m => { const h=Math.floor(m/60), r=m%60; return h ? (r?`${h}h ${r}m`:`${h}h`) : `${r}m`; };
+const total = () => rows.reduce((s,r)=>s+(Number(r.mins)||0),0);
+
+function render(){
+  document.getElementById('hoursBody').innerHTML = rows.map((r,i)=>`
+    <tr data-i="${i}">
+      <td>
+        <span class="act" contenteditable="plaintext-only" data-f="act">${esc(r.act)}</span>
+        <span class="sub" contenteditable="plaintext-only" data-f="sub">${esc(r.sub)}</span>
+      </td>
+      <td>
+        <select class="blk" data-blk aria-label="Time in ten-minute blocks">
+          ${BLOCKS.map(b=>`<option value="${b}"${b===Number(r.mins)?' selected':''}>${hm(b)}</option>`).join('')}
+        </select>
+      </td>
+    </tr>`).join('');
+  const t = total();
+  document.getElementById('totalCell').textContent = hm(t);
+  document.getElementById('figTime').textContent = hm(t);
+  document.getElementById('footTime').textContent = `8h cap · ${hm(t)} used · ${t/10} ten-minute blocks`;
+}
+
+const body = document.getElementById('hoursBody');
+body.addEventListener('blur', e => {
+  const f = e.target.closest('[data-f]');
+  if(!f) return;
+  rows[Number(f.closest('tr').dataset.i)][f.dataset.f] = f.textContent.trim();
+  save();
+}, true);
+body.addEventListener('keydown', e => {
+  const f = e.target.closest('[data-f]');
+  if(f && e.key === 'Enter'){ e.preventDefault(); f.blur(); }
+});
+body.addEventListener('change', e => {
+  const s = e.target.closest('[data-blk]');
+  if(!s) return;
+  rows[Number(s.closest('tr').dataset.i)].mins = Number(s.value);
+  save(); render();
+});
+
+window.recalc = render;
+document.addEventListener('doc:reset', () => {
+  rows = structuredClone(DEFAULT_ROWS);
+  localStorage.removeItem(STORE);
+  render();
+});
+render();
+</script>
+
+<script>
+/* Every document in this set is fully editable: click anywhere and type.
+   The page is saved to this browser as you go, so a reload keeps your wording.
+   Pasting is forced to plain text so a copy from Word cannot drag its own
+   styling in and break the layout. */
+(function(){
+  const doc = document.getElementById('doc');
+  const KEY = 'celonis-doc-' + document.title.replace(/\W+/g,'-');
+  const ORIGINAL = doc.innerHTML;
+
+  const stored = localStorage.getItem(KEY);
+  if(stored) doc.innerHTML = stored;
+
+  const state = document.getElementById('state');
+  let t;
+  function persist(){
+    // A <select> keeps its choice in the DOM property, not the markup, so mirror
+    // it onto the attribute before serialising or the selection is lost.
+    doc.querySelectorAll('select').forEach(s => [...s.options].forEach(o => o.toggleAttribute('selected', o.value === s.value)));
+    localStorage.setItem(KEY, doc.innerHTML);
+    state.textContent = 'saved';
+    clearTimeout(t);
+    t = setTimeout(() => state.textContent = 'saved in this browser', 1200);
+  }
+
+  const setMode = on => {
+    doc.contentEditable = on;
+    document.body.classList.toggle('editing', on);
+    const b = document.getElementById('edit');
+    b.textContent = on ? 'Editing · on' : 'Editing · off';
+    b.setAttribute('aria-pressed', String(on));
+  };
+  setMode(true);
+
+  document.getElementById('edit').addEventListener('click', () => setMode(doc.contentEditable !== 'true'));
+  document.getElementById('print').addEventListener('click', () => { setMode(false); print(); });
+  document.getElementById('reset').addEventListener('click', () => {
+    if(!confirm('Discard your edits and restore the original wording?')) return;
+    localStorage.removeItem(KEY);
+    doc.innerHTML = ORIGINAL;
+    // Anything on the page holding its own state resets itself here.
+    document.dispatchEvent(new CustomEvent('doc:reset'));
+    if(window.recalc) recalc();
+    state.textContent = 'reset';
+  });
+
+  doc.addEventListener('input', () => { clearTimeout(t); t = setTimeout(persist, 400); });
+  doc.addEventListener('change', () => { if(window.recalc) recalc(); persist(); });
+  doc.addEventListener('paste', e => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text');
+    document.execCommand('insertText', false, text);
+  });
+})();
+</script>

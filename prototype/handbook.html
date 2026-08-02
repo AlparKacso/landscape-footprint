@@ -1,0 +1,1009 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landscape Footprint &#8212; Product Handbook</title>
+</head>
+<body>
+<style>
+  /* Single light theme, deliberately. The product this documents is a View
+     inside Celonis Studio, which is a white surface. A handbook that flipped
+     to a dark ground would stop matching the thing it describes. Tokens below
+     are the same values as the prototype's app.css, not approximations. */
+  :root {
+    color-scheme: light;
+
+    --ground:#F7F8FA; --surface:#FFFFFF; --surface-2:#FAFBFD;
+    --line:#E2E6ED; --line-2:#CFD6E0;
+    --ink:#0B1F3A; --ink-2:#5B6B84; --ink-3:#8A97A8;
+    --accent:#2B4EE6; --accent-2:#E8EBFD;
+    --good:#0E7A54; --good-bg:#E6F7EF;
+    --warn:#B3701A; --warn-bg:#FDF3E4;
+    /* The Investigate call. Its own colour, because it is a state rather than a
+       fault — the warning amber still marks measured-at-zero evidence. */
+    --invest:#0F8B9E; --invest-bg:#E4F3F6;
+    --bad:#D64545;  --bad-bg:#FDECEC;
+    --hatch-a:#C8D0DC; --hatch-b:#DDE3EA;
+    --hatch-c:#AAB6C6; --hatch-d:#C3CCD8;
+
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+    --t-xs:11.5px; --t-sm:13px; --t-base:15px; --t-lg:18px;
+    --t-xl:23px; --t-2xl:31px; --t-3xl:40px;
+
+    --r:8px; --r-lg:12px;
+  }
+
+  * { box-sizing:border-box; }
+
+  body {
+    margin:0; background:var(--ground); color:var(--ink);
+    font-family:var(--sans); font-size:var(--t-base); line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap {
+    display:grid; grid-template-columns:210px minmax(0,1fr);
+    gap:52px; max-width:1180px; margin:0 auto; padding:0 32px 120px;
+    align-items:start;
+  }
+
+  .rail { position:sticky; top:0; padding:56px 0 40px; }
+  .rail-title {
+    font-size:var(--t-xs); text-transform:uppercase; letter-spacing:.09em;
+    font-weight:600; color:var(--ink-3); margin:0 0 14px;
+  }
+  .rail ol { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:1px; }
+  .rail a {
+    display:block; padding:5px 10px; border-radius:6px; text-decoration:none;
+    color:var(--ink-2); font-size:var(--t-sm); line-height:1.45;
+  }
+  .rail a:hover { background:var(--surface); color:var(--ink); }
+  .rail a:focus-visible { outline:2px solid var(--accent); outline-offset:1px; }
+
+  .masthead { padding:56px 0 0; }
+  .eyebrow {
+    font-family:var(--mono); font-size:var(--t-xs); letter-spacing:.06em;
+    text-transform:uppercase; color:var(--accent); margin:0 0 14px;
+  }
+  h1 {
+    font-size:var(--t-3xl); font-weight:650; letter-spacing:-.025em;
+    line-height:1.1; margin:0 0 16px; text-wrap:balance;
+  }
+  .standfirst { font-size:var(--t-lg); color:var(--ink-2); margin:0; line-height:1.55; }
+  .meta {
+    display:flex; flex-wrap:wrap; gap:6px 24px; margin-top:26px;
+    padding-top:20px; border-top:1px solid var(--line);
+    font-family:var(--mono); font-size:var(--t-xs); color:var(--ink-3);
+  }
+  .meta b { color:var(--ink-2); font-weight:500; }
+
+  section { padding-top:52px; scroll-margin-top:24px; }
+  h2 { font-size:var(--t-xl); font-weight:640; letter-spacing:-.02em; margin:0 0 10px; text-wrap:balance; }
+  h3 { font-size:var(--t-base); font-weight:640; margin:0 0 6px; }
+  section > p, .lede { margin:0 0 16px; color:var(--ink-2); }
+  section > p:last-child { margin-bottom:0; }
+  strong { color:var(--ink); font-weight:600; }
+  code {
+    font-family:var(--mono); font-size:.88em; background:var(--surface-2);
+    border:1px solid var(--line); border-radius:4px; padding:1px 5px; color:var(--ink);
+  }
+
+  .card { background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); padding:20px 22px; }
+  .stack { display:flex; flex-direction:column; gap:12px; }
+
+  /* two pages */
+  .pages { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; margin-top:18px; }
+  .pagecard { background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); padding:18px 20px; }
+  .pagecard .icon {
+    width:34px; height:34px; border-radius:var(--r); background:var(--accent-2); color:var(--accent);
+    display:grid; place-items:center; font-size:16px; margin-bottom:11px;
+  }
+  .pagecard h3 { font-size:var(--t-lg); margin-bottom:5px; }
+  .pagecard p { margin:0 0 12px; color:var(--ink-2); font-size:var(--t-sm); line-height:1.6; }
+  .pagecard ul { margin:0; padding-left:18px; color:var(--ink-2); font-size:var(--t-sm); }
+  .pagecard li { margin:3px 0; }
+
+  /* wizard steps */
+  .flow { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
+  .fstep {
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg);
+    padding:16px 18px; display:grid; grid-template-columns:30px minmax(0,1fr); gap:16px; align-items:start;
+  }
+  .fstep-n { font-family:var(--mono); font-size:var(--t-sm); font-weight:600; color:var(--accent); padding-top:2px; }
+  .fstep h3 { margin-bottom:4px; }
+  .fstep p { margin:0; color:var(--ink-2); font-size:var(--t-sm); line-height:1.6; }
+  .fstep p + p { margin-top:8px; }
+
+  /* coverage strip, matching the product */
+  .coverage { padding:18px 20px; }
+  .coverage-row { display:grid; grid-template-columns:150px minmax(0,1fr) 210px; gap:14px; align-items:center; padding:8px 0; }
+  .coverage-row .name { font-weight:550; font-size:var(--t-sm); color:var(--ink); }
+  .coverage-row .name small { display:block; color:var(--ink-3); font-weight:400; font-size:var(--t-xs); }
+  .bar { display:flex; height:18px; border-radius:4px; overflow:hidden; background:var(--ground); }
+  .bar span { display:block; }
+  .e-active { background:var(--good); }
+  .e-dead { background:var(--warn); }
+  .e-unmeasured { background:repeating-linear-gradient(45deg,var(--hatch-a),var(--hatch-a) 3px,var(--hatch-b) 3px,var(--hatch-b) 6px); }
+  .e-unmeasurable { background:repeating-linear-gradient(45deg,var(--hatch-c),var(--hatch-c) 3px,var(--hatch-d) 3px,var(--hatch-d) 6px); }
+  .coverage-row .tally { font-size:var(--t-xs); color:var(--ink-2); font-family:var(--mono); text-align:right; font-variant-numeric:tabular-nums; }
+  .cov-group { margin-top:10px; padding-top:10px; border-top:1px solid var(--line); }
+  .legend { display:flex; flex-wrap:wrap; gap:5px 16px; margin-top:16px; padding-top:14px; border-top:1px solid var(--line); }
+  .legend .item { display:flex; align-items:flex-start; gap:8px; font-size:var(--t-sm); color:var(--ink-2); line-height:1.5; }
+  .legend .swatch { width:12px; height:12px; border-radius:3px; flex:none; margin-top:4px; }
+  .legend b { color:var(--ink); font-weight:600; display:block; }
+
+  .scroll { overflow-x:auto; border:1px solid var(--line); border-radius:var(--r-lg); background:var(--surface); }
+  table { border-collapse:collapse; width:100%; font-size:var(--t-sm); min-width:520px; }
+  th {
+    text-align:left; font-weight:600; font-size:var(--t-xs); color:var(--ink-2);
+    padding:11px 16px; border-bottom:1px solid var(--line); white-space:nowrap;
+    text-transform:uppercase; letter-spacing:.05em;
+  }
+  td { padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:top; color:var(--ink-2); }
+  tr:last-child td { border-bottom:0; }
+  td:first-child { color:var(--ink); }
+  .num { font-family:var(--mono); font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap; }
+  .mono { font-family:var(--mono); font-size:.94em; color:var(--ink); }
+
+  .tag { display:inline-block; font-size:var(--t-xs); font-weight:600; padding:2px 8px; border-radius:5px; white-space:nowrap; }
+  .t-good { background:var(--good-bg); color:var(--good); }
+  .t-invest { background:var(--invest-bg); color:var(--invest); }
+  .t-bad  { background:var(--bad-bg);  color:var(--bad); }
+  .t-acc  { background:var(--accent-2); color:var(--accent); }
+  .t-flat { background:var(--surface-2); color:var(--ink-2); border:1px solid var(--line); }
+
+  .track { position:relative; height:6px; border-radius:3px; background:var(--surface-2); border:1px solid var(--line); margin:0 0 4px; }
+  .track i { position:absolute; top:-5px; width:2px; height:14px; background:var(--accent); border-radius:1px; }
+  .track-ends { display:flex; justify-content:space-between; font-family:var(--mono); font-size:var(--t-xs); color:var(--ink-3); margin-bottom:16px; }
+
+  .tree {
+    font-family:var(--mono); font-size:var(--t-sm); line-height:1.9;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg);
+    padding:18px 20px; overflow-x:auto; margin:0;
+  }
+  .tree .dir { color:var(--accent); font-weight:600; }
+  .tree .note { color:var(--ink-3); }
+  .tree .f { color:var(--ink); }
+
+  /* ---------- pipeline diagram ---------- */
+  .diagwrap { overflow-x:auto; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); padding:18px 20px; margin:18px 0 0; }
+  .flowdiag { display:block; min-width:900px; width:100%; height:auto; }
+  .fd-file { fill:var(--surface-2); stroke:var(--line-2); }
+  .fd-stage { fill:var(--surface); stroke:var(--line-2); }
+  .fd-parse { fill:var(--accent-2); stroke:none; }
+  .fd-ai { fill:#FFF; stroke:var(--accent); stroke-dasharray:5 4; }
+  .fd-out { fill:var(--good-bg); stroke:none; }
+  .fd-t { fill:var(--ink); font-family:var(--sans); font-size:11.5px; font-weight:600; }
+  .fd-s { fill:var(--ink-3); font-family:var(--sans); font-size:9.5px; }
+  .fd-n { fill:var(--accent); font-family:var(--mono); font-size:9px; font-weight:600; }
+  .fd-lab { fill:var(--ink-2); font-family:var(--sans); font-size:10px; font-weight:500; }
+  .fd-arrow { stroke:var(--line-2); stroke-width:1.5; fill:none; }
+  .fd-brace { stroke:var(--line-2); stroke-width:1.2; fill:none; }
+  .fd-loop { stroke:var(--accent); stroke-width:1.4; fill:none; stroke-dasharray:4 3; }
+  .fd-ms { fill:var(--ink-3); font-family:var(--mono); font-size:9px; }
+
+  .diag-key { display:flex; flex-wrap:wrap; gap:6px 20px; margin-top:14px; padding-top:13px; border-top:1px solid var(--line); font-size:var(--t-sm); color:var(--ink-2); }
+  .diag-key .k { display:flex; align-items:center; gap:8px; }
+  .diag-key .sw { width:14px; height:11px; border-radius:3px; flex:none; border:1px solid var(--line-2); }
+
+  .note { display:flex; gap:12px; background:var(--accent-2); border-radius:var(--r); padding:14px 16px; font-size:var(--t-sm); color:var(--ink-2); line-height:1.6; }
+  .note b { color:var(--ink); }
+  .note-m { font-family:var(--mono); font-size:var(--t-xs); color:var(--accent); font-weight:600; flex:none; padding-top:2px; }
+
+  .kv { display:grid; grid-template-columns:minmax(0,160px) minmax(0,1fr); gap:10px 20px; font-size:var(--t-sm); }
+  .kv dt { font-family:var(--mono); font-size:var(--t-xs); color:var(--ink-3); padding-top:3px; }
+  .kv dd { margin:0; color:var(--ink-2); }
+
+  footer {
+    margin-top:64px; padding-top:22px; border-top:1px solid var(--line);
+    font-family:var(--mono); font-size:var(--t-xs); color:var(--ink-3); line-height:1.8;
+  }
+
+  @media (max-width:880px) {
+    .wrap { grid-template-columns:minmax(0,1fr); gap:0; padding:0 20px 80px; }
+    .rail { position:static; padding:36px 0 0; }
+    .rail ol { flex-direction:row; flex-wrap:wrap; gap:4px; }
+    .rail a { border:1px solid var(--line); background:var(--surface); }
+    .coverage-row { grid-template-columns:minmax(0,1fr); gap:6px; }
+    .coverage-row .tally { text-align:left; }
+    h1 { font-size:var(--t-2xl); }
+  }
+  @media (prefers-reduced-motion:reduce) { * { animation:none !important; transition:none !important; } }
+</style>
+
+<div class="wrap">
+  <nav class="rail" aria-label="Sections">
+    <p class="rail-title">Handbook</p>
+    <ol>
+      <li><a href="#what">What it is</a></li>
+      <li><a href="#pages">The two pages</a></li>
+      <li><a href="#wizard">The Extract Wizard</a></li>
+      <li><a href="#runs">How it actually runs</a></li>
+      <li><a href="#know">What we know</a></li>
+      <li><a href="#calls">How a call is made</a></li>
+      <li><a href="#decisions">The eleven decisions</a></li>
+      <li><a href="#objects">One object at a time</a></li>
+      <li><a href="#assistant">The assistant</a></li>
+      <li><a href="#dials">The one lever</a></li>
+      <li><a href="#disagree">When you disagree</a></li>
+      <li><a href="#position">The answer</a></li>
+      <li><a href="#built">What it is built from</a></li>
+      <li><a href="#change">Changing it live</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <header class="masthead">
+      <p class="eyebrow">Product handbook &#183; v2</p>
+      <h1>Landscape Footprint</h1>
+      <p class="standfirst">
+        A company is about to move off SAP ECC. Before anyone can plan that, somebody has to
+        answer a boring, enormous question: what is actually in there, and what do we do with it?
+        This turns four spreadsheets of system data into eleven decisions a leader can fund &#8212;
+        each one showing the evidence behind it and how much to trust it.
+      </p>
+      <div class="meta">
+        <span><b>Data</b> 4 files, one ECC system</span>
+        <span><b>Objects</b> 366 &#183; 106 custom</span>
+        <span><b>Decisions</b> 11</span>
+        <span><b>Setup</b> none</span>
+      </div>
+    </header>
+
+    <section id="what">
+      <h2>What it is</h2>
+      <p>
+        The obvious thing to build from a list of system objects and their connections is a big
+        network diagram. It looks impressive. Nobody can act on it, and it is exactly the kind of
+        picture the Celonis vision paper argues against.
+      </p>
+      <p>
+        So this is <strong>a list of decisions instead of a picture</strong>. Each one says what to do,
+        why, and how confident you should be. A diagram does appear &#8212; but only inside a single
+        decision, answering one question: if we do this, what else moves?
+      </p>
+      <div class="note">
+        <span class="note-m">Key</span>
+        <span>
+          <b>Nothing is recommended by AI.</b> Every recommendation comes from a set of written
+          rules you can read and re-run. A model writes words &#8212; the summaries, and the
+          assistant that reads either page back to you &#8212; and everything it wrote is marked as
+          such. That way, when someone asks &ldquo;why does it say retire?&rdquo;, the answer is a
+          rule and rows from their own data &#8212; not &ldquo;the model said so&rdquo;.
+        </span>
+      </div>
+    </section>
+
+    <section id="pages">
+      <h2>The two pages</h2>
+      <p>They do different jobs, so they are kept apart. One is how the answer gets made; the other is the answer.</p>
+
+      <div class="pages">
+        <div class="pagecard">
+          <div class="icon" aria-hidden="true">&#8679;</div>
+          <h3>Extract Wizard</h3>
+          <p>Where you bring your own data in and watch what happens to it. Nothing here is hidden behind a loading spinner.</p>
+          <ul>
+            <li>Load your files</li>
+            <li>Confirm what each file is</li>
+            <li>See how the system is scored</li>
+            <li>See exactly where AI is used</li>
+            <li>Finish, then see what the data can and cannot tell you</li>
+          </ul>
+        </div>
+        <div class="pagecard">
+          <div class="icon" aria-hidden="true">&#9704;</div>
+          <h3>Landscape Footprint</h3>
+          <p>Where you decide. Empty until the wizard has been run once &#8212; an empty page is more honest than a page of numbers with no source.</p>
+          <ul>
+            <li><b>Position</b> &#8212; what it all adds up to, drawn as a map. First, not last.</li>
+            <li><b>Scope</b> &#8212; the estate the decisions are built from</li>
+            <li><b>Decisions</b> &#8212; the eleven calls to make</li>
+            <li><b>Objects</b> &#8212; the same estate one row at a time, for the people who want to find theirs</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="wizard">
+      <h2>The Extract Wizard</h2>
+      <p>
+        Four steps. The point of showing them is trust: a tool that swallows your data and returns
+        confident advice is asking to be believed. One that shows its working can be checked.
+      </p>
+
+      <div class="flow">
+        <div class="fstep">
+          <div class="fstep-n">01</div>
+          <div>
+            <h3>Load your files</h3>
+            <p>Drag in the CSV files your Basis team exported. Nothing is cleaned or corrected on the way in &#8212; the messy parts of an export are usually findings, not mistakes to tidy away before anyone sees them.</p>
+            <p>There is also a one-click option to use the sample data, so a demo never stalls on a file dialog.</p>
+          </div>
+        </div>
+
+        <div class="fstep">
+          <div class="fstep-n">02</div>
+          <div>
+            <h3>Confirm what each file is</h3>
+            <p>The tool works out which file is which by looking at the <b>column headings</b>, not the filename. That matters because a real export is called something like <code>ZOBJ_DUMP_PRD1_0714.CSV</code>, never <code>objects.csv</code>.</p>
+            <p>It shows you its guess and why it guessed that, and you can correct any row. This is also the point where a different data source plugs in: give it the same four kinds of file from SAP Readiness Check instead, and everything after this step is unchanged.</p>
+          </div>
+        </div>
+
+        <div class="fstep">
+          <div class="fstep-n">03</div>
+          <div>
+            <h3>See how the system is scored</h3>
+            <p>Your four files become one connected picture: what exists, what calls what, and what is known about each thing. Then every object is scored and given a recommended call.</p>
+            <p><b>All of this comes from a rules file you can open and read.</b> Same data in, same answer out, every time. The step shows you the counts at each stage and lists every rule that fired, so nothing arrives unexplained.</p>
+          </div>
+        </div>
+
+        <div class="fstep">
+          <div class="fstep-n">04</div>
+          <div>
+            <h3>See exactly where AI is used</h3>
+            <p>106 custom objects is a list, and nobody funds a list. Grouping them into eleven decisions is done <b>by rule</b> &#8212; each object lands in exactly one group, so nothing is counted or paid for twice.</p>
+            <p>Only then does AI get involved, and only to write the summary sentences for each decision. The step shows a real example with the AI-written lines marked, so you can see the boundary rather than take it on faith. The text is written once and saved, so the live page never depends on a network connection.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="runs">
+      <h2>How it actually runs</h2>
+      <p>
+        This is the part to have straight before someone technical asks. Two things happen at the
+        same time; everything after that has to happen in order, because each step needs the answer
+        from the one before it. You cannot score a piece of code before you know what calls it.
+      </p>
+
+      <div class="diagwrap">
+        <svg class="flowdiag" viewBox="0 0 950 300" role="img"
+             aria-label="Four files load together, are parsed, then pass through five sequential steps: build the graph, check the evidence, score, apply the rules, group into decisions.">
+          <defs>
+            <marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M0,0 L8,4 L0,8 z" fill="#CFD6E0"/>
+            </marker>
+            <marker id="ahb" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M0,0 L8,4 L0,8 z" fill="#2B4EE6"/>
+            </marker>
+          </defs>
+
+          <!-- the four files, requested together -->
+          <text class="fd-lab" x="10" y="18">At the same time</text>
+          <rect class="fd-file" x="10" y="28" width="120" height="24" rx="5"/>
+          <text class="fd-t" x="20" y="44" font-size="10">objects.csv</text>
+          <rect class="fd-file" x="10" y="58" width="120" height="24" rx="5"/>
+          <text class="fd-t" x="20" y="74" font-size="10">usage.csv</text>
+          <rect class="fd-file" x="10" y="88" width="120" height="24" rx="5"/>
+          <text class="fd-t" x="20" y="104" font-size="10">dependencies.csv</text>
+          <rect class="fd-file" x="10" y="118" width="120" height="24" rx="5"/>
+          <text class="fd-t" x="20" y="134" font-size="10">transactions.csv</text>
+          <path class="fd-brace" d="M136,40 h8 M136,70 h8 M136,100 h8 M136,130 h8 M144,40 V130 M144,85 h10"/>
+
+          <!-- parse -->
+          <rect class="fd-parse" x="164" y="52" width="88" height="66" rx="7"/>
+          <text class="fd-n" x="174" y="70">01</text>
+          <text class="fd-t" x="174" y="88">Read</text>
+          <text class="fd-s" x="174" y="102">rows &amp; columns</text>
+          <text class="fd-ms" x="174" y="132">0.5 ms</text>
+
+          <path class="fd-arrow" marker-end="url(#ah)" d="M254,85 h18"/>
+
+          <!-- sequential chain -->
+          <rect class="fd-stage" x="276" y="52" width="120" height="66" rx="7"/>
+          <text class="fd-n" x="288" y="70">02</text>
+          <text class="fd-t" x="288" y="88">Build the graph</text>
+          <text class="fd-s" x="288" y="102">what calls what</text>
+          <text class="fd-ms" x="288" y="132">8 ms</text>
+          <path class="fd-arrow" marker-end="url(#ah)" d="M398,85 h14"/>
+
+          <rect class="fd-stage" x="414" y="52" width="120" height="66" rx="7"/>
+          <text class="fd-n" x="426" y="70">03</text>
+          <text class="fd-t" x="426" y="88">Check evidence</text>
+          <text class="fd-s" x="426" y="102">what we know</text>
+          <text class="fd-ms" x="426" y="132">1 ms</text>
+          <path class="fd-arrow" marker-end="url(#ah)" d="M536,85 h14"/>
+
+          <rect class="fd-stage" x="552" y="52" width="120" height="66" rx="7"/>
+          <text class="fd-n" x="564" y="70">04</text>
+          <text class="fd-t" x="564" y="88">Score</text>
+          <text class="fd-s" x="564" y="102">three signal types</text>
+          <text class="fd-ms" x="564" y="132">9 ms</text>
+          <path class="fd-arrow" marker-end="url(#ah)" d="M674,85 h14"/>
+
+          <rect class="fd-stage" x="690" y="52" width="120" height="66" rx="7"/>
+          <text class="fd-n" x="702" y="70">05</text>
+          <text class="fd-t" x="702" y="88">Apply the rules</text>
+          <text class="fd-s" x="702" y="102">one call each</text>
+          <text class="fd-ms" x="702" y="132">5 ms</text>
+          <path class="fd-arrow" marker-end="url(#ah)" d="M812,85 h14"/>
+
+          <rect class="fd-out" x="828" y="52" width="112" height="66" rx="7"/>
+          <text class="fd-n" x="840" y="70" fill="#0E7A54">06</text>
+          <text class="fd-t" x="840" y="88">Group</text>
+          <text class="fd-s" x="840" y="102">11 decisions</text>
+          <text class="fd-ms" x="840" y="132">0.5 ms</text>
+
+          <!-- changing the route only re-runs the last two -->
+          <path class="fd-loop" marker-end="url(#ahb)" d="M884,48 C884,14 750,14 750,44"/>
+          <text class="fd-lab" x="628" y="10" fill="#2B4EE6">Change the route &#8212; only these two run again, 5 ms</text>
+
+          <!-- AI, off to the side and earlier -->
+          <rect class="fd-ai" x="620" y="196" width="320" height="62" rx="7"/>
+          <text class="fd-t" x="634" y="216" fill="#2B4EE6">Written earlier, by a model</text>
+          <text class="fd-s" x="634" y="232">One sentence per decision, saved to a file.</text>
+          <text class="fd-s" x="634" y="246">Not part of this run. Nothing here decides anything.</text>
+          <path class="fd-arrow" marker-end="url(#ah)" stroke-dasharray="4 3" d="M884,192 V126"/>
+
+          <text class="fd-lab" x="10" y="212">Everything above happens</text>
+          <text class="fd-lab" x="10" y="228">in your browser, in about</text>
+          <text class="fd-t" x="10" y="250" font-size="19">25 milliseconds</text>
+          <text class="fd-s" x="10" y="268">for 366 objects and 326 connections</text>
+        </svg>
+
+        <div class="diag-key">
+          <span class="k"><span class="sw" style="background:#FAFBFD"></span>Your files, untouched</span>
+          <span class="k"><span class="sw" style="background:var(--accent-2);border-color:transparent"></span>Reading them</span>
+          <span class="k"><span class="sw" style="background:#FFF"></span>Rules doing the work</span>
+          <span class="k"><span class="sw" style="background:var(--good-bg);border-color:transparent"></span>What you see</span>
+        </div>
+      </div>
+
+      <h3 style="margin-top:26px">What is parallel, and what cannot be</h3>
+      <p>
+        <b>Parallel:</b> the four files are asked for at once rather than one after another, so the
+        slowest one sets the pace instead of the total. On a laptop reading local files the saving is
+        small &#8212; 8.7 milliseconds against 9.6 &#8212; but the same pattern is what keeps it quick when
+        the files come from somewhere further away.
+      </p>
+      <p>
+        <b>Sequential:</b> steps 2 to 6 are a chain, and not by choice. Evidence needs the graph,
+        because knowing whether anything still calls a program requires knowing what calls what.
+        Scoring needs the evidence. The rules need the scores. Grouping needs the calls. Trying to
+        run any of it early would mean guessing at the answer it depends on.
+      </p>
+      <p>
+        <b>What happens when you change the route:</b> not this whole chain. The graph and the scores are
+        worked out once and kept, because which route you take does not change what the data says. Only
+        the last two steps run again, which is why the page responds instantly rather than reloading.
+      </p>
+
+      <h3 style="margin-top:26px">What runs where</h3>
+      <p>Worth being exact about, because it is the first thing a technical person will ask.</p>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Part</th><th>Where it runs</th><th>Built with</th></tr></thead>
+          <tbody>
+            <tr><td>Reading the files, building the graph, scoring, the rules, grouping</td><td>In your browser, while you watch</td><td>Plain JavaScript &#8212; no framework, no build step</td></tr>
+            <tr><td>Writing the summary sentences</td><td>Once, in advance, on a laptop</td><td>Node.js and a single call to a model</td></tr>
+            <tr><td>Re-checking every headline number against the raw files</td><td>On demand, on a laptop</td><td>Node.js</td></tr>
+            <tr><td>Handing the page to your browser</td><td>On your machine</td><td>Python &#8212; a thirty-line file server</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note" style="margin-top:16px">
+        <span class="note-m">Note</span>
+        <span>
+          <b>Python never touches the data.</b> Its only job is to hand files to the browser, because
+          browsers refuse to read local files directly for security reasons. Every decision on this
+          page is made by JavaScript running in front of you, from a rules file you can open and read.
+        </span>
+      </div>
+    </section>
+
+    <section id="know">
+      <h2>What we know, and what we don't</h2>
+      <p>
+        This is the foundation, and it is the part most tools get wrong. There is a real difference
+        between <b>&ldquo;we measured this and it never ran&rdquo;</b> and <b>&ldquo;nobody measured
+        this&rdquo;</b>. Treating the second as the first is the quickest way to produce a confident,
+        wrong list of things to delete.
+      </p>
+      <p>So every object sits in one of four states, and only the first two are actual measurements.</p>
+
+      <div class="card coverage">
+        <div class="coverage-row">
+          <div class="name">Everything<small>all 366 objects in the export</small></div>
+          <div class="bar" role="img" aria-label="All objects: 142 active, 17 never ran, 175 not measured, 32 cannot be measured">
+            <span class="e-active" style="width:38.8%"></span>
+            <span class="e-dead" style="width:4.6%"></span>
+            <span class="e-unmeasured" style="width:47.8%"></span>
+            <span class="e-unmeasurable" style="width:8.8%"></span>
+          </div>
+          <div class="tally">142 &#183; 17 &#183; 175 &#183; 32</div>
+        </div>
+
+        <div class="cov-group">
+          <div class="coverage-row">
+            <div class="name">Custom code<small>106 objects &#8212; what you decide about</small></div>
+            <div class="bar" role="img" aria-label="Custom: 54 active, 17 never ran, 17 not measured, 18 cannot be measured">
+              <span class="e-active" style="width:50.9%"></span>
+              <span class="e-dead" style="width:16.0%"></span>
+              <span class="e-unmeasured" style="width:16.0%"></span>
+              <span class="e-unmeasurable" style="width:17.1%"></span>
+            </div>
+            <div class="tally">54 &#183; 17 &#183; 17 &#183; 18</div>
+          </div>
+          <div class="coverage-row">
+            <div class="name">SAP standard<small>260 objects &#8212; SAP's to decide about</small></div>
+            <div class="bar" role="img" aria-label="Standard: 88 active, 158 not measured, 14 cannot be measured">
+              <span class="e-active" style="width:33.8%"></span>
+              <span class="e-unmeasured" style="width:60.8%"></span>
+              <span class="e-unmeasurable" style="width:5.4%"></span>
+            </div>
+            <div class="tally">88 &#183; 0 &#183; 158 &#183; 14</div>
+          </div>
+        </div>
+
+        <div class="cov-group">
+          <div class="coverage-row">
+            <div class="name">Programs<small>65 custom</small></div>
+            <div class="bar"><span class="e-active" style="width:60%"></span><span class="e-dead" style="width:20%"></span><span class="e-unmeasured" style="width:20%"></span></div>
+            <div class="tally">39 &#183; 13 &#183; 13</div>
+          </div>
+          <div class="coverage-row">
+            <div class="name">Function modules<small>23 custom</small></div>
+            <div class="bar"><span class="e-active" style="width:65.2%"></span><span class="e-dead" style="width:17.4%"></span><span class="e-unmeasured" style="width:17.4%"></span></div>
+            <div class="tally">15 &#183; 4 &#183; 4</div>
+          </div>
+          <div class="coverage-row">
+            <div class="name">Tables<small>18 custom</small></div>
+            <div class="bar"><span class="e-unmeasurable" style="width:100%"></span></div>
+            <div class="tally">18 cannot be measured</div>
+          </div>
+        </div>
+
+        <div class="legend">
+          <div class="item"><span class="swatch e-active"></span><span><b>Running</b>We have a usage record and it shows real activity.</span></div>
+          <div class="item"><span class="swatch e-dead"></span><span><b>Measured, never ran</b>We have a usage record and it shows zero. That is a finding, not a gap.</span></div>
+          <div class="item"><span class="swatch e-unmeasured"></span><span><b>Not measured</b>No usage record at all. We do not know &#8212; and we say what would tell us.</span></div>
+          <div class="item"><span class="swatch e-unmeasurable"></span><span><b>Cannot be measured</b>Tables do not &ldquo;run&rdquo;, so usage data cannot exist for them. Evidence comes from what reads and writes them instead.</span></div>
+        </div>
+      </div>
+
+      <p style="margin-top:18px">
+        Read those three bars together and the frightening headline turns around. Yes, 175 objects
+        have no usage record &#8212; but look where they are. <strong>61% of SAP's own standard code is
+        unmeasured, against 16% of your custom code.</strong> The blind spot is almost entirely in code
+        nobody was going to make decisions about anyway. And every single object measured at zero
+        is custom, which is precisely where a retirement list should come from.
+      </p>
+    </section>
+
+    <section id="calls">
+      <h2>How a call is made</h2>
+      <p>
+        No single fact decides anything, because in this data no single fact can. The obvious test
+        for dead code &#8212; nothing uses it, it uses nothing, no usage record &#8212; returns 105
+        objects, and 101 of them are SAP's own. It would have been confidently useless.
+      </p>
+      <p>Instead three kinds of evidence are weighed together.</p>
+
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Evidence</th><th>The question it answers</th></tr></thead>
+          <tbody>
+            <tr><td>Does the business use it?</td><td>Can a person reach it from a menu? How many people, how often?</td></tr>
+            <tr><td>How tangled is it?</td><td>What else calls it? Does it write into SAP's own data? Is there a duplicate version?</td></tr>
+            <tr><td>How old and how neglected?</td><td>When was it built, when did it last run, who wrote it, are they still here?</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:26px">The five possible calls</h3>
+      <div class="scroll" style="margin-top:10px">
+        <table>
+          <thead><tr><th>Call</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td><span class="tag t-bad">Remediate</span></td><td>It writes into SAP's own data. That gets in the way of a clean system, whether or not anyone uses it.</td></tr>
+            <tr><td><span class="tag t-invest">Investigate</span></td><td>The evidence points in two directions, or it simply is not there yet.</td></tr>
+            <tr><td><span class="tag t-acc">Workshop</span></td><td>The business clearly relies on it. Whether the new system covers it out of the box is a conversation, not something data can answer.</td></tr>
+            <tr><td><span class="tag t-good">Retire</span></td><td>The evidence supports switching it off rather than paying to carry it forward.</td></tr>
+            <tr><td><span class="tag t-flat">Carry as-is</span></td><td>It is being used and nothing argues for touching it.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note" style="margin-top:18px">
+        <span class="note-m">Why</span>
+        <span>
+          Each call also records <b>how solid the evidence behind it is</b>, and that is not
+          decoration. It is a hard limit: <b>&ldquo;Retire&rdquo; can only come from a rule resting on a
+          structural fact or an actual measurement</b>. A rule built on inference, or on the absence of
+          a record, proposes &ldquo;Investigate&rdquo; instead and names what would settle it. The engine
+          refuses to start if a rule breaks that.
+        </span>
+      </div>
+    </section>
+
+    <section id="decisions">
+      <h2>The eleven decisions</h2>
+      <p>
+        Every custom object belongs to exactly one of these, so the numbers add up to the whole
+        estate and nothing gets funded twice.
+      </p>
+
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Decision</th><th class="num">Objects</th><th>Recommended</th><th>Confidence</th></tr></thead>
+          <tbody>
+            <tr><td>Code that writes into SAP's own data</td><td class="num">6</td><td><span class="tag t-bad">Remediate</span></td><td>High</td></tr>
+            <tr><td>Dead code the business still points at</td><td class="num">4</td><td><span class="tag t-invest">Investigate</span></td><td>High</td></tr>
+            <tr><td>Old versions replaced by newer ones</td><td class="num">2</td><td><span class="tag t-good">Retire</span></td><td>High</td></tr>
+            <tr><td>Measured at zero, nothing depends on it</td><td class="num">11</td><td><span class="tag t-good">Retire</span></td><td>High</td></tr>
+            <tr><td>In use, nothing argues for touching it</td><td class="num">33</td><td><span class="tag t-flat">Carry as-is</span></td><td>High</td></tr>
+            <tr><td>Two versions both running at once</td><td class="num">11</td><td><span class="tag t-invest">Investigate</span></td><td>High</td></tr>
+            <tr><td>Business-critical custom code</td><td class="num">5</td><td><span class="tag t-acc">Workshop</span></td><td>High</td></tr>
+            <tr><td>Custom tables &#8212; what data moves with what</td><td class="num">18</td><td><span class="tag t-flat">Carry as-is</span></td><td>Medium</td></tr>
+            <tr><td>Leftovers from the 2011 migration</td><td class="num">8</td><td><span class="tag t-invest">Investigate</span></td><td>Low</td></tr>
+            <tr><td>Unmeasured, but something references it</td><td class="num">6</td><td><span class="tag t-invest">Investigate</span></td><td>Low</td></tr>
+            <tr><td>Possible retirements, pending measurement</td><td class="num">2</td><td><span class="tag t-invest">Investigate</span></td><td>Low</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:26px">What the data actually turned up</h3>
+      <div class="scroll" style="margin-top:10px">
+        <table>
+          <thead><tr><th>Finding</th><th>Why it matters</th></tr></thead>
+          <tbody>
+            <tr><td><b>Two vendor scorecards are both live</b> &#8212; each with its own menu entry, 1,229 and 2,515 runs a month</td><td>Somebody built a replacement and the old one never went away. Migrate both and you pay to build both again.</td></tr>
+            <tr><td><b>21 of 31 menu entries run on custom code</b></td><td>The business does not experience &ldquo;SAP&rdquo;. It experiences custom code with SAP underneath.</td></tr>
+            <tr><td><b>Three menu entries point at programs the inventory does not contain</b> &#8212; one labelled &ldquo;Legacy pricing tool (decommissioned?)&rdquo;, another &ldquo;Temporary fix 2014&rdquo;</td><td>People can run these today. Nobody can say who owns them. One runs 3,860 times a month across 74 users.</td></tr>
+            <tr><td><b>Six objects write directly into SAP's own sales and finance records</b>, by seven different paths</td><td>Small enough to fix this quarter, and true whether or not anyone runs them.</td></tr>
+            <tr><td><b>SAP's own code never calls custom code</b> &#8212; not once</td><td>Retiring custom code will not break SAP. What stops you is people using it, which is a much easier thing to check.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="objects">
+      <h2>One object at a time</h2>
+      <p>
+        Eleven decisions is what a steering committee can fund. It is not what the FI lead in the room
+        wants: they want <span class="mono">ZFI_MASS_REVERSAL</span>, the thing their team wrote, and
+        they want to know what you are proposing to do with it. A tool that cannot answer that reads
+        as a slide rather than a system.
+      </p>
+      <p>
+        So the same estate is available a second way, on a tab next to the decisions: every object, in
+        the order the decisions put them, searchable and sortable, with the evidence behind each one on
+        the row. Click any of them and a panel opens with what the extract knows &#8212; how often it
+        runs and for how many people, or why no such number can exist; what calls it and what it calls,
+        with writes into SAP's own data flagged in red; who wrote it and when; and which decision it is
+        funded under, one click away.
+      </p>
+      <div class="note">
+        <span class="note-m">Note</span>
+        <span>
+          That panel is deliberately <b>not</b> reachable from inside a decision. There the objects are
+          grouped on purpose &#8212; grouping them is what turned a list nobody can fund into eleven
+          things somebody can &#8212; and opening them one by one from inside invites exactly the
+          object-by-object arguing the grouping exists to end.
+        </span>
+      </div>
+      <p style="margin-top:16px">
+        There is one place the two units of decision can disagree, and it is said out loud rather than
+        smoothed over. Three custom tables have no recorded reads or writes at all, so the rule that
+        catches them says &ldquo;Investigate&rdquo;. They sit inside a decision to carry the eighteen
+        custom tables forward with the data. The panel names both, and says which one governs: decisions
+        are taken per decision, not per object.
+      </p>
+    </section>
+
+    <section id="assistant">
+      <h2>The assistant</h2>
+      <p>
+        Everything that decides anything here is deterministic, and that has so far been said as a
+        <em>negative</em>: no score, no call and no grouping is written by a model. That proves
+        restraint. It does not show where a model actually pays &#8212; and for a capability whose
+        whole premise is that AI is only as good as the context it is given, that is half an answer.
+      </p>
+      <p>
+        It pays in one specific place. The page in front of a transformation lead carries four files,
+        eleven decisions, five calls, four evidence states and a route lever, and the thing nobody can
+        buy is thirty seconds of an expert saying <em>here is what you are looking at, and here is
+        what I would not trust yet</em>. That is translation, not judgement. It is the right job to
+        give a model and the wrong job to give the rulepack.
+      </p>
+      <p>
+        So there is a button in the corner of both pages. On the Extract Wizard it says what just
+        happened to your data and what to know about it before going further. On the Landscape
+        Footprint it says where you stand and how to decide from here.
+      </p>
+
+      <div class="stack">
+        <div class="card">
+          <h3>Written for whom, not how much</h3>
+          <p class="lede" style="margin-bottom:12px">
+            One control: <b>for the board</b>, <b>for the programme</b>, <b>for the engineer</b>.
+            Same content, three registers.
+          </p>
+          <p style="margin:0; font-size:var(--t-sm)">
+            It is deliberately not a &ldquo;less / medium / more&rdquo; slider. Nobody knows which
+            verbosity they are, but everybody knows which room they are in &#8212; and asking for the
+            board version hands you a sentence you can put straight on a slide, live, which is a far
+            better thing to be able to do than to have set detail to medium.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Two rules that keep it honest</h3>
+          <p style="margin:0 0 12px; font-size:var(--t-sm)">
+            <b>It is composed fresh every time it opens, never cached whole.</b> A summary describing
+            the neutral position while the page showed a greenfield reading would destroy the
+            credibility of both. The phrasing is model-written and lives in the file; every number in
+            it is read from your data at the moment you press the button. Switch the route and press
+            it again &#8212; the summary moves with the page.
+          </p>
+          <p style="margin:0; font-size:var(--t-sm)">
+            <b>Everything a model wrote is marked, with what it was written from.</b> A disclaimer
+            says &ldquo;do not sue us&rdquo;. Provenance says &ldquo;here is what to check&rdquo;,
+            which is the only version worth putting in front of somebody who is about to fund
+            something.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Where it points next</h3>
+          <p style="margin:0 0 12px; font-size:var(--t-sm)">
+            Every held decision already names the one thing that would settle it &#8212; a usage
+            collection over a full business cycle, or table row counts from the source system. Read
+            as a sentence that is a caveat. Read as a work order it is something else: scoped,
+            repeatable, with a defined finish line.
+          </p>
+          <p style="margin:0; font-size:var(--t-sm)">
+            That is the shape of work that belongs to an agent rather than a consultant, and the
+            assistant says so: point a collection at the estate, run it for a cycle, re-run this page.
+            The held objects are the backlog it would be handed. Nothing here builds that agent &#8212;
+            but the footprint is what would scope it.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="dials">
+      <h2>The one lever that changes the answer</h2>
+
+      <div class="stack">
+        <div class="card">
+          <h3>Which route you take</h3>
+          <p class="lede" style="margin-bottom:14px">
+            Rebuild from scratch, convert what you have, or move in slices? It is not settled at this
+            customer, so the tool refuses to assume. The same evidence is read four ways, and the
+            interesting part is where the readings disagree. This is the only control on the page.
+          </p>
+          <div class="scroll">
+            <table>
+              <thead><tr><th>Route</th><th>What rises to the top</th><th>Code writing into SAP data</th></tr></thead>
+              <tbody>
+                <tr><td>No route assumed</td><td>Everything the extract supports, each decision sized on its own evidence</td><td><span class="tag t-bad">Remediate</span></td></tr>
+                <tr><td>Convert what you have</td><td>Retirement first &#8212; anything switched off is something you never pay to convert, test and own</td><td><span class="tag t-bad">Remediate</span></td></tr>
+                <tr><td>Build fresh</td><td>Everything actually in use, because nothing carries over by itself</td><td><span class="tag t-acc">Becomes a spec</span></td></tr>
+                <tr><td>Move in slices</td><td>The 18 custom tables &#8212; they decide what each slice contains</td><td><span class="tag t-bad">Remediate</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin:14px 0 0; font-size:var(--t-sm)">
+            Same six objects, opposite meaning. On a conversion they are the hard gate. On a fresh
+            build there is no core to keep clean and nothing to remediate &#8212; but those seven write
+            paths describe behaviour the business depends on today, so they stop being defects and
+            become requirements for the thing you are about to build. A tool that had quietly assumed
+            a route would have shown you one of those answers and hidden the other.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>What each route does to the numbers</h3>
+          <p class="lede" style="margin-bottom:14px">
+            The route does not only reorder the list. Where it genuinely changes what you would do
+            about a decision, it changes the call &#8212; and the decision then carries the sentence
+            that justifies the change. Seven of the forty-four route/decision combinations move.
+          </p>
+          <div class="scroll">
+            <table>
+              <thead><tr><th>Route</th><th class="num">Remediate</th><th class="num">Retire</th><th class="num">Workshop</th><th class="num">Investigate</th><th class="num">Carry</th></tr></thead>
+              <tbody>
+                <tr><td>No route assumed</td><td class="num">6</td><td class="num">13</td><td class="num">5</td><td class="num">31</td><td class="num">51</td></tr>
+                <tr><td>Convert what you have</td><td class="num">6</td><td class="num">13</td><td class="num">0</td><td class="num">31</td><td class="num">56</td></tr>
+                <tr><td>Build fresh</td><td class="num">0</td><td class="num">23</td><td class="num">62</td><td class="num">21</td><td class="num">0</td></tr>
+                <tr><td>Move in slices</td><td class="num">6</td><td class="num">13</td><td class="num">5</td><td class="num">49</td><td class="num">33</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="note" style="margin-top:16px">
+            <span class="note-m">Read</span>
+            <span>Every row still adds up to 106 &#8212; the route changes what you do, never how much
+            there is. Building fresh turns 62 of the 106 into build-buy-or-drop decisions and makes the
+            clean-core problem disappear; moving in slices turns the tables into the open question,
+            because they decide what a slice contains and not one of them has usage evidence.</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>What is deliberately not a control</h3>
+          <p class="lede" style="margin-bottom:14px">
+            An earlier version of this had a second dial: how much unproven evidence you were willing
+            to act on, nought to a hundred. It has been taken out, and that is a feature rather than a
+            simplification.
+          </p>
+          <p style="margin:0 0 12px; font-size:var(--t-sm)">
+            No Head of Transformation says &ldquo;I accept a risk score of seventy&rdquo;. The dial asked
+            for a number nobody can source, and turning it up far enough made the tool recommend
+            deleting things nobody had measured. A safeguard you can switch off is not a safeguard.
+          </p>
+          <p style="margin:0; font-size:var(--t-sm)">
+            What the dial used to protect is now a property of the engine: <b>nothing is ever retired on
+            evidence weaker than a measurement</b>. The two rules that used to sit behind the dial now
+            propose &ldquo;Investigate&rdquo; and name what would settle them, which is what their own
+            wording always said. The default output is identical &#8212; only the dial is gone.
+          </p>
+          <div class="note" style="margin-top:16px">
+            <span class="note-m">Also</span>
+            <span>Whether a missing usage row means &ldquo;never ran&rdquo; is a question for the
+            customer's team, not a switch for the reader to guess at. It stays in
+            <span class="mono">rulepack.json</span>, stated on the face of the output, and it is one
+            string to change if the answer comes back different.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="disagree">
+      <h2>When you disagree</h2>
+      <p>
+        You can change any recommendation. Open a decision and pick a different call &#8212; it is
+        marked <b>edited</b> everywhere it appears, and a <b>Reset to rule proposal</b> button appears
+        next to it.
+      </p>
+      <p>
+        Three layers, all kept: what the rules proposed from the evidence, what the route you chose
+        implies, and what a person concluded. Each is shown separately rather than collapsed into a
+        single answer.
+      </p>
+      <p>
+        The original recommendation is never thrown away. The record shows both what the evidence
+        said and what a person concluded, which is the honest way round: the tool is not the
+        decision-maker, but it should not quietly forget that it disagreed.
+      </p>
+    </section>
+
+    <section id="position">
+      <h2>The answer, first</h2>
+      <p>
+        The Landscape Footprint opens on the thing you actually take to a steering committee. It is
+        the first card on the page, not the last, because a transformation lead should be able to
+        stop reading after it and still have the answer:
+      </p>
+      <div class="card" style="margin:16px 0; font-size:var(--t-lg); line-height:1.6">
+        &ldquo;<b>106</b> custom objects resolve into <b>11</b> decisions. <b>24</b> of them have an
+        action against them today: 13 retired, 6 remediated to clear the write paths into standard
+        and 5 taken to a fit-to-standard workshop. <b>31</b> are held for a named piece of evidence
+        rather than guessed at, and <b>51</b> carry forward untouched.&rdquo;
+      </div>
+      <p>
+        Underneath it, the whole custom estate drawn as a map: one tile per decision, sized by how
+        many objects it covers and coloured by the call. It answers &ldquo;what is the split&rdquo; and
+        &ldquo;which of these is big&rdquo; in one picture &#8212; a bar chart answers only the first, and
+        would show you 51 objects to carry without showing that 33 of them are one decision and 18
+        are another resting on completely different evidence. Every tile opens the decision behind it.
+      </p>
+      <p>
+        Then a line naming exactly what evidence would settle the ones being held, and an export to a
+        text file you can paste straight into a deck. Change the route and the whole card redraws.
+      </p>
+      <div class="note">
+        <span class="note-m">Point</span>
+        <span>Most tools answer &ldquo;what is in your system?&rdquo;. This one answers <b>&ldquo;what have you decided, and what are you still not able to decide?&rdquo;</b> &#8212; and it never lets the second one hide.</span>
+      </div>
+    </section>
+
+    <section id="built">
+      <h2>What it is built from</h2>
+      <p>
+        One requirement shaped every choice here: it has to be changeable <strong>live, in the room,
+        in under ten minutes</strong>. That rules out anything with a build step, an install, or a
+        dependency on the internet.
+      </p>
+
+      <dl class="kv">
+        <dt>Runs on</dt><dd>Plain browser code. No framework, no build, no install.</dd>
+        <dt>Your data</dt><dd>Read in the browser when the page loads. Nothing is pre-baked, so the demo genuinely runs on the real files.</dd>
+        <dt>Diagrams</dt><dd>Drawn by hand in the page. A charting library was tried and dropped &#8212; a twenty-box diagram does not need one, and a hand-drawn one looks identical every time, which matters when you are presenting.</dd>
+        <dt>Network</dt><dd>None. It works with the wi-fi off, checked.</dd>
+        <dt>Where AI runs</dt><dd>Once, in advance, saved to a file. The live page never calls out to anything.</dd>
+        <dt>Sharing it</dt><dd>Static files. Any host, or a Git link.</dd>
+      </dl>
+
+      <pre class="tree">
+<span class="dir">prototype/</span>
+  <span class="f">index.html</span>          <span class="note">the two pages</span>
+  <span class="f">app.css</span>             <span class="note">Celonis Studio look and feel</span>
+  <span class="dir">data/</span>              <span class="note">the four files, exactly as delivered</span>
+  <span class="dir">src/core/</span>          <span class="note">reads files, builds the picture, works out what is known</span>
+  <span class="dir">src/engine/</span>        <span class="note">the scoring and the rules</span>
+    <span class="f">rulepack.json</span>     <span class="note">every number and threshold, in one editable file</span>
+  <span class="dir">src/workspace/</span>     <span class="note">the wizard and the board</span>
+  <span class="dir">tools/</span>
+    <span class="f">check.mjs</span>         <span class="note">re-checks every headline number against the raw files</span>
+    <span class="f">serve.py</span>          <span class="note">runs it locally</span>
+</pre>
+
+      <h3 style="margin-top:24px">How the numbers are kept honest</h3>
+      <p style="margin-bottom:10px">
+        A separate script recalculates every headline figure straight from the original files and
+        fails loudly if anything drifts. It has already caught one real error: an early claim of
+        &ldquo;7 objects writing into SAP data&rdquo; when it is seven <em>paths</em> across <em>six</em>
+        objects, because one object writes to two places.
+      </p>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Checked</th><th class="num">Value</th></tr></thead>
+          <tbody>
+            <tr><td>Objects &#183; custom &#183; tables</td><td class="num">366 &#183; 106 &#183; 32</td></tr>
+            <tr><td>Menu entries running on custom code</td><td class="num">21 of 31</td></tr>
+            <tr><td>Writes into SAP data &#8212; paths / objects</td><td class="num">7 / 6</td></tr>
+            <tr><td>SAP code calling custom code</td><td class="num">0</td></tr>
+            <tr><td>Programs referenced but not in the inventory</td><td class="num">3</td></tr>
+            <tr><td>Nothing is retired on inference or on a missing record</td><td class="num">pass</td></tr>
+            <tr><td>Every route still covers all 106 custom objects</td><td class="num">pass</td></tr>
+            <tr><td>Every route change names a real decision, a real call and a reason</td><td class="num">pass</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="change">
+      <h2>Changing it live</h2>
+      <p>
+        The rules live in a file, not buried in code, so most requests are a number and a refresh.
+      </p>
+
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Request</th><th>Where it changes</th><th class="num">Effort</th></tr></thead>
+          <tbody>
+            <tr><td>Weigh something more heavily, move a threshold</td><td class="mono">rulepack.json</td><td class="num">one line</td></tr>
+            <tr><td>Take a new fact into account</td><td class="mono">two files</td><td class="num">a few lines</td></tr>
+            <tr><td>Add a filter, a column, a new view</td><td class="mono">one file</td><td class="num">a few lines</td></tr>
+            <tr><td>Change what a route does to a call</td><td class="mono">lens.js</td><td class="num">three lines</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:26px">The setting that matters most</h3>
+      <p>
+        One question is still open with the customer: when a piece of code has no usage record,
+        does that mean <em>nobody measured it</em>, or <em>it never ran</em>? It is a switch rather
+        than something buried in code, so the answer costs one edit.
+      </p>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Setting</th><th class="num">Decisions</th><th>What unmeasured code gets</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">not measured</td><td class="num">11</td><td>Investigate, and say what would settle it</td><td>The current assumption. Unmeasured code is never retired.</td></tr>
+            <tr><td class="mono">never ran</td><td class="num">8</td><td>Becomes a measurement</td><td>If the customer confirms this, unmeasured code becomes evidence, retirement becomes available to it, and three decisions fold into others.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px">
+        If that question gets answered mid-meeting, absorbing it is a demo asset rather than a
+        setback &#8212; it is the same move as any other live change, and it shows the seams hold.
+      </p>
+    </section>
+
+    <footer>
+      Landscape Footprint &#183; prototype v2 &#183; Alp&#225;r Kacs&#243;<br>
+      Celonis product challenge &#8212; Sr. Applications Product Manager, AI System Transformation<br>
+      Every figure on this page is re-checked against the source files by tools/check.mjs.
+    </footer>
+  </main>
+</div>
+</body>
+</html>

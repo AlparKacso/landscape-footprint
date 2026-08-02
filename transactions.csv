@@ -1,0 +1,32 @@
+transaction_code,program_name,description
+VA01_LIKE,STD_ORDER_ENTRY,Create sales order
+VA02_LIKE,STD_ORDER_CHANGE,Change sales order
+VL01_LIKE,STD_DELIVERY_CREATE,Create delivery
+VF01_LIKE,STD_BILLING_RUN,Create billing document
+F110_LIKE,STD_PAYMENT_RUN,Automatic payment run
+ME21_LIKE,STD_PO_CREATE,Create purchase order
+MD01_LIKE,STD_MRP_RUN,MRP planning run
+Z469,Z_TAX_ADJUST_V2,Custom transaction for z_tax_adjust_v2
+Z235,Z_WAREHOUSE_MAP,Custom transaction for z_warehouse_map
+Z981,Z_DELIVERY_SPLIT,Custom transaction for z_delivery_split
+Z474,Z_PICKLIST_OPT,Custom transaction for z_picklist_opt
+Z881,Z_EDI_MAP_CUST01,Custom transaction for z_edi_map_cust01
+Z888,Z_LABEL_PRINT,Custom transaction for z_label_print
+Z117,Y_MONTH_END_HELPER,Custom transaction for y_month_end_helper
+Z114,ZSD_INVOICE_CHECK,Custom transaction for zsd_invoice_check
+Z320,Z_FX_REVALUATION,Custom transaction for z_fx_revaluation
+Z161,Z_LEGACY_MIG_10,Custom transaction for z_legacy_mig_10
+Z618,Z_LEGACY_MIG_07,Custom transaction for z_legacy_mig_07
+Z743,Z_WAREHOUSE_MAP_V2,Custom transaction for z_warehouse_map_v2
+Z885,Z_VENDOR_SCORECARD_V2,Custom transaction for z_vendor_scorecard_v2
+Z818,Y_INVOICE_MATCH,Custom transaction for y_invoice_match
+Z184,Z_RETURNS_HANDLER,Custom transaction for z_returns_handler
+Z384,Z_LEGACY_SYNC,Custom transaction for z_legacy_sync
+Z417,Z_COMPLAINT_LOG,Custom transaction for z_complaint_log
+Z927,Y_AUDIT_EXTRACT,Custom transaction for y_audit_extract
+Z500,Z_VENDOR_SCORECARD,Custom transaction for z_vendor_scorecard
+Z815,Y_SHIPMENT_TRACKER,Custom transaction for y_shipment_tracker
+Z901,ZSD_ORDER_UNBLOCK,Remove delivery/billing block
+Z777,Z_OLD_PRICING_TOOL,Legacy pricing tool (decommissioned?)
+Z778,Y_TEMP_FIX_2014,Temporary fix 2014
+Z779,ZPRC_REBATE_CALC,Rebate calculation

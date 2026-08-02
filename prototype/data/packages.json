@@ -1,0 +1,86 @@
+{
+  "_meta": {
+    "generatedBy": "Claude (Opus 5), during the build session",
+    "generatedAt": "2026-07-30",
+    "regenerate": "node tools/generate-packages.mjs",
+    "why_cached": "The narrative layer is the only part of this prototype an LLM authored, and it is cached to disk on purpose. A live API call inside a ten-minute demo is a single point of failure for no benefit: the text does not change between runs unless the packages do. Scores and dispositions are never AI-generated — they come from the rulepack and can be replayed.",
+    "scope": "Headline, decision and watch-out per package. Nothing here feeds back into scoring."
+  },
+
+  "clean-core": {
+    "headline": "Six custom objects write directly into standard finance and sales document tables. That is seven write paths into the core you are trying to keep clean.",
+    "decision": "Remediate before conversion, or accept that the core is not clean on day one.",
+    "watchOut": "This one does not depend on usage evidence at all — the write paths are in the dependency extract whether or not anyone runs the code. It is the only package you can act on today without measuring anything first.",
+    "urgency": "Act now"
+  },
+
+  "fork-live": {
+    "headline": "Eleven objects are running as forked pairs, and seven of them sit behind their own transaction code. Z_VENDOR_SCORECARD and Z_VENDOR_SCORECARD_V2 are both live — 1,229 and 2,515 executions a month, 71 and 58 users.",
+    "decision": "Resolve each fork before migrating either side. Otherwise the fork migrates too, and you pay to build both in S/4.",
+    "watchOut": "Two live versions usually means two groups of users with different expectations. The technical merge is the easy half.",
+    "urgency": "Act now"
+  },
+
+  "fork-superseded": {
+    "headline": "Two predecessors whose successor is measurably carrying the load. Z_EDI_MAP_CUST01 still owns a transaction code while recording zero executions; its V2 runs 706 times a month with no transaction code of its own.",
+    "decision": "Retire the predecessor and repoint the transaction code at the successor.",
+    "watchOut": "Users are already reaching V2 somehow. Find out how before you move the transaction code, or you will break the path they actually use.",
+    "urgency": "Act now"
+  },
+
+  "dead-clear": {
+    "headline": "Eleven custom objects measured at zero executions, with no transaction code and nothing calling them. Three independent signals agreeing.",
+    "decision": "Retire as a batch. This is the strongest retirement case the extract supports.",
+    "watchOut": "Confirm the extract spans a full business cycle. A year-end-only job measured over a quarter looks exactly like this.",
+    "urgency": "Now"
+  },
+
+  "dead-referenced": {
+    "headline": "Four objects measured at zero executions that something still points at — two of them behind live transaction codes.",
+    "decision": "Investigate before retiring. Dead code with a live entry point is a governance question, not a cleanup task.",
+    "watchOut": "Either the transaction is genuinely unused and should go with the code, or the measurement is wrong. Both answers matter, and they lead to different places.",
+    "urgency": "Now"
+  },
+
+  "workshop": {
+    "headline": "Five business-critical custom objects, every one behind its own transaction code and actively used. The business reaches these directly.",
+    "decision": "Book the fit-to-standard workshop. Each must exist on the other side in some form — the question is whether S/4 standard covers it.",
+    "watchOut": "Metadata cannot tell you whether standard covers a custom function. This scopes the workshop; it does not pre-empt it.",
+    "urgency": "Next"
+  },
+
+  "tables": {
+    "headline": "Eighteen custom tables, and usage.csv covers none of them — zero of thirty-two tables in the whole extract. Execution semantics do not apply to tables, so the usual evidence simply is not there. Fifteen are read or written by something; three are touched by nothing at all.",
+    "decision": "These carry data, so they are the pivot in a selective transition: what moves is decided by which tables follow which slice.",
+    "watchOut": "The evidence here is read and write access from the dependency extract alone. The three untouched tables look like free retirements and are not — no reads in a dependency extract is not the same as no rows in the database. Get row counts and last-change timestamps first.",
+    "urgency": "Next"
+  },
+
+  "migration-residue": {
+    "headline": "Eight objects left over from the 2011 migration with no evidence of use. The migration-era packages hold thirty-four objects in total; the rest are demonstrably still working and are decided on their own merits.",
+    "decision": "Measure these, then retire as a batch. One decision, taken once.",
+    "watchOut": "Fifteen years is long enough for a migration helper to quietly become a business process. Measure before you batch.",
+    "urgency": "Next"
+  },
+
+  "unmeasured-referenced": {
+    "headline": "Six objects with no usage row that something still references — two are reachable from a transaction code.",
+    "decision": "Hold. Nothing here should be retired on the evidence available.",
+    "watchOut": "This is the package that punishes a confident tool. Absence of measurement is not absence of use, and these are exactly the objects a single-criterion orphan test would have deleted.",
+    "urgency": "Next"
+  },
+
+  "unmeasured-candidates": {
+    "headline": "Two objects with no usage row, no callers and no path from any transaction code. Three weak signals agreeing — which is not the same as one strong one.",
+    "decision": "Measure them, then retire. These are the strongest retirement candidates in the extract and they are still not retirements.",
+    "watchOut": "This is the package that tempts a tool into overreach. Every signal here is an absence, and absence of measurement is not absence of use. Measuring costs one collection window; getting it wrong costs a business process.",
+    "urgency": "Later"
+  },
+
+  "carry": {
+    "headline": "Thirty-three custom objects running measurably but with no transaction code — reached by batch, interface or RFC. Used, but not business entry points.",
+    "decision": "Carry forward. No signal argues otherwise.",
+    "watchOut": "Being invisible to the transaction list is not the same as being unused. These would look like orphans to any tool that only checks transaction codes.",
+    "urgency": "Later"
+  }
+}

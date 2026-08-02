@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "customer": "Manufacturing customer — ECC productive system 1 of 3",
+  "note": "Everything the engine does is in this file. Change a number here and refresh — no rebuild, no code edit. This is the seam the live extension uses.",
+
+  "unmeasuredMeans": "not_measured",
+  "_unmeasuredMeans": "Working assumption 5, sent to the customer and still open. A missing usage row means 'not measured', not 'never ran'. Set to 'dead' if they confirm otherwise: that single string re-scores the whole estate and folds 11 decisions into 8. Deliberately not a control in the interface — it is a question for the customer's team, not a setting for the reader to guess at.",
+
+  "staleMonths": 12,
+  "migrationEraPackages": ["Z_MIGRATION_2011", "Y_LEGACY_TOOLS"],
+  "externalAuthorPrefix": "EXT_",
+
+  "business": {
+    "tcodeDirect": 45,
+    "tcodeReachable": 15,
+    "usersAt": 50,
+    "usersWeight": 20,
+    "executionsAt": 1000,
+    "executionsWeight": 20
+  },
+
+  "entanglement": {
+    "writesStandard": 45,
+    "fanInPer": 6,
+    "fanInCap": 24,
+    "blastRadiusPer": 4,
+    "blastRadiusCap": 20,
+    "versionFork": 15
+  },
+
+  "decay": {
+    "measuredDead": 40,
+    "staleExecution": 20,
+    "ageOverYears": 12,
+    "ageWeight": 10,
+    "migrationEra": 15,
+    "externalAuthor": 12,
+    "unmeasured": 10
+  },
+
+  "_confidence": "Keyed on the evidence basis of the rule that fired, not on how strongly it fired. This is the only thing basis is read for, and it is what every Confidence mark on screen shows.",
+  "confidence": {
+    "structural": "high",
+    "measured": "high",
+    "inferred": "medium",
+    "unmeasured": "low"
+  }
+}

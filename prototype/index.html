@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landscape Footprint — ECC productive system 1</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="shell">
+  <nav class="rail" aria-label="Sections">
+    <div class="mark" aria-hidden="true"></div>
+    <button data-page="extract" title="Extract Wizard" aria-label="Extract Wizard" aria-current="true">⇪</button>
+    <button data-page="footprint" title="Landscape Footprint" aria-label="Landscape Footprint" aria-current="false">◧</button>
+    <div class="spacer"></div>
+    <button title="Help" aria-label="Help">?</button>
+  </nav>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="crumbs">
+        <a href="#">Studio</a><span class="sep">›</span>
+        <a href="#">Manufacturing customer</a><span class="sep">›</span>
+        <span class="here" id="crumb-here">Extract Wizard</span>
+      </div>
+      <span class="tag">Prototype</span>
+      <div class="grow"></div>
+      <span class="byline">Alpár Kacsó · Celonis product challenge</span>
+    </div>
+
+    <!-- ============================ EXTRACT WIZARD ============================ -->
+    <main class="page" id="page-extract">
+      <div class="needs-server" id="needs-server">
+        <div>
+          <b>This page needs a local server.</b>
+          It reads the four CSVs over <code>fetch</code>, which browsers block on <code>file://</code> —
+          so opening <code>index.html</code> directly leaves it blank. Run this from the folder above
+          <code>prototype/</code>, then open <a href="http://localhost:8010">localhost:8010</a>:
+          <pre>python3 prototype/tools/serve.py 8010 prototype</pre>
+          On macOS you can also just double-click <code>prototype/run.command</code>.
+        </div>
+      </div>
+
+      <header>
+        <h1>Extract Wizard</h1>
+        <p class="lede">Turn a raw system extract into a scored Context Model, one visible step at a time. What the pipeline does to your data is shown as it happens rather than asserted afterwards.</p>
+      </header>
+
+      <!-- Section 1 -->
+      <section class="section">
+        <h2>Load an extract</h2>
+        <div class="card load-card is-empty" id="load-card">
+          <div>
+            <b id="load-what">No extract loaded</b>
+            <span class="files" id="load-files">Four tables — an inventory, usage, dependencies and transaction codes</span>
+          </div>
+          <div class="grow"></div>
+          <button class="btn btn--ghost" id="clear-all" hidden
+                  title="Reset to the empty state. Double-clicking the Extract Wizard icon in the sidebar does the same.">Clear all data</button>
+          <button class="btn btn--primary" id="start-wizard">Load an extract</button>
+        </div>
+      </section>
+
+      <!-- Section 2 -->
+      <section class="section" id="sec-wizard" hidden>
+        <h2>Extract Wizard</h2>
+        <div class="card wizard">
+          <div id="stepper"></div>
+          <div class="wiz-panel">
+            <h3 id="wiz-title"></h3>
+            <div id="wiz-body"></div>
+          </div>
+          <div class="wiz-foot">
+            <button class="btn" id="wiz-back">Back</button>
+            <div class="grow"></div>
+            <span class="wiz-count" id="wiz-count"></span>
+            <button class="btn btn--primary" id="wiz-next">Next</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3 -->
+      <section class="section" id="sec-evidence" hidden>
+        <h2>Evidence coverage</h2>
+        <p class="section-note">What the extract can and cannot tell you. Everything on the Landscape Footprint rests on this, so it is the last thing the wizard shows you and the first thing to argue with.</p>
+        <div class="card" id="coverage"></div>
+      </section>
+    </main>
+
+    <!-- ========================== LANDSCAPE FOOTPRINT ========================== -->
+    <main class="page" id="page-footprint" hidden>
+      <header>
+        <h1>Landscape Footprint</h1>
+        <p class="lede">Day-one transparency on the custom estate — what is in there, what actually runs, and which parts of the S/4 bill you can cut before the programme starts.</p>
+      </header>
+
+      <div class="empty-state" id="empty-state">
+        <div class="es-mark" aria-hidden="true">◧</div>
+        <h3>Nothing to show yet</h3>
+        <p>The footprint is built from a scored Context Model. Run the Extract Wizard once and this page fills in — the position you are in, the estate it rests on, and the decisions that get you out of it.</p>
+        <button class="btn btn--primary" id="go-wizard">Open the Extract Wizard</button>
+      </div>
+
+      <div id="footprint-body" hidden>
+        <section class="section">
+          <div class="sec-bar">
+            <h2>Position</h2>
+            <div class="seg" id="lens-seg" role="tablist" aria-label="Transition path"></div>
+          </div>
+          <p class="section-note" id="lens-note"></p>
+          <!-- Built once, updated in place. The treemap host has to be a stable
+               node so its ResizeObserver survives a re-render. -->
+          <div class="card position" id="position">
+            <p class="position-line" id="position-line"></p>
+            <div class="treemap-host" id="treemap-host"></div>
+            <div class="split-key" id="calls"></div>
+            <div class="position-foot">
+              <div class="unlock" id="unlock"></div>
+              <button class="btn" id="export">Export position</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Scope</h2>
+          <p class="section-note">The estate the decisions are built from. Every tile opens.</p>
+          <div class="tiles" id="tiles"></div>
+        </section>
+
+        <section class="section">
+          <div class="sec-bar">
+            <div class="viewtabs viewtabs--head" id="viewtabs" role="tablist" aria-label="Board">
+              <button role="tab" data-view="decisions" aria-selected="true"><b id="tab-n-decisions">11</b> decisions</button>
+              <button role="tab" data-view="objects" aria-selected="false"><b id="tab-n-objects">106</b> objects</button>
+            </div>
+          </div>
+          <p class="section-note" id="board-note"></p>
+          <div class="toolbar">
+            <div class="pills" id="filters"></div>
+            <div class="tools">
+              <input type="search" id="q" placeholder="Search name, package, owner…" aria-label="Search objects" hidden>
+              <button class="pill" id="scope-std" aria-pressed="false" hidden
+                      data-tip="The 260 SAP standard objects, plus the 3 programs the extract references and the inventory does not contain. Shown for dependency context — none of them is the customer's decision to make.">Include SAP standard</button>
+            </div>
+          </div>
+          <div class="board" id="board"></div>
+        </section>
+
+        <section class="section collapsible is-collapsed" id="sec-integrity">
+          <button class="sec-head" aria-expanded="false">
+            <span class="chev" aria-hidden="true">▾</span>
+            <span class="sec-title">Inventory integrity</span>
+            <span class="sec-sum" id="sum-integrity"></span>
+          </button>
+          <div class="sec-body">
+            <p class="section-note">Transaction codes that are live in production and point at programs the object inventory does not contain. Read as data quality these are join failures; read as findings they are the sharpest thing in the extract. The Basis team has said the extract may be incomplete &mdash; so this is what this export reveals, not what exists.</p>
+            <div class="card" id="integrity"></div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="modal-scrim" id="scrim" hidden></div>
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <header>
+    <div class="modal-nav">
+      <button class="icon" id="prev" aria-label="Previous decision" title="Previous">‹</button>
+      <button class="icon" id="next" aria-label="Next decision" title="Next">›</button>
+      <span class="modal-pos" id="modal-pos"></span>
+    </div>
+    <div class="grow"></div>
+    <button class="icon" id="modal-close" aria-label="Close">×</button>
+  </header>
+  <div class="modal-head">
+    <h2 id="modal-title"></h2>
+    <div id="modal-badges" class="pack-top"></div>
+  </div>
+  <div class="modal-body" id="modal-body"></div>
+</div>
+
+<!-- The object drawer. Reachable from the inventory and the integrity table,
+     never from inside the decision modal — see src/workspace/drawer.js. -->
+<div class="drawer-scrim" id="drawer-scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+  <header class="drawer-head">
+    <button class="icon" id="drawer-close" aria-label="Close">×</button>
+    <h3 id="drawer-title"></h3>
+    <p id="drawer-sub"></p>
+  </header>
+  <div class="drawer-body" id="drawer-body"></div>
+</aside>
+
+<!-- The assistant. Appears once the wizard has produced something to talk about,
+     on both pages, and says something different on each. -->
+<button class="ai-cta" id="ai-cta" hidden aria-haspopup="dialog">
+  <span class="ai-cta-mark" aria-hidden="true"></span>
+  <span class="ai-cta-label">Explain this page</span>
+</button>
+
+<div class="modal-scrim" id="ai-scrim" hidden></div>
+<div class="modal modal--ai" id="ai-modal" hidden role="dialog" aria-modal="true" aria-labelledby="ai-title">
+  <header>
+    <span class="ai-mark"><i aria-hidden="true"></i>AI generated</span>
+    <div class="grow"></div>
+    <button class="icon" id="ai-close" aria-label="Close">×</button>
+  </header>
+  <div class="modal-head">
+    <h2 id="ai-title"></h2>
+    <div class="ai-aud">
+      <span class="ai-aud-label">Written</span>
+      <div class="seg seg--sm" id="ai-audience" role="tablist" aria-label="Written for"></div>
+      <span class="ai-aud-note" id="ai-aud-note"></span>
+    </div>
+  </div>
+  <div class="modal-body" id="ai-body"></div>
+</div>
+
+<input type="file" id="file-input" accept=".csv,text/csv" multiple hidden>
+
+<script type="module" src="src/workspace/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# Not mine to publish.
+#
+# The candidate brief is Celonis's own assessment material — public means
+# searchable by the next candidate.
+Challenge_Brief_Candidate.docx
+
+# Screenshots of a live Celonis tenant: a real cloud URL, a signed-in name and a
+# customer space name. Used to sample the design tokens in prototype/app.css,
+# which is the only part of them that needed to survive.
+design language/
+
+# The brief calls this the public vision paper, so it is not a secret — there is
+# simply no reason for this repo to be the place it is hosted.
+SystemTransformation_Vision.pdf
+
+# Local tooling
+.claude/
+.DS_Store
