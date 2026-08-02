@@ -78,6 +78,27 @@ assistant that reads either page back to you at the register you choose. Everyth
 marked with what it was written *from*, and the assistant is composed from live state each time it
 opens rather than cached — so it can never describe a position the page is not showing.
 
+## Deploying
+
+Published with GitHub Pages from `main` at `/ (root)`. **Nothing is automatic** — there are no
+hooks and no CI, so a local edit is not live until it is pushed. Only the Pages rebuild is
+automatic, and it takes about a minute after a commit lands.
+
+```bash
+node prototype/tools/check.mjs        # must pass before anything ships
+git add -A && git commit -m "…"
+git push origin main
+```
+
+Then check the **live URL**, not localhost — `fetch` behaves differently on a `file://` origin, and
+the "this page needs a local server" notice only removes itself when the CSVs actually load.
+
+Two things worth knowing before touching the remote:
+
+- The remote is **HTTPS on purpose**. This machine's SSH key authenticates as a different GitHub
+  account, so an SSH remote would be rejected. The macOS keychain holds the right HTTPS credential.
+- Git identity is set **per-repo**, not globally.
+
 ## Not in this repo
 
 The candidate brief and the screenshots of the Celonis tenant used to sample the design tokens are
