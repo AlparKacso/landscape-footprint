@@ -128,20 +128,10 @@
         </section>
 
         <section class="section">
-          <div class="sec-bar">
-            <div class="viewtabs viewtabs--head" id="viewtabs" role="tablist" aria-label="Board">
-              <button role="tab" data-view="decisions" aria-selected="true"><b id="tab-n-decisions">11</b> decisions</button>
-              <button role="tab" data-view="objects" aria-selected="false"><b id="tab-n-objects">106</b> objects</button>
-            </div>
-          </div>
-          <p class="section-note" id="board-note"></p>
+          <h2>Decisions</h2>
+          <p class="section-note">One call per decision, taken once, executed as a batch. Every row opens: what it is, what moves if you act on it, and the objects behind it.</p>
           <div class="toolbar">
             <div class="pills" id="filters"></div>
-            <div class="tools">
-              <input type="search" id="q" placeholder="Search name, package, owner…" aria-label="Search objects" hidden>
-              <button class="pill" id="scope-std" aria-pressed="false" hidden
-                      data-tip="The 260 SAP standard objects, plus the 3 programs the extract references and the inventory does not contain. Shown for dependency context — none of them is the customer's decision to make.">Include SAP standard</button>
-            </div>
           </div>
           <div class="board" id="board"></div>
         </section>
@@ -179,18 +169,6 @@
   </div>
   <div class="modal-body" id="modal-body"></div>
 </div>
-
-<!-- The object drawer. Reachable from the inventory and the integrity table,
-     never from inside the decision modal — see src/workspace/drawer.js. -->
-<div class="drawer-scrim" id="drawer-scrim"></div>
-<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
-  <header class="drawer-head">
-    <button class="icon" id="drawer-close" aria-label="Close">×</button>
-    <h3 id="drawer-title"></h3>
-    <p id="drawer-sub"></p>
-  </header>
-  <div class="drawer-body" id="drawer-body"></div>
-</aside>
 
 <!-- The assistant. Appears once the wizard has produced something to talk about,
      on both pages, and says something different on each. -->

@@ -119,7 +119,6 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
     <li><strong>The Landscape Footprint</strong> &mdash; Position first, drawn as a treemap of the eleven decisions sized by object count and coloured by call; then Scope; then the decisions and the object inventory on two tabs. Empty until the wizard has been run once.</li>
     <li><strong>One control that changes the answer</strong> &mdash; the transition type, reading the same evidence as no-path, brownfield, greenfield or selective. It does not only reorder: where the route genuinely changes what you would do, it changes the call and shows the sentence that justifies the change.</li>
     <li><strong>An assistant</strong> on both pages, behind one button. It explains what the page in front of you is saying, at the register you pick &mdash; for the board, for the programme, for the engineer. Composed from live numbers every time it opens rather than cached, so it cannot describe a position the page is not showing, and marked as model-written wherever it appears.</li>
-    <li><strong>An object drawer</strong> reachable from any row of the inventory: the evidence behind one object, what depends on it, what it writes into, and the decision it is funded under. Deliberately not reachable from inside a decision.</li>
     <li><strong>A human override</strong> on every call, with the rule&rsquo;s original proposal kept beside it and a one-click reset.</li>
     <li><strong>A verification harness</strong> that re-derives every headline number from the raw files and fails loudly on drift.</li>
   </ul>
@@ -167,7 +166,7 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
     <li><strong>Removed the card view</strong> (the list already worked, and the modal carried the prose) and <strong>the risk score</strong> from the object rows.</li>
     <li><strong>Promoted the transition type</strong> from a hidden setting to the one control on the page, and made it consequential: it now changes the call where the route genuinely changes what you would do, with the justifying sentence attached. Seven of forty-four route/decision combinations move. Choosing a greenfield build turns 62 of the 106 objects into build-buy-or-drop decisions and makes the clean-core problem disappear into a requirements list.</li>
     <li><strong>Replaced the position bar chart with a treemap.</strong> A bar shows the split and hides the shape; it would tell you 51 objects carry forward without telling you that 33 of them are one decision and 18 another, resting on completely different evidence.</li>
-    <li><strong>Added an object inventory and a detail drawer</strong>, because &ldquo;where is my object&rdquo; is the first question anyone with a stake asks, and eleven decisions cannot answer it.</li>
+    <li><strong>Added, then removed, an object inventory and a detail drawer.</strong> Built because &ldquo;where is my object&rdquo; is the first question anyone with a stake asks. Cut on the next read-through: a browsable list of 106 rows is precisely the artifact the eleven decisions exist to replace, and offering one beside them invites re-litigating the grouping one object at a time. The objects are still all there, inside the decision that funds them, where each one carries a reason.</li>
   </ul>
   <div class="callout">
     <b>On where the AI actually sits.</b> Up to this point the AI story was entirely a negative claim &mdash; nothing is decided by a model &mdash; which proves judgement and shows no point of view. The assistant turns it positive without weakening it: the rules decide, a model explains, and everything the model wrote is labelled with what it was written from. The engine is unchanged; the number of model-written numbers on screen is still zero.
@@ -180,7 +179,7 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
     the same question with attribution and a named rule. The engine was not ported on principle &mdash;
     it calls 61 of 106 custom objects &ldquo;decommission&rdquo; on <span class="mono">exec &lt; 50 &amp;&amp; users &lt;= 2</span>,
     which is precisely the confident, wrong retirement list the four-state evidence model exists to
-    prevent. The headline sentence and the drawer were worth taking, and were.
+    prevent. The headline sentence was worth taking, and was; the drawer was taken, used, and then cut for the reason above.
   </div>
 
   <h2>Where the hours went</h2>
@@ -217,7 +216,7 @@ const DEFAULT_ROWS = [
     sub:"Driven by clicking through a working build rather than by a plan.", mins:50 },
   { act:"Handbook, two demo-breaking bug fixes, and this log",
     sub:"Reworded for a non-technical reader; kept the precise numbers precise.", mins:20 },
-  { act:"Second pass — stripped the risk dial, made the route change the calls, added the treemap, the object inventory and the drawer",
+  { act:"Second pass — stripped the risk dial, made the route change the calls, added the treemap",
     sub:"Driven by demoing the first build and watching where a reader would stall. Same default numbers, one control instead of two.", mins:70 },
   { act:"Third pass — the assistant, the AI provenance marks, and the wizard trimmed to match",
     sub:"Composed from live state so it tracks the route lever. Customer answers folded in: the extract has more gaps than the three we can see.", mins:60 },

@@ -16,9 +16,7 @@ import { buildPackages } from '../engine/packages.js';
 import { LENSES, ROLE_LABEL, roleFor, callForLens, sortForLens } from './lens.js';
 import { renderSubgraph } from './subgraph.js';
 import { renderTreemap } from './treemap.js';
-import { renderDrawer } from './drawer.js';
 import { renderAssistant, AUDIENCES, DEFAULT_AUDIENCE } from './assistant.js';
-import * as inventory from './inventory.js';
 import { esc, plural, num, renderChips, confidenceMark, callChip } from './ui.js';
 import { STEPS, ROLES, renderStepper, renderUpload, renderMap, renderModel, renderNarrative } from './wizard.js';
 
@@ -31,21 +29,15 @@ const state = {
   rules: null,
   narrative: {},
   packages: [],
-  rows: [],
   rawUsage: [],
   shipped: null,
   source: { label: 'Shipped extract', files: [] },
   wizard: { open: false, step: 0, tables: [], mapping: [], error: null },
   lens: 'undecided',
   filter: 'all',
-  view: 'decisions',
-  query: '',
-  includeStandard: false,
   overrides: {},
   sort: { key: null, dir: 'desc' },
-  invSort: { key: null, dir: 'asc' },
   modal: null,
-  drawer: null,
   ai: { open: false, audience: DEFAULT_AUDIENCE },
   returnFocus: null,
 };
@@ -226,20 +218,14 @@ function clearAll() {
   state.wizard = { open: false, step: 0, tables: [], mapping: [], error: null };
   state.overrides = {};
   state.filter = 'all';
-  state.view = 'decisions';
-  state.query = '';
-  state.includeStandard = false;
   state.sort = { key: null, dir: 'desc' };
-  state.invSort = { key: null, dir: 'asc' };
   state.modal = null;
   state.lens = 'undecided';
   state.ai = { open: false, audience: DEFAULT_AUDIENCE };
   state.source = { label: 'Shipped extract', files: [] };
-  $('q').value = '';
   $('sec-wizard').hidden = true;
   $('sec-evidence').hidden = true;
   closeModal();
-  closeDrawer();
   closeAssistant();
   buildAudienceSeg();
 
@@ -399,8 +385,10 @@ function positionStatement() {
 
   const phantoms = state.graph.phantoms.length;
 
+  // "of them" used to sit next to "11 decisions" and read as though 24 of the
+  // eleven had an action. Naming the denominator is uglier and unambiguous.
   return `<b>${custom}</b> custom objects resolve into <b>${state.packages.length}</b> decisions.
-    ${acting ? `<b>${acting}</b> of them have an action against them today: ${actions}.` : 'None of them has an action against it on this path yet.'}
+    ${acting ? `<b>${acting}</b> of the ${custom} objects have an action against them today: ${actions}.` : `None of the ${custom} has an action against it on this path yet.`}
     ${held}${carry}
     ${phantoms ? `<span class="position-aside">${plural(phantoms, 'program')} behind live transaction codes ${phantoms === 1 ? 'is' : 'are'} missing from the inventory entirely — the first question for the Basis team.</span>` : ''}`;
 }
@@ -512,16 +500,10 @@ function renderTiles() {
 // ---------------------------------------------------------------- board
 
 function renderFilters() {
-  const onObjects = state.view === 'objects';
-  const counts = onObjects
-    ? inventory.inventoryCounts(state.rows, state.includeStandard)
-    : (() => {
-      const c = { all: state.packages.length };
-      for (const p of state.packages) c[callFor(p)] = (c[callFor(p)] ?? 0) + 1;
-      return c;
-    })();
+  const counts = { all: state.packages.length };
+  for (const p of state.packages) counts[callFor(p)] = (counts[callFor(p)] ?? 0) + 1;
 
-  const options = [['all', onObjects ? 'All objects' : 'All decisions'], ...CALL_ORDER.filter((c) => counts[c]).map((c) => [c, DISPOSITION_LABEL[c]])];
+  const options = [['all', 'All decisions'], ...CALL_ORDER.filter((c) => counts[c]).map((c) => [c, DISPOSITION_LABEL[c]])];
   $('filters').innerHTML = options.map(([key, label]) =>
     `<button class="pill" data-filter="${key}" aria-pressed="${state.filter === key}"
        ${key !== 'all' ? `data-tip="${esc(DISPOSITION_NOTE[key])}"` : ''}
@@ -560,29 +542,7 @@ function renderList(packages) {
 
 function renderBoard() {
   if (!state.hasRun) return;
-  const onObjects = state.view === 'objects';
-  $('q').hidden = !onObjects;
-  $('scope-std').hidden = !onObjects;
-  $('scope-std').setAttribute('aria-pressed', String(state.includeStandard));
-
-  $('board-note').textContent = onObjects
-    ? 'Every object in the estate, in the order the decisions put them. A row opens what the extract knows about it, what depends on it, and the decision it is funded under.'
-    : 'One call per decision, taken once, executed as a batch. Every row opens: what it is, what moves if you act on it, and the objects behind it.';
-
-  if (!onObjects) return renderList(orderedPackages());
-
-  const rows = inventory.filterInventory(state.rows, {
-    query: state.query, filter: state.filter, includeStandard: state.includeStandard,
-  });
-  const key = inventory.SORT_KEYS[state.invSort.key];
-  const list = key
-    ? [...rows].sort((a, b) => {
-      const sign = state.invSort.dir === 'asc' ? 1 : -1;
-      const va = key(a), vb = key(b);
-      return va < vb ? -sign : va > vb ? sign : 0;
-    })
-    : rows;
-  $('board').innerHTML = inventory.renderInventory(list, { sort: state.invSort });
+  renderList(orderedPackages());
 }
 
 function renderIntegrity() {
@@ -598,7 +558,7 @@ function renderIntegrity() {
     if (usage) detail.push(' It runs ', { v: `${num(usage.avg_executions_per_month)}/mo`, tone: 'risk' },
       ' across ', { v: `${usage.distinct_users} users`, tone: 'risk' }, `, last on ${usage.last_executed_date}.`);
     if (reads.length) detail.push(` It reads ${reads.map((r) => r.to).join(' and ')}.`);
-    return `<tr data-object="${esc(p.name)}">
+    return `<tr>
       <td class="num">${i + 1}</td>
       <td class="obj">${esc(p.name)}</td>
       <td class="why">Referenced in ${renderChips(sourceList)}, absent from the object inventory. ${renderChips(detail)}
@@ -608,7 +568,7 @@ function renderIntegrity() {
       </td>
     </tr>`;
   }).join('');
-  $('integrity').innerHTML = `<table class="findings findings--clickable">
+  $('integrity').innerHTML = `<table class="findings">
     <thead><tr><th></th><th>Object</th><th>Finding</th></tr></thead><tbody>${rows}</tbody></table>`;
   $('sum-integrity').textContent = plural(state.graph.phantoms.length, 'exception');
 }
@@ -651,11 +611,6 @@ function render() {
   $('ai-cta').hidden = !state.hasRun;
   if (!state.hasRun) return;
 
-  state.rows = inventory.buildInventory(state.graph, state.packages, state.rules, callFor);
-  const custom = [...state.graph.objects.values()].filter((o) => o.isCustom).length;
-  $('tab-n-decisions').textContent = state.packages.length;
-  $('tab-n-objects').textContent = state.includeStandard ? state.rows.length : custom;
-
   syncLensSeg();
   renderPosition();
   renderTiles();
@@ -663,7 +618,6 @@ function render() {
   renderBoard();
   renderIntegrity();
   if (state.modal) renderModal();
-  if (state.drawer) renderDrawerPanel();
   if (state.ai.open) renderAssistantPanel();
 }
 
@@ -857,43 +811,6 @@ function step(delta) {
   if (next) openModal('pack', next.id);
 }
 
-// ---------------------------------------------------------------- drawer
-
-function drawerContext() {
-  return {
-    graph: state.graph,
-    packById: new Map(state.packages.map((p) => [p.id, p])),
-    callOf: callFor,
-    rules: state.rules,
-    rawUsage: state.rawUsage,
-  };
-}
-
-function renderDrawerPanel() {
-  const name = state.drawer;
-  if (!name) return;
-  const view = renderDrawer(name, drawerContext());
-  $('drawer-title').textContent = view.title;
-  $('drawer-sub').textContent = view.sub;
-  $('drawer-body').innerHTML = view.body;
-  $('drawer-body').scrollTop = 0;
-}
-
-function openDrawer(name, { keepFocus = false } = {}) {
-  if (!keepFocus) state.returnFocus = document.activeElement;
-  state.drawer = name;
-  renderDrawerPanel();
-  document.body.classList.add('drawer-open');
-  $('drawer-close').focus();
-}
-
-function closeDrawer() {
-  state.drawer = null;
-  document.body.classList.remove('drawer-open');
-  state.returnFocus?.focus?.();
-  state.returnFocus = null;
-}
-
 // ---------------------------------------------------------------- assistant
 
 // Composed from live state every time it opens, so it cannot describe a
@@ -936,14 +853,6 @@ function closeAssistant() {
 // ---------------------------------------------------------------- controls
 
 function applySort(key) {
-  if (state.view === 'objects') {
-    if (!inventory.SORT_KEYS[key]) return;
-    const first = inventory.FIRST_DIR[key];
-    if (state.invSort.key === key) {
-      state.invSort = state.invSort.dir === first ? { key, dir: first === 'asc' ? 'desc' : 'asc' } : { key: null, dir: 'asc' };
-    } else state.invSort = { key, dir: first };
-    return renderBoard();
-  }
   if (!SORT_KEYS[key]) return;
   const first = FIRST_DIR[key];
   if (state.sort.key === key) {
@@ -972,14 +881,6 @@ function wireTooltip() {
   document.addEventListener('focusin', (e) => { const el = e.target.closest('[data-tip]'); el ? show(el) : hide(); });
   document.addEventListener('focusout', hide);
   addEventListener('scroll', hide, true);
-}
-
-function setView(view) {
-  state.view = view;
-  state.filter = 'all';
-  for (const tab of $('viewtabs').children) tab.setAttribute('aria-selected', String(tab.dataset.view === view));
-  renderFilters();
-  renderBoard();
 }
 
 function wire() {
@@ -1054,24 +955,9 @@ function wire() {
     renderFilters();
     renderBoard();
   });
-  $('viewtabs').addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-view]');
-    if (btn) setView(btn.dataset.view);
-  });
-  $('q').addEventListener('input', (e) => { state.query = e.target.value; renderBoard(); });
-  $('scope-std').addEventListener('click', () => {
-    state.includeStandard = !state.includeStandard;
-    const custom = [...state.graph.objects.values()].filter((o) => o.isCustom).length;
-    $('tab-n-objects').textContent = state.includeStandard ? state.rows.length : custom;
-    renderFilters();
-    renderBoard();
-  });
-
   $('board').addEventListener('click', (e) => {
     const header = e.target.closest('[data-sort]');
     if (header) return applySort(header.dataset.sort);
-    const object = e.target.closest('[data-object]');
-    if (object) return openDrawer(object.dataset.object);
     const row = e.target.closest('[data-pack]');
     if (row) openModal('pack', row.dataset.pack);
   });
@@ -1083,11 +969,6 @@ function wire() {
     const tile = e.target.closest('[data-tile]');
     if (tile) openModal('tile', tile.dataset.tile);
   });
-  $('integrity').addEventListener('click', (e) => {
-    const row = e.target.closest('[data-object]');
-    if (row) openDrawer(row.dataset.object);
-  });
-
   // The treemap tiles are the decisions. Clicking one lands on the same modal
   // the list row does.
   $('position').addEventListener('click', (e) => {
@@ -1137,21 +1018,6 @@ function wire() {
   $('modal-close').addEventListener('click', closeModal);
   $('scrim').addEventListener('click', closeModal);
 
-  $('drawer-close').addEventListener('click', closeDrawer);
-  $('drawer-scrim').addEventListener('click', closeDrawer);
-  $('drawer-body').addEventListener('click', (e) => {
-    const pack = e.target.closest('[data-open-pack]');
-    if (pack) {
-      // Drawer and modal never stack. Leaving the drawer for the decision is a
-      // move up a level, not a second layer on top of the first.
-      const id = pack.dataset.openPack;
-      closeDrawer();
-      return openModal('pack', id);
-    }
-    const link = e.target.closest('[data-object]');
-    if (link) openDrawer(link.dataset.object, { keepFocus: true });
-  });
-
   $('ai-cta').addEventListener('click', openAssistant);
   $('ai-close').addEventListener('click', closeAssistant);
   $('ai-scrim').addEventListener('click', closeAssistant);
@@ -1164,7 +1030,6 @@ function wire() {
 
   document.addEventListener('keydown', (e) => {
     if (state.ai.open && e.key === 'Escape') return closeAssistant();
-    if (state.drawer && e.key === 'Escape') return closeDrawer();
     if (!$('modal').hidden) {
       if (e.key === 'Escape') closeModal();
       if (e.key === 'ArrowLeft') step(-1);

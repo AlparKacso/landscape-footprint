@@ -182,8 +182,13 @@ function footprintDid(f, level) {
     f.byCall[DISPOSITION.REBUILD] && `${b(f.byCall[DISPOSITION.REBUILD])} into a fit-to-standard workshop`,
   ].filter(Boolean);
 
-  out.push(p(`${b(f.custom.length)} custom objects, ${b(f.decisions)} decisions, and ${path} you can
-    act on ${b(f.acting)} of them today${parts.length ? `: ${parts.join(', ')}` : ''}.
+  // The denominator is named rather than pronounced. "24 of them" directly
+  // after "11 decisions" reads as 24 of the eleven, which is the one thing this
+  // sentence must not say.
+  const opener = path.charAt(0).toUpperCase() + path.slice(1);
+  out.push(p(`${b(f.custom.length)} custom objects resolve into ${b(f.decisions)} decisions.
+    ${opener}, ${b(f.acting)} of the ${f.custom.length} objects have an action against them
+    today${parts.length ? `: ${parts.join(', ')}` : ''}.
     ${b(f.byCall[DISPOSITION.INVESTIGATE])} are held for a named piece of evidence rather than
     guessed at${f.byCall[DISPOSITION.RETAIN] ? `, and ${b(f.byCall[DISPOSITION.RETAIN])} carry forward untouched` : ''}.`));
 

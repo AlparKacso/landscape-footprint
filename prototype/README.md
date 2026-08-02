@@ -36,7 +36,7 @@ The visual walkthrough — pipeline, evidence model, controls and stack — is `
 
 The position it arrives at: **24 of 106 custom objects have an action against them today** — 13 to retire, 6 to remediate, 5 into a fit-to-standard workshop. **31 are held** for a named piece of evidence rather than guessed at, and 51 carry forward untouched. Two numbers, not one: what you act on now, and what it costs to decide the rest.
 
-The same estate is available two ways. **Decisions** is the funding unit. **Objects** is the inventory, in the order the decisions put them, because the first question anyone with a stake asks is "where is my object" — and any row opens what the extract knows about it, what depends on it, and which decision it is funded under.
+The decision is the unit throughout. There is no per-object browser: a list of 106 rows is the thing this exists to replace, and putting one back beside the decisions invites re-litigating the grouping one object at a time. Every object is still reachable — inside the decision that funds it, where it has a reason attached.
 
 The spine is an evidence model with **four states, not two**:
 
@@ -64,8 +64,8 @@ src/engine/    rulepack.json + scoring + dispositions. Runs headless.
                Every score carries the signals that produced it.
 
 src/workspace/ The two pages. Renders engine output; holds no opinions.
-               treemap.js draws the position, inventory.js the object table,
-               drawer.js one object at a time, subgraph.js one blast radius.
+               treemap.js draws the position, subgraph.js one blast radius,
+               assistant.js the model-written explanation of either page.
 ```
 
 ## What this is a slice of
