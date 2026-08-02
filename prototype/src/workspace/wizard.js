@@ -27,7 +27,13 @@ export const ROLE_INFO = {
 
 export const STEPS = [
   { id: 'load', label: 'Load', title: 'Load the extract' },
-  { id: 'model', label: 'Context Model', title: 'Deterministic processing and scoring' },
+  // "Context", not "Context Model". The context model is the whole
+  // interpretation — the graph, the evidence states, the derived signals — that
+  // every screen downstream reads. It is not a step you pass through, and
+  // labelling one screen with it shrinks the thing to a wizard page. This step
+  // is where you watch that interpretation being built, which is a different
+  // claim and a true one.
+  { id: 'context', label: 'Context', title: 'Deterministic processing and scoring' },
   { id: 'narrative', label: 'Narrative', title: 'Where the model writes, and where it does not' },
 ];
 
