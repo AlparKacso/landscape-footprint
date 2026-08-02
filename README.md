@@ -6,7 +6,13 @@ metadata extract.
 Celonis product challenge — *Sr. Applications Product Manager, AI System Transformation*.
 Alpár Kacsó, July 2026.
 
-**→ [alparkacso.github.io/landscape-footprint](https://alparkacso.github.io/landscape-footprint/)**
+**→ [alparkacso.github.io/landscape-footprint](https://alparkacso.github.io/landscape-footprint/)** — opens the prototype directly.
+
+The four written deliverables are alongside it:
+[Increment Breakdown](https://alparkacso.github.io/landscape-footprint/1_Increment_Breakdown.html) ·
+[Deployment Design](https://alparkacso.github.io/landscape-footprint/2_Deployment_Design.html) ·
+[Build Log](https://alparkacso.github.io/landscape-footprint/3_Build_Log.html) ·
+[Handbook](https://alparkacso.github.io/landscape-footprint/4_Handbook.html)
 
 ## What it does
 
@@ -28,7 +34,7 @@ measurement.** It is enforced at run time rather than left to the reader as a se
 ## Layout
 
 ```
-index.html               landing page
+index.html               redirect straight into the app
 prototype/               the app — no build step, no dependencies, no network calls
   index.html app.css     Extract Wizard + Landscape Footprint
   handbook.html          visual walkthrough
