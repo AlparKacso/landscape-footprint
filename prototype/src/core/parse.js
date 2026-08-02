@@ -28,7 +28,10 @@ const FILES = {
 export async function loadExtract(base = 'data') {
   const entries = await Promise.all(
     Object.entries(FILES).map(async ([key, file]) => {
-      const res = await fetch(`${base}/${file}`);
+      // revalidate rather than trust the cache: a stale CSV beside fresh code
+      // would produce numbers that are wrong rather than merely old, and a
+      // conditional request that comes back 304 costs almost nothing.
+      const res = await fetch(`${base}/${file}`, { cache: 'no-cache' });
       if (!res.ok) throw new Error(`Could not load ${file} (${res.status})`);
       return [key, parseCsv(await res.text())];
     })

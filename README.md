@@ -95,17 +95,30 @@ automatic, and it takes about a minute after a commit lands.
 
 ```bash
 node prototype/tools/check.mjs        # must pass before anything ships
-# if prototype/index.html changed, bump ?v= on the module entry at the bottom of it
+node prototype/tools/bump.mjs         # bump every module version
 git add -A && git commit -m "…"
 git push origin main
 ```
 
-That `?v=` matters. Pages caches `index.html` and `app.js` for ten minutes **each,
-independently**, so without it a visitor can end up holding a new page and a stale
-script — which then looks for elements the new page no longer has, and the app dies on
-boot. Bumping the version guarantees a matched pair. Wiring is defensive as a second
-line of defence, and a boot failure now says *reload with ⌘⇧R* rather than blaming the
-server.
+**Always run `bump.mjs`.** Pages caches every file for ten minutes *independently*, so
+without version pins a visitor can hold a new page beside a stale module. Cosmetically
+that is yesterday's wording; at worst it is a module missing an export the new code
+imports, which throws before any error handler exists and leaves a blank page. It has
+happened twice.
+
+`prototype/index.html` carries an **import map** pinning all twelve modules plus the
+entry, so a version bump busts the whole graph rather than only the entry script — that
+was the gap that let a stale `wizard.js` survive a bump. `bump.mjs` rewrites all
+thirteen numbers at once, because thirteen hand-edits that must agree will agree twelve
+times out of thirteen at the worst possible moment. Browsers without import-map support
+fall back to unversioned files, which is simply the old behaviour.
+
+The CSVs, the rulepack and the cached narrative are fetched with `cache: 'no-cache'`,
+so they revalidate rather than being trusted blind — a stale rulepack beside fresh code
+would produce numbers that are *wrong* rather than merely old.
+
+Wiring is defensive as a second line of defence, and a boot failure says *reload with
+⌘⇧R* rather than blaming the server.
 
 Then check the **live URL**, not localhost — `fetch` behaves differently on a `file://` origin, and
 the "this page needs a local server" notice only removes itself when the CSVs actually load.

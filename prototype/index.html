@@ -206,11 +206,34 @@
 
 <input type="file" id="file-input" accept=".csv,text/csv" multiple hidden>
 
-<!-- The version is not decoration. GitHub Pages caches index.html and app.js for
-     ten minutes each, independently, so without it a visitor can hold a new page
-     and a stale script — and the stale script then looks for elements the new
-     page no longer has. Bumping this on deploy means a visitor always gets a
-     matched pair: old page with old script, or new with new, never one of each. -->
-<script type="module" src="src/workspace/app.js?v=13"></script>
+<!-- Every module is version-pinned, not just the entry.
+     GitHub Pages caches each file for ten minutes independently, so a visitor
+     can hold a fresh app.js next to a stale wizard.js and see yesterday's
+     wording — or, worse, a stale module missing an export the new code imports,
+     which fails before any error handler exists. Versioning only the <script>
+     tag fixed the entry and left every sibling exposed.
+     An import map fixes the rest with no build step: it rewrites each specifier
+     to a versioned URL at resolution time. Browsers without import-map support
+     simply load the unversioned files, which is exactly today's behaviour.
+     Bump all of these together with: node tools/bump.mjs -->
+<script type="importmap">
+{
+  "imports": {
+    "./src/core/parse.js": "./src/core/parse.js?v=14",
+    "./src/core/graph.js": "./src/core/graph.js?v=14",
+    "./src/core/evidence.js": "./src/core/evidence.js?v=14",
+    "./src/engine/score.js": "./src/engine/score.js?v=14",
+    "./src/engine/dispose.js": "./src/engine/dispose.js?v=14",
+    "./src/engine/packages.js": "./src/engine/packages.js?v=14",
+    "./src/workspace/lens.js": "./src/workspace/lens.js?v=14",
+    "./src/workspace/subgraph.js": "./src/workspace/subgraph.js?v=14",
+    "./src/workspace/treemap.js": "./src/workspace/treemap.js?v=14",
+    "./src/workspace/assistant.js": "./src/workspace/assistant.js?v=14",
+    "./src/workspace/ui.js": "./src/workspace/ui.js?v=14",
+    "./src/workspace/wizard.js": "./src/workspace/wizard.js?v=14"
+  }
+}
+</script>
+<script type="module" src="src/workspace/app.js?v=14"></script>
 </body>
 </html>

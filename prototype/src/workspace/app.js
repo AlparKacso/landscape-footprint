@@ -1097,8 +1097,11 @@ function doExport() {
 async function boot() {
   const [extract, rules, narrative] = await Promise.all([
     loadExtract('data'),
-    fetch('src/engine/rulepack.json').then((r) => r.json()),
-    fetch('data/packages.json').then((r) => r.json()),
+    // Same reasoning as the CSVs: a stale rulepack next to new code is worse
+    // than stale prose, because every score and call would quietly be built
+    // from yesterday's weights.
+    fetch('src/engine/rulepack.json', { cache: 'no-cache' }).then((r) => r.json()),
+    fetch('data/packages.json', { cache: 'no-cache' }).then((r) => r.json()),
   ]);
 
   $('needs-server')?.remove();
