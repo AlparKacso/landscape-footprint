@@ -18,7 +18,7 @@ import { renderSubgraph } from './subgraph.js';
 import { renderTreemap } from './treemap.js';
 import { renderAssistant, AUDIENCES, DEFAULT_AUDIENCE } from './assistant.js';
 import { esc, plural, num, renderChips, confidenceMark, callChip } from './ui.js';
-import { STEPS, ROLES, renderStepper, renderUpload, renderMap, renderModel, renderNarrative } from './wizard.js';
+import { STEPS, ROLES, renderStepper, renderUpload, renderModel, renderNarrative } from './wizard.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -165,10 +165,13 @@ function modelStats() {
 
 // ---------------------------------------------------------------- wizard
 
+// Loading and mapping are the same step now, so the gate that used to sit on
+// the mapping screen sits here: four files is not enough, four files that fill
+// all four adapters exactly once is.
 function wizardCanAdvance() {
   const w = state.wizard;
-  if (w.step === 0) return w.tables.length > 0;
-  if (w.step === 1) {
+  if (w.step === 0) {
+    if (!w.tables.length) return false;
     const set = w.mapping.filter(Boolean);
     return ROLES.every((r) => set.includes(r)) && new Set(set).size === set.length;
   }
@@ -188,9 +191,8 @@ function renderWizard() {
   $('wiz-next').textContent = w.step === STEPS.length - 1 ? 'Finish' : 'Next';
 
   if (w.step === 0) $('wiz-body').innerHTML = renderUpload(w);
-  if (w.step === 1) $('wiz-body').innerHTML = renderMap(w);
-  if (w.step === 2) $('wiz-body').innerHTML = renderModel(modelStats());
-  if (w.step === 3) {
+  if (w.step === 1) $('wiz-body').innerHTML = renderModel(modelStats());
+  if (w.step === 2) {
     const sample = state.packages.find((p) => p.headline);
     $('wiz-body').innerHTML = renderNarrative(modelStats(), sample);
   }
@@ -222,7 +224,7 @@ async function acceptFiles(fileList) {
   w.tables = tables;
   w.mapping = tables.map((t) => t.detected ?? '');
   const unmatched = tables.filter((t) => !t.detected).length;
-  if (unmatched) w.error = `${plural(unmatched, 'file')} did not match a known signature — map ${unmatched > 1 ? 'them' : 'it'} by hand on the next step.`;
+  if (unmatched) w.error = `${plural(unmatched, 'file')} did not match a known signature — set ${unmatched > 1 ? 'them' : 'it'} by hand in the list above.`;
   renderWizard();
 }
 
@@ -288,8 +290,9 @@ function wizardNext() {
   const w = state.wizard;
   if (!wizardCanAdvance()) return;
 
-  // Leaving the mapping step is where the pipeline actually runs.
-  if (w.step === 1) {
+  // Leaving the load step is where the pipeline actually runs — the mapping is
+  // already settled there, by column signature or by hand.
+  if (w.step === 0) {
     runPipeline(extractFromMapping());
     state.overrides = {};
     const used = w.mapping.map((r, i) => (r ? w.tables[i].name : null)).filter(Boolean);

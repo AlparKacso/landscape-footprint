@@ -26,8 +26,7 @@ export const ROLE_INFO = {
 };
 
 export const STEPS = [
-  { id: 'upload', label: 'Upload', title: 'Load the extract' },
-  { id: 'map', label: 'Map', title: 'Map each file to an adapter' },
+  { id: 'load', label: 'Load', title: 'Load the extract' },
   { id: 'model', label: 'Context Model', title: 'Deterministic processing and scoring' },
   { id: 'narrative', label: 'Narrative', title: 'Where the model writes, and where it does not' },
 ];
@@ -42,12 +41,45 @@ export function renderStepper(current) {
   }).join('')}</ol>`;
 }
 
-// --- step 1 -----------------------------------------------------------------
+// --- step 1 ------------------------------------------------------------------
+//
+// Loading and mapping are one step, not two. The mapping is not a decision the
+// reader makes — it is made deterministically on the way in, by matching column
+// signatures rather than filenames, because a Basis team exports
+// ZOBJ_DUMP_PRD1_0714.CSV and never objects.csv. A whole step asking someone to
+// confirm a conclusion the tool already reached is ceremony. What is worth
+// keeping is the override, so it sits on the row it belongs to: every file
+// shows what it matched on and what it will be used as, and either can be
+// changed in place.
 
 export function renderUpload(w) {
-  const loaded = w.tables.length;
+  const assigned = new Set(w.mapping.filter(Boolean));
+  const missing = ROLES.filter((r) => !assigned.has(r));
+  const dupes = w.mapping.filter(Boolean).filter((r, i, a) => a.indexOf(r) !== i);
+
+  const files = w.tables.map((t, i) => {
+    const options = ROLES.map(
+      (r) => `<option value="${r}"${w.mapping[i] === r ? ' selected' : ''}>${ROLE_INFO[r].label}</option>`
+    ).join('');
+    const matched = t.detected
+      ? `matched on <code>${esc(ROLE_INFO[t.detected].need)}</code>`
+      : '<span class="fr-nomatch">no column signature matched &mdash; choose below</span>';
+    return `<div class="filerow">
+      <span class="fr-name">${esc(t.name)}</span>
+      <span class="fr-rows">${plural(t.rows.length, 'row')}</span>
+      <span class="fr-match">${matched}</span>
+      <select class="sel sel--inline" data-map="${i}" aria-label="Adapter for ${esc(t.name)}">
+        <option value="">— not used —</option>${options}
+      </select>
+    </div>`;
+  }).join('');
+
   return `
-    <p class="wiz-lede">Drop the extract your Basis team produced. Four tables are needed &mdash; an inventory, usage, dependencies and transaction codes. Nothing is cleaned or corrected on the way in: the imperfections in an extract are findings, not defects to be tidied away before anyone sees them.</p>
+    <p class="wiz-lede">Drop the extract your Basis team produced. Four tables are needed, and each is
+      matched to an adapter by its <b>column signature rather than its filename</b> &mdash; which is the
+      seam a different source plugs into: point these same four adapters at SAP Readiness Check or the
+      Custom Code Migration app and nothing downstream changes. Nothing is cleaned on the way in either;
+      the imperfections in an extract are findings, not defects to be tidied away before anyone sees them.</p>
 
     <div class="dropzone${w.dragging ? ' is-drop' : ''}" id="dropzone" tabindex="0" role="button">
       <div class="dz-main">Drop CSV files here, or <span class="link">browse</span></div>
@@ -57,54 +89,19 @@ export function renderUpload(w) {
     <div class="wiz-or"><span>or</span></div>
     <button class="btn" id="use-shipped">Use the extract shipped with this prototype</button>
 
-    ${loaded ? `<div class="filelist">${w.tables.map((t) => `
-      <div class="filerow">
-        <span class="fr-name">${esc(t.name)}</span>
-        <span class="fr-rows">${plural(t.rows.length, 'row')}</span>
-        <span class="fr-cols">${esc(Object.keys(t.rows[0] ?? {}).slice(0, 4).join(', '))}${Object.keys(t.rows[0] ?? {}).length > 4 ? '…' : ''}</span>
-      </div>`).join('')}</div>` : ''}
+    ${w.tables.length ? `<div class="filelist">${files}</div>
+      <div class="roles">${ROLES.map((r) => `
+        <div class="role${assigned.has(r) ? ' is-set' : ''}">
+          <b>${esc(ROLE_INFO[r].label)}</b>
+          <span>${esc(ROLE_INFO[r].what)}</span>
+        </div>`).join('')}</div>` : ''}
 
-    ${w.error ? `<div class="wiz-error">${esc(w.error)}</div>` : ''}`;
+    ${w.error ? `<div class="wiz-error">${esc(w.error)}</div>` : ''}
+    ${w.tables.length && missing.length ? `<div class="wiz-error">Still needed: ${missing.map((r) => ROLE_INFO[r].label).join(', ')}.</div>` : ''}
+    ${dupes.length ? '<div class="wiz-error">Two files are mapped to the same adapter.</div>' : ''}`;
 }
 
 // --- step 2 -----------------------------------------------------------------
-
-export function renderMap(w) {
-  const rows = w.tables.map((t, i) => {
-    const options = ROLES.map(
-      (r) => `<option value="${r}"${w.mapping[i] === r ? ' selected' : ''}>${ROLE_INFO[r].label}</option>`
-    ).join('');
-    const auto = t.detected ? `matched on <code>${esc(ROLE_INFO[t.detected].need)}</code>` : 'no signature matched — choose manually';
-    return `<tr>
-      <td class="obj">${esc(t.name)}</td>
-      <td class="why">${plural(t.rows.length, 'row')} · ${auto}</td>
-      <td><select class="sel" data-map="${i}"><option value="">— not used —</option>${options}</select></td>
-    </tr>`;
-  }).join('');
-
-  const assigned = new Set(w.mapping.filter(Boolean));
-  const missing = ROLES.filter((r) => !assigned.has(r));
-  const dupes = w.mapping.filter(Boolean).filter((r, i, a) => a.indexOf(r) !== i);
-
-  return `
-    <p class="wiz-lede">Each file is matched to an adapter by its <b>column signature</b>, not its filename &mdash; a Basis team exports <code>ZOBJ_DUMP_PRD1_0714.CSV</code>, never <code>objects.csv</code>. This is the seam a different source plugs into: point the same four adapters at SAP Readiness Check or Custom Code Migration output and everything downstream is unchanged. Override any row if the guess is wrong.</p>
-
-    <div class="card" style="overflow-x:auto"><table class="findings">
-      <thead><tr><th>File</th><th>Detected</th><th style="width:200px">Maps to</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table></div>
-
-    <div class="roles">${ROLES.map((r) => `
-      <div class="role${assigned.has(r) ? ' is-set' : ''}">
-        <b>${esc(ROLE_INFO[r].label)}</b>
-        <span>${esc(ROLE_INFO[r].what)}</span>
-      </div>`).join('')}</div>
-
-    ${missing.length ? `<div class="wiz-error">Still needed: ${missing.map((r) => ROLE_INFO[r].label).join(', ')}.</div>` : ''}
-    ${dupes.length ? `<div class="wiz-error">Two files are mapped to the same adapter.</div>` : ''}`;
-}
-
-// --- step 3 -----------------------------------------------------------------
 //
 // One picture instead of three stat cards and a table. The same 106 custom
 // objects are counted at all four stages, so the strip reads as one population
@@ -209,7 +206,7 @@ export function renderModel(stats) {
     <p class="mini">Both look like retirements. Only the first was measured, so only the first is one.</p>`;
 }
 
-// --- step 4 -----------------------------------------------------------------
+// --- step 3 -----------------------------------------------------------------
 //
 // The shortest step, and the one that has to land hardest: everything that
 // decided anything was deterministic, and here is the complete list of what a

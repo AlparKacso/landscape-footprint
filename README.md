@@ -80,6 +80,13 @@ careful to say that the wording is the model's while the arithmetic is not, beca
 would undo the claim the whole artifact rests on. The assistant is composed from live state each
 time it opens rather than cached, so it can never describe a position the page is not showing.
 
+## What it deliberately does not do
+
+A risk dial, a per-object browser, on-screen risk scores, effort estimates, a 366-node network
+picture, and a step for confirming which file is which. Most of those were built and then taken out
+again — the reasoning for each is in the [Build Log](3_Build_Log.html) and the
+[Handbook](4_Handbook.html), because a log that lists only what survived is not a log.
+
 ## Deploying
 
 Published with GitHub Pages from `main` at `/ (root)`. **Nothing is automatic** — there are no

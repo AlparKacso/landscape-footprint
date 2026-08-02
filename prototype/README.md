@@ -49,6 +49,13 @@ The spine is an evidence model with **four states, not two**:
 
 Collapsing the last two into "unused" is the fastest way to produce a confident, wrong retirement list. 175 of 366 objects have no usage row; 32 more are tables that `usage.csv` cannot cover by construction. Both are shown on the face of the output rather than in a footnote.
 
+## What it deliberately does not do
+
+A risk dial, a per-object browser, on-screen risk scores, effort estimates in days, a picture of all
+366 objects at once, and a separate step for confirming which file is which. Most were built and then
+removed; each removal is recorded with its reason in
+[`3_Build_Log.html`](../3_Build_Log.html) and in the handbook's *What it does not do*.
+
 ## Three components
 
 Each runs standalone given correctly-shaped data.

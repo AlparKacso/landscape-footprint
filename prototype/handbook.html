@@ -230,6 +230,7 @@
       <li><a href="#disagree">When you disagree</a></li>
       <li><a href="#position">The answer</a></li>
       <li><a href="#built">What it is built from</a></li>
+      <li><a href="#scope">What it does not do</a></li>
       <li><a href="#change">Changing it live</a></li>
     </ol>
   </nav>
@@ -287,8 +288,7 @@
           <h3>Extract Wizard</h3>
           <p>Where you bring your own data in and watch what happens to it. Nothing here is hidden behind a loading spinner.</p>
           <ul>
-            <li>Load your files</li>
-            <li>Confirm what each file is</li>
+            <li>Load your files &#8212; each one identified and mapped as it arrives</li>
             <li>See how the system is scored</li>
             <li>See exactly where AI is used</li>
             <li>Finish, then see what the data can and cannot tell you</li>
@@ -320,6 +320,8 @@
           <div>
             <h3>Load your files</h3>
             <p>Drag in the CSV files your Basis team exported. Nothing is cleaned or corrected on the way in &#8212; the messy parts of an export are usually findings, not mistakes to tidy away before anyone sees them.</p>
+            <p>The tool works out which file is which by looking at the <b>column headings</b>, not the filename. That matters because a real export is called something like <code>ZOBJ_DUMP_PRD1_0714.CSV</code>, never <code>objects.csv</code>. Each file shows what it matched on and what it will be used as, and either can be corrected on the spot &#8212; there is no separate confirmation screen, because the matching is not a judgement anybody needs to make twice.</p>
+            <p>This is also the point where a different data source plugs in: give it the same four kinds of file from SAP Readiness Check instead, and everything after this step is unchanged.</p>
             <p>There is also a one-click option to use the sample data, so a demo never stalls on a file dialog.</p>
           </div>
         </div>
@@ -327,27 +329,19 @@
         <div class="fstep">
           <div class="fstep-n">02</div>
           <div>
-            <h3>Confirm what each file is</h3>
-            <p>The tool works out which file is which by looking at the <b>column headings</b>, not the filename. That matters because a real export is called something like <code>ZOBJ_DUMP_PRD1_0714.CSV</code>, never <code>objects.csv</code>.</p>
-            <p>It shows you its guess and why it guessed that, and you can correct any row. This is also the point where a different data source plugs in: give it the same four kinds of file from SAP Readiness Check instead, and everything after this step is unchanged.</p>
+            <h3>See how the system is scored</h3>
+            <p>Your four files become one connected picture: what exists, what calls what, and what is known about each thing. Then every object is scored and given a recommended call.</p>
+            <p><b>All of this comes from a rules file you can open and read.</b> Same data in, same answer out, every time.</p>
+            <p>The step draws it as one strip: the same 106 objects moving through <b>evidence &rarr; rule &rarr; confidence &rarr; the call</b>, so the derivation is visible in the counts rather than asserted. Two real objects are then walked the whole way &#8212; one reaching &ldquo;retire&rdquo; on a measurement, one reaching &ldquo;investigate&rdquo; on an absence, identical until you read the middle. All eleven rules are one click away.</p>
           </div>
         </div>
 
         <div class="fstep">
           <div class="fstep-n">03</div>
           <div>
-            <h3>See how the system is scored</h3>
-            <p>Your four files become one connected picture: what exists, what calls what, and what is known about each thing. Then every object is scored and given a recommended call.</p>
-            <p><b>All of this comes from a rules file you can open and read.</b> Same data in, same answer out, every time. The step shows you the counts at each stage and lists every rule that fired, so nothing arrives unexplained.</p>
-          </div>
-        </div>
-
-        <div class="fstep">
-          <div class="fstep-n">04</div>
-          <div>
             <h3>See exactly where AI is used</h3>
             <p>106 custom objects is a list, and nobody funds a list. Grouping them into eleven decisions is done <b>by rule</b> &#8212; each object lands in exactly one group, so nothing is counted or paid for twice.</p>
-            <p>Only then does AI get involved, and only to write the summary sentences for each decision. The step shows a real example with the AI-written lines marked, so you can see the boundary rather than take it on faith. The text is written once and saved, so the live page never depends on a network connection.</p>
+            <p>Only then does AI get involved, and only to write words. The step names all three places it does: the summary sentences on each decision, the sentence at the top of the Landscape Footprint, and the assistant. A boundary you can state as a closed list is one somebody can check; one you gesture at is not. The cached text is written once and saved, so the live page never depends on a network connection.</p>
           </div>
         </div>
       </div>
@@ -921,6 +915,73 @@
             <tr><td>Every route change names a real decision, a real call and a reason</td><td class="num">pass</td></tr>
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <section id="scope">
+      <h2>What it deliberately does not do</h2>
+      <p>
+        Most of what follows was built and then taken out again. That is not waste &#8212; a thing you
+        have used for ten minutes tells you something a thing you have only argued about does not, and
+        the fastest way to find out whether a feature earns its place is to live with it. Each of these
+        was removed for a reason worth stating out loud.
+      </p>
+
+      <div class="scroll">
+        <table>
+          <thead><tr><th style="width:30%">Taken out</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><b>A risk dial</b>, nought to a hundred</td>
+              <td>It asked for a number nobody can source, and turning it high enough made the tool recommend deleting unmeasured code. What it protected is now a property of the engine: nothing is retired on evidence weaker than a measurement. The default answer did not change.</td>
+            </tr>
+            <tr>
+              <td><b>A switch for &ldquo;does a missing usage row mean it never ran&rdquo;</b></td>
+              <td>A question for the customer's team, not a setting for the reader to guess at. It stays in the rules file, stated on the face of the output, and it is one word to change when the answer comes back.</td>
+            </tr>
+            <tr>
+              <td><b>A browsable list of all 106 objects</b>, with a detail panel per object</td>
+              <td>Built, used, cut. A list of 106 rows is precisely the artifact the eleven decisions exist to replace, and offering one alongside them invites re-litigating the grouping one object at a time. Every object is still there, inside the decision that funds it, with a reason attached.</td>
+            </tr>
+            <tr>
+              <td><b>A risk matrix</b> &#8212; criticality against blast radius</td>
+              <td>It restates two numbers as a picture. The decision view already answers the same question with a named rule behind it, which is the part that survives being challenged.</td>
+            </tr>
+            <tr>
+              <td><b>Risk scores on screen</b></td>
+              <td>&ldquo;Why is this 72?&rdquo; costs five minutes of a ten-minute meeting and lands on facts the rule already states in a sentence. The scores still order the rows; they no longer make claims.</td>
+            </tr>
+            <tr>
+              <td><b>A step for confirming which file is which</b></td>
+              <td>The matching is deterministic &#8212; it happens on the way in, by column headings. A whole screen asking someone to confirm a conclusion the tool already reached is ceremony. The override moved onto the file row where it belongs.</td>
+            </tr>
+            <tr>
+              <td><b>A detail slider on the assistant</b> (less / medium / more)</td>
+              <td>Nobody knows which verbosity they are. Replaced with audience &#8212; for the board, the programme, the engineer &#8212; which is a question anyone can answer instantly.</td>
+            </tr>
+            <tr>
+              <td><b>A live AI call</b></td>
+              <td>A network round trip inside a ten-minute demo is a single point of failure for no benefit. The wording is written once and kept; the numbers around it are read live, so the assistant can never describe a position the page is not showing.</td>
+            </tr>
+            <tr>
+              <td><b>A picture of the whole network</b>, 366 nodes</td>
+              <td>It looks impressive and decides nothing &#8212; and it is the exact category the Celonis vision paper spends four pages distinguishing itself from. The graph survives only inside one decision, answering one question: if we act on this, what else moves?</td>
+            </tr>
+            <tr>
+              <td><b>Effort and cost estimates</b> in days or euros</td>
+              <td>The extract carries no size or complexity signal, so any figure would be invented &#8212; and one invented number undermines every real one on the same screen.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note" style="margin-top:18px">
+        <span class="note-m">Also</span>
+        <span>
+          Out of scope on purpose, and sequenced rather than forgotten: a live connection to the source
+          system, the other two productive systems, and agents that <em>act</em> on a decision rather than
+          only proposing it. All three sit in the increment breakdown as Next or Later.
+        </span>
       </div>
     </section>
 
