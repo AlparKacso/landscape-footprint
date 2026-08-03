@@ -317,7 +317,7 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
   </div>
 
   <div class="callout warn">
-    <b>An hour over, and where it went.</b> Rehearsing is how I found the one scoping gap
+    <b>Seventy minutes over, and where they went.</b> Rehearsing is how I found the one scoping gap
     the artifact could not see: these four files cannot record a modification or an enhancement to SAP
     standard, so 106 is every custom object in <em>this extract</em> rather than the system's whole
     custom footprint. Naming it on the Scope card was ten minutes. The other forty went on the
@@ -326,8 +326,10 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
     than leaving it as an assertion. The last ten closed an ownership leak the same reading found:
     four rules were missing their <span class="mono">isCustom</span> guard, so eight SAP objects
     carried a call the customer cannot take on code they do not own — invisible in every reported
-    number, because every reported number is custom-only. Reading the artifact back was free;
-    changing it was not, so it is counted, and the total says 9h against an 8h cap.
+    number, because every reported number is custom-only. The last ten gave the transition path's
+    priority labels a verb and a direction, because <em>Deferred</em> reads as a status and a Head of
+    Transformation needs an instruction. Reading the artifact back was free; changing it was not, so
+    it is counted, and the total says 9h 10m against an 8h cap.
   </div>
 
   <div class="callout">
@@ -391,6 +393,9 @@ const DEFAULT_ROWS = [
   { ph:"Spillover — found while rehearsing",
     act:"Closed an ownership leak: four rules were missing their isCustom guard",
     sub:"Eight SAP objects were being told to resolve a fork they do not own. No headline number moved, which is why it survived — now asserted in the harness so it cannot come back.", mins:10 },
+  { ph:"Spillover — found while rehearsing",
+    act:"Gave the transition path's priority labels a verb and a direction",
+    sub:"“Deferred” read as a status rather than an instruction. Now ↑ Do first, ↓ Later, ⊘ Falls away — the arrow says which way the route moved it, the word says what to do.", mins:10 },
 ];
 
 const STORE = 'celonis-buildlog-doc-v4';

@@ -114,10 +114,17 @@ export const LENSES = {
   },
 };
 
+// Each label carries a verb and a direction, because the reader is deciding
+// what to do next rather than classifying anything. "Deferred" was the weak
+// one — an adjective with no time and no action in it, which left a Head of
+// Transformation reading a status instead of an instruction. The arrow says
+// which way the route moved this decision; the word says what to do about it.
+// "Falls away" takes a different mark on purpose: it is not lower priority,
+// it is gone.
 export const ROLE_LABEL = {
-  critical: 'In scope now',
-  deferred: 'Deferred',
-  moot: 'Falls away',
+  critical: '↑ Do first',
+  deferred: '↓ Later',
+  moot: '⊘ Falls away',
 };
 
 export function roleFor(lens, packageId) {
