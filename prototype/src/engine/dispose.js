@@ -16,6 +16,15 @@
 // tool. A dial you can turn up until it tells you to delete things is not a
 // safeguard.
 
+// One more invariant, weaker than the retire gate but easy to break: every rule
+// above `standard-object` must test `o.isCustom`. Four of them did not, and
+// because the fork rules sit near the top, eight SAP objects were being told to
+// "resolve the fork before migrating either" — a call the customer cannot take
+// on code they do not own, and a direct contradiction of what the Scope card
+// says about the standard estate. No headline number moved, which is exactly
+// why it survived: everything reported is custom-only, so the interface was
+// the only place it showed.
+
 import { EVIDENCE } from '../core/evidence.js';
 
 export const DISPOSITION = {
@@ -75,7 +84,7 @@ const RULES = [
     basis: 'measured',
     test: (o, ev, g) => {
       const partner = g.objects.get(o.forkPartner);
-      return partner && ev === EVIDENCE.ACTIVE && partner.evidence === EVIDENCE.ACTIVE;
+      return o.isCustom && partner && ev === EVIDENCE.ACTIVE && partner.evidence === EVIDENCE.ACTIVE;
     },
     result: (o, ev, g) => {
       const partner = g.objects.get(o.forkPartner);
@@ -98,7 +107,7 @@ const RULES = [
     basis: 'measured',
     test: (o, ev, g) => {
       const partner = g.objects.get(o.forkPartner);
-      return partner && ev === EVIDENCE.DEAD && partner.evidence === EVIDENCE.ACTIVE;
+      return o.isCustom && partner && ev === EVIDENCE.DEAD && partner.evidence === EVIDENCE.ACTIVE;
     },
     result: (o) => ({
       disposition: DISPOSITION.RETIRE,
@@ -114,7 +123,7 @@ const RULES = [
   {
     id: 'measured-dead-referenced',
     basis: 'measured',
-    test: (o, ev) => ev === EVIDENCE.DEAD && (o.tcodeDirect || o.fanIn > 0),
+    test: (o, ev) => o.isCustom && ev === EVIDENCE.DEAD && (o.tcodeDirect || o.fanIn > 0),
     result: (o) => ({
       disposition: DISPOSITION.INVESTIGATE,
       rationale: [
@@ -129,7 +138,7 @@ const RULES = [
   {
     id: 'measured-dead-unreferenced',
     basis: 'measured',
-    test: (o, ev) => ev === EVIDENCE.DEAD && !o.tcodeDirect && o.fanIn === 0,
+    test: (o, ev) => o.isCustom && ev === EVIDENCE.DEAD && !o.tcodeDirect && o.fanIn === 0,
     result: () => ({
       disposition: DISPOSITION.RETIRE,
       rationale: [

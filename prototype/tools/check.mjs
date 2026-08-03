@@ -66,6 +66,14 @@ check('evidence states sum to inventory',
 check('custom non-table objects with usage evidence',
   custom.filter((o) => o.type !== 'Table' && o.usage).length, 71);
 
+// The customer decides about their own code and nothing else. Asserted rather
+// than trusted because it broke silently once: four rules were missing their
+// isCustom guard, and since every reported number is custom-only, eight SAP
+// objects carried a customer-facing call without moving a single headline.
+console.log('\nOwnership boundary');
+check('standard objects reaching a rule other than standard-object',
+  all.filter((o) => !o.isCustom && o.rule !== 'standard-object').length, 0);
+
 console.log('\nBusiness anchoring');
 check('transaction codes', graph.transactions.length, 31);
 check('tcodes on custom programs',

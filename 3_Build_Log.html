@@ -176,9 +176,10 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
       watches what happens to them. Files are matched to adapters by <em>column signature</em>, not
       filename, because a Basis team exports <span class="mono">ZOBJ_DUMP_PRD1_0714.CSV</span>, never
       <span class="mono">objects.csv</span>. Three steps: load, rules, and where AI is involved.</li>
-    <li><strong>A rules engine, not a model.</strong> Every score and every call comes from one
-      editable rulepack file, so "why does it say retire?" is answered with a named rule and rows from
-      the customer's own extract. Five calls: <span class="tag t-remediate">Remediate</span>
+    <li><strong>A rules engine, not a model.</strong> Twelve ordered rules decide, first match wins,
+      and every weight they read sits in one editable rulepack file — so "why does it say retire?" is
+      answered with a named rule and rows from the customer's own extract. Five calls:
+      <span class="tag t-remediate">Remediate</span>
       <span class="tag t-invest">Investigate</span> <span class="tag t-workshop">Workshop</span>
       <span class="tag t-retire">Retire</span> <span class="tag t-retain">Carry as-is</span>.</li>
     <li><strong>A four-state evidence model</strong> — the spine. <em>Measured and running</em>,
@@ -316,14 +317,17 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
   </div>
 
   <div class="callout warn">
-    <b>Fifty minutes over, and where they came from.</b> Rehearsing is how I found the one scoping gap
+    <b>An hour over, and where it went.</b> Rehearsing is how I found the one scoping gap
     the artifact could not see: these four files cannot record a modification or an enhancement to SAP
     standard, so 106 is every custom object in <em>this extract</em> rather than the system's whole
     custom footprint. Naming it on the Scope card was ten minutes. The other forty went on the
     walkthrough — Scope now leads the page, because a demo has to establish the ground before it
     shows a conclusion drawn on it, and three Scope cards gained the picture behind the number rather
-    than leaving it as an assertion. Reading the artifact back was free; changing it was not, so it is
-    counted, and the total says 8h 50m against an 8h cap.
+    than leaving it as an assertion. The last ten closed an ownership leak the same reading found:
+    four rules were missing their <span class="mono">isCustom</span> guard, so eight SAP objects
+    carried a call the customer cannot take on code they do not own — invisible in every reported
+    number, because every reported number is custom-only. Reading the artifact back was free;
+    changing it was not, so it is counted, and the total says 9h against an 8h cap.
   </div>
 
   <div class="callout">
@@ -384,6 +388,9 @@ const DEFAULT_ROWS = [
   { ph:"Spillover — found while rehearsing",
     act:"Reordered the Footprint for the walkthrough, and filled the Scope cards with their evidence",
     sub:"Scope now leads and the tiles read as a sentence. Three cards gained the picture behind them — dependency direction, the clean-core blast radius, the custom-code evidence bar.", mins:40 },
+  { ph:"Spillover — found while rehearsing",
+    act:"Closed an ownership leak: four rules were missing their isCustom guard",
+    sub:"Eight SAP objects were being told to resolve a fork they do not own. No headline number moved, which is why it survived — now asserted in the harness so it cannot come back.", mins:10 },
 ];
 
 const STORE = 'celonis-buildlog-doc-v4';
