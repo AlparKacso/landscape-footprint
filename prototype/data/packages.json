@@ -78,7 +78,7 @@
   },
 
   "carry": {
-    "headline": "Thirty-three custom objects running measurably but with no transaction code — reached by batch, interface or RFC. Used, but not business entry points.",
+    "headline": "Thirty-three custom objects running measurably, none with a transaction code of its own — so they are reached some other way: batch, an interface, an RFC, or an entry point this extract does not record. Used, but not business entry points.",
     "decision": "Carry forward. No signal argues otherwise.",
     "watchOut": "Being invisible to the transaction list is not the same as being unused. These would look like orphans to any tool that only checks transaction codes.",
     "urgency": "Later"
