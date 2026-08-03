@@ -102,8 +102,9 @@ export function renderUpload(w) {
 
 export function renderBoundary(stats) {
   return `
-    <p class="wiz-lede">${stats.objects} objects in, ${stats.packages} decisions out. Replayable from
-      the raw files with <code>tools/check.mjs</code>.</p>
+    <p class="section-note">${stats.objects} objects in, ${stats.packages} decisions out &mdash; one
+      deterministic pass, replayable from the raw files with <code>tools/check.mjs</code>. A model
+      writes words in three named places, and nowhere else.</p>
 
     <div class="split-two">
       <div class="mcard">
