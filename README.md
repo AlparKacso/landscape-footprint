@@ -36,7 +36,7 @@ measurement.** It is enforced at run time rather than left to the reader as a se
 ```
 index.html               redirect straight into the app
 prototype/               the app — no build step, no dependencies, no network calls
-  index.html app.css     Extract Wizard + Landscape Footprint
+  index.html app.css     Context Slice + Landscape Footprint
   handbook.html          visual walkthrough
   data/                  the four CSVs shipped with the challenge
   src/core/              adapters in, canonical Context Slice out
@@ -108,7 +108,7 @@ happened twice.
 
 `prototype/index.html` carries an **import map** pinning all twelve modules plus the
 entry, so a version bump busts the whole graph rather than only the entry script — that
-was the gap that let a stale `wizard.js` survive a bump. `bump.mjs` rewrites all
+was the gap that let a stale sibling module survive a bump. `bump.mjs` rewrites all
 thirteen numbers at once, because thirteen hand-edits that must agree will agree twelve
 times out of thirteen at the worst possible moment. Browsers without import-map support
 fall back to unversioned files, which is simply the old behaviour.

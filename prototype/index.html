@@ -10,7 +10,7 @@
 <div class="shell">
   <nav class="rail" aria-label="Sections">
     <div class="mark" aria-hidden="true"></div>
-    <button data-page="extract" title="Extract Wizard" aria-label="Extract Wizard" aria-current="true">⇪</button>
+    <button data-page="extract" title="Context Slice" aria-label="Context Slice" aria-current="true">⇪</button>
     <button data-page="footprint" title="Landscape Footprint" aria-label="Landscape Footprint" aria-current="false">◧</button>
     <div class="spacer"></div>
     <button title="Help" aria-label="Help">?</button>
@@ -21,14 +21,14 @@
       <div class="crumbs">
         <a href="#">Studio</a><span class="sep">›</span>
         <a href="#">Manufacturing customer</a><span class="sep">›</span>
-        <span class="here" id="crumb-here">Extract Wizard</span>
+        <span class="here" id="crumb-here">Context Slice</span>
       </div>
       <span class="tag">Prototype</span>
       <div class="grow"></div>
       <span class="byline">Alpár Kacsó · Celonis product challenge</span>
     </div>
 
-    <!-- ============================ EXTRACT WIZARD ============================ -->
+    <!-- ============================= CONTEXT SLICE ============================= -->
     <main class="page" id="page-extract">
       <div class="needs-server" id="needs-server">
         <div>
@@ -42,8 +42,8 @@
       </div>
 
       <header>
-        <h1>Extract Wizard</h1>
-        <p class="lede">Turn a raw system extract into a scored Context Slice, one visible step at a time. What the pipeline does to your data is shown as it happens rather than asserted afterwards.</p>
+        <h1>Context Slice</h1>
+        <p class="lede">What this extract can and cannot tell you, and the estate it describes. A <em>slice</em> rather than the Celonis Context Model &mdash; this reads technical objects only, where the full model spans business objects too. Everything on the Landscape Footprint rests on what is here.</p>
       </header>
 
       <!-- Section 1 -->
@@ -56,34 +56,43 @@
           </div>
           <div class="grow"></div>
           <button class="btn btn--ghost" id="clear-all" hidden
-                  title="Reset to the empty state. Double-clicking the Extract Wizard icon in the sidebar does the same.">Clear all data</button>
-          <button class="btn btn--primary" id="start-wizard">Load an extract</button>
+                  title="Reset to the empty state. Double-clicking the Context Slice icon in the sidebar does the same.">Clear all data</button>
+          <button class="btn btn--primary" id="start-load">Load an extract</button>
+        </div>
+
+        <!-- The three-step wizard that used to live here is gone. Its load step
+             is this panel; its boundary statement is the section below. The two
+             steps between them proved a thing nobody doubts. -->
+        <div class="card wizard" id="load-panel" hidden>
+          <div id="load-body"></div>
+          <div class="wiz-foot">
+            <div class="grow"></div>
+            <button class="btn btn--primary" id="build-slice" disabled>Build the Context Slice</button>
+          </div>
         </div>
       </section>
 
       <!-- Section 2 -->
-      <section class="section" id="sec-wizard" hidden>
-        <h2>Extract Wizard</h2>
-        <div class="card wizard">
-          <div id="stepper"></div>
-          <div class="wiz-panel">
-            <h3 id="wiz-title"></h3>
-            <div id="wiz-body"></div>
-          </div>
-          <div class="wiz-foot">
-            <button class="btn" id="wiz-back">Back</button>
-            <div class="grow"></div>
-            <span class="wiz-count" id="wiz-count"></span>
-            <button class="btn btn--primary" id="wiz-next">Next</button>
-          </div>
-        </div>
+      <section class="section" id="sec-boundary" hidden>
+        <h2>How this is computed</h2>
+        <p class="section-note">One sequential, deterministic pass from four tables to eleven decisions &mdash; and the three places, named exactly, where a model writes words instead.</p>
+        <div class="card" id="boundary"></div>
       </section>
 
       <!-- Section 3 -->
       <section class="section" id="sec-evidence" hidden>
-        <h2>Evidence coverage</h2>
-        <p class="section-note">What the extract can and cannot tell you. Everything on the Landscape Footprint rests on this, so it is the last thing the wizard shows you and the first thing to argue with.</p>
+        <h2>Coverage</h2>
+        <p class="section-note">Four evidence states, not two. Every call downstream rests on this, so it is the first thing to argue with.</p>
         <div class="card" id="coverage"></div>
+      </section>
+
+      <!-- Section 4 — moved here from the Footprint. Scope is what the extract
+           describes, so it belongs with the evidence that bounds it; the
+           Footprint is left carrying only the decisions. -->
+      <section class="section" id="sec-scope" hidden>
+        <h2>Scope</h2>
+        <p class="section-note">The estate the decisions are built from. Every tile opens.</p>
+        <div class="tiles" id="tiles"></div>
       </section>
     </main>
 
@@ -97,21 +106,14 @@
       <div class="empty-state" id="empty-state">
         <div class="es-mark" aria-hidden="true">◧</div>
         <h3>Nothing to show yet</h3>
-        <p>The footprint is built from a scored Context Slice. Run the Extract Wizard once and this page fills in — the position you are in, the estate it rests on, and the decisions that get you out of it.</p>
-        <button class="btn btn--primary" id="go-wizard">Open the Extract Wizard</button>
+        <p>The footprint is built from a scored Context Slice. Load an extract once and this page fills in — the position you are in, and the eleven decisions that get you out of it.</p>
+        <button class="btn btn--primary" id="go-load">Go to the Context Slice</button>
       </div>
 
       <div id="footprint-body" hidden>
-        <!-- Scope leads. This page is the demo surface rather than the pitch:
-             the pitch is spoken and starts from the outcome, but a walkthrough
-             has to establish the ground before it shows a conclusion drawn on
-             it. Position sits second, where it reads as a result. -->
-        <section class="section">
-          <h2>Scope</h2>
-          <p class="section-note">The estate the decisions are built from. Every tile opens.</p>
-          <div class="tiles" id="tiles"></div>
-        </section>
-
+        <!-- Scope now lives on the Context Slice page, with the evidence that
+             bounds it. What is left here is only the decisions: the position,
+             and the eleven calls that move it. -->
         <section class="section">
           <div class="sec-bar">
             <h2>Position</h2>
@@ -212,7 +214,7 @@
 
 <!-- Every module is version-pinned, not just the entry.
      GitHub Pages caches each file for ten minutes independently, so a visitor
-     can hold a fresh app.js next to a stale wizard.js and see yesterday's
+     can hold a fresh app.js next to a stale sibling module and see yesterday's
      wording — or, worse, a stale module missing an export the new code imports,
      which fails before any error handler exists. Versioning only the <script>
      tag fixed the entry and left every sibling exposed.
@@ -223,21 +225,21 @@
 <script type="importmap">
 {
   "imports": {
-    "./src/core/parse.js": "./src/core/parse.js?v=20",
-    "./src/core/graph.js": "./src/core/graph.js?v=20",
-    "./src/core/evidence.js": "./src/core/evidence.js?v=20",
-    "./src/engine/score.js": "./src/engine/score.js?v=20",
-    "./src/engine/dispose.js": "./src/engine/dispose.js?v=20",
-    "./src/engine/packages.js": "./src/engine/packages.js?v=20",
-    "./src/workspace/lens.js": "./src/workspace/lens.js?v=20",
-    "./src/workspace/subgraph.js": "./src/workspace/subgraph.js?v=20",
-    "./src/workspace/treemap.js": "./src/workspace/treemap.js?v=20",
-    "./src/workspace/assistant.js": "./src/workspace/assistant.js?v=20",
-    "./src/workspace/ui.js": "./src/workspace/ui.js?v=20",
-    "./src/workspace/wizard.js": "./src/workspace/wizard.js?v=20"
+    "./src/core/parse.js": "./src/core/parse.js?v=21",
+    "./src/core/graph.js": "./src/core/graph.js?v=21",
+    "./src/core/evidence.js": "./src/core/evidence.js?v=21",
+    "./src/engine/score.js": "./src/engine/score.js?v=21",
+    "./src/engine/dispose.js": "./src/engine/dispose.js?v=21",
+    "./src/engine/packages.js": "./src/engine/packages.js?v=21",
+    "./src/workspace/lens.js": "./src/workspace/lens.js?v=21",
+    "./src/workspace/subgraph.js": "./src/workspace/subgraph.js?v=21",
+    "./src/workspace/treemap.js": "./src/workspace/treemap.js?v=21",
+    "./src/workspace/assistant.js": "./src/workspace/assistant.js?v=21",
+    "./src/workspace/ui.js": "./src/workspace/ui.js?v=21",
+    "./src/workspace/slice.js": "./src/workspace/slice.js?v=21"
   }
 }
 </script>
-<script type="module" src="src/workspace/app.js?v=20"></script>
+<script type="module" src="src/workspace/app.js?v=21"></script>
 </body>
 </html>

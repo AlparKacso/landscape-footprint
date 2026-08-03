@@ -1,7 +1,8 @@
-// Two pages. The Extract Wizard turns a raw extract into a scored Context
-// Model and shows its working; the Landscape Footprint is what you decide from.
-// Neither holds opinions of its own — every number traces to a rule in the
-// rulepack and a row in the extract, and every one of them can be opened.
+// Two pages. The Context Slice establishes what the extract supports — what
+// loaded, how it is computed, what can and cannot be seen, and the estate it
+// describes. The Landscape Footprint is what you decide from. Neither holds
+// opinions of its own: every number traces to a rule in the rulepack and a row
+// in the extract, and every one of them can be opened.
 //
 // The Footprint reads scope, then the position drawn from it, then the
 // decisions that move it. That order is for the walkthrough: establish the
@@ -20,7 +21,7 @@ import { renderSubgraph } from './subgraph.js';
 import { renderTreemap } from './treemap.js';
 import { renderAssistant, AUDIENCES, DEFAULT_AUDIENCE } from './assistant.js';
 import { esc, plural, num, renderChips, confidenceMark, callChip } from './ui.js';
-import { STEPS, ROLES, renderStepper, renderUpload, renderModel, renderNarrative } from './wizard.js';
+import { ROLES, renderUpload, renderBoundary } from './slice.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -45,7 +46,7 @@ const state = {
   rawUsage: [],
   shipped: null,
   source: { label: 'Shipped extract', files: [] },
-  wizard: { open: false, step: 0, tables: [], mapping: [], error: null },
+  load: { open: false, tables: [], mapping: [], error: null },
   lens: 'undecided',
   filter: 'all',
   overrides: {},
@@ -104,119 +105,53 @@ function recompute() {
   render();
 }
 
-// Facts about what the pipeline just did, for the wizard to show.
+// Facts about what the pipeline just did, for the boundary card to state. It
+// used to carry a dozen more fields feeding the wizard's pipeline strip and its
+// two worked examples; those steps are gone, and a stats object that computes
+// what nobody reads is just a slower way to be wrong later.
 function modelStats() {
-  const g = state.graph;
-  const all = [...g.objects.values()];
-  const custom = all.filter((o) => o.isCustom);
-  const evidence = {};
-  for (const k of [EVIDENCE.ACTIVE, EVIDENCE.DEAD, EVIDENCE.UNMEASURED, EVIDENCE.UNMEASURABLE]) {
-    evidence[k] = all.filter((o) => o.evidence === k).length;
-  }
-  const orphans = all.filter((o) => !o.usage && o.fanIn === 0 && o.fanOut === 0);
-  const byRule = {};
-  for (const o of custom) {
-    byRule[o.rule] ??= { id: o.rule, basis: o.basis, count: 0, disposition: o.proposed };
-    byRule[o.rule].count += 1;
-  }
-
-  // The wizard's pipeline strip walks the same 106 custom objects through four
-  // stages, so every stage has to be counted over the same population. Mixing
-  // the 366-object evidence split with the 106-object call split would make a
-  // picture that quietly changes denominator halfway across.
-  const tally = (list, key) => {
-    const out = {};
-    for (const o of list) out[o[key]] = (out[o[key]] ?? 0) + 1;
-    return out;
-  };
-  const customEvidence = {};
-  for (const k of [EVIDENCE.ACTIVE, EVIDENCE.DEAD, EVIDENCE.UNMEASURED, EVIDENCE.UNMEASURABLE]) {
-    customEvidence[k] = custom.filter((o) => o.evidence === k).length;
-  }
-
-  // Two real objects, walked end to end. One reaches Retire on a measurement;
-  // the other has every appearance of a retirement and reaches Investigate
-  // because nothing about it was measured. Those two rows are the argument.
-  const worked = [
-    custom.find((o) => o.rule === 'measured-dead-unreferenced'),
-    custom.find((o) => o.rule === 'unmeasured-unreferenced-custom'),
-  ].filter(Boolean);
-
   return {
-    customEvidence,
-    customBasis: tally(custom, 'basis'),
-    customConfidence: tally(custom, 'confidence'),
-    customCalls: tally(custom, 'proposed'),
-    worked,
-    objects: all.length,
-    customObjects: custom.length,
-    edges: g.edges.length,
-    transactions: g.transactions.length,
-    phantoms: g.phantoms.length,
-    evidence,
-    reachable: custom.filter((o) => o.tcodeReachable).length,
-    writesStandard: g.edges.filter((e) => e.type === 'Write' && g.objects.get(e.from)?.isCustom && g.objects.get(e.to)?.namespace === 'Standard').length,
-    forks: all.filter((o) => o.forkPartner).length / 2,
-    maxBlast: Math.max(...all.map((o) => o.blastRadius.length)),
-    orphanTrap: orphans.length,
-    orphanTrapStandard: orphans.filter((o) => !o.isCustom).length,
+    objects: state.graph.objects.size,
     packages: state.packages.length,
-    rules: Object.values(byRule).sort((a, b) => b.count - a.count),
   };
 }
 
-// ---------------------------------------------------------------- wizard
+// ---------------------------------------------------------------- load
 
-// Loading and mapping are the same step now, so the gate that used to sit on
-// the mapping screen sits here: four files is not enough, four files that fill
-// all four adapters exactly once is.
-function wizardCanAdvance() {
-  const w = state.wizard;
-  if (w.step === 0) {
-    if (!w.tables.length) return false;
-    const set = w.mapping.filter(Boolean);
-    return ROLES.every((r) => set.includes(r)) && new Set(set).size === set.length;
-  }
-  return true;
+// The gate that used to sit on the wizard's mapping screen sits here: four
+// files is not enough, four files that fill all four adapters exactly once is.
+function canBuild() {
+  const w = state.load;
+  if (!w.tables.length) return false;
+  const set = w.mapping.filter(Boolean);
+  return ROLES.every((r) => set.includes(r)) && new Set(set).size === set.length;
 }
 
-function renderWizard() {
-  const w = state.wizard;
-  $('sec-wizard').hidden = !w.open;
+function renderLoad() {
+  const w = state.load;
+  $('load-panel').hidden = !w.open;
   if (!w.open) return;
-
-  $('stepper').innerHTML = renderStepper(w.step);
-  $('wiz-title').textContent = STEPS[w.step].title;
-  $('wiz-count').textContent = `Step ${w.step + 1} of ${STEPS.length}`;
-  $('wiz-back').disabled = w.step === 0;
-  $('wiz-next').disabled = !wizardCanAdvance();
-  $('wiz-next').textContent = w.step === STEPS.length - 1 ? 'Finish' : 'Next';
-
-  if (w.step === 0) $('wiz-body').innerHTML = renderUpload(w);
-  if (w.step === 1) $('wiz-body').innerHTML = renderModel(modelStats());
-  if (w.step === 2) {
-    const sample = state.packages.find((p) => p.headline);
-    $('wiz-body').innerHTML = renderNarrative(modelStats(), sample);
-  }
+  $('load-body').innerHTML = renderUpload(w);
+  $('build-slice').disabled = !canBuild();
 }
 
-// Step 2 builds the extract from whatever the mapping says, so a manual
-// override is honoured exactly like a detected one.
+// The extract is built from whatever the mapping says, so a manual override is
+// honoured exactly like a detected one.
 function extractFromMapping() {
   const extract = {};
-  state.wizard.mapping.forEach((role, i) => {
-    if (role) extract[role] = state.wizard.tables[i].rows;
+  state.load.mapping.forEach((role, i) => {
+    if (role) extract[role] = state.load.tables[i].rows;
   });
   return extract;
 }
 
 async function acceptFiles(fileList) {
   const files = [...fileList].filter((f) => /\.csv$/i.test(f.name));
-  const w = state.wizard;
+  const w = state.load;
   w.error = null;
   if (!files.length) {
     w.error = 'No CSV files in that drop.';
-    return renderWizard();
+    return renderLoad();
   }
   const tables = [];
   for (const file of files) {
@@ -227,20 +162,20 @@ async function acceptFiles(fileList) {
   w.mapping = tables.map((t) => t.detected ?? '');
   const unmatched = tables.filter((t) => !t.detected).length;
   if (unmatched) w.error = `${plural(unmatched, 'file')} did not match a known signature — set ${unmatched > 1 ? 'them' : 'it'} by hand in the list above.`;
-  renderWizard();
+  renderLoad();
 }
 
 // The card reports what has been *loaded*, which is not the same as what is in
 // memory. A graph exists from boot and is rebuilt after a clear so the rest of
-// the app always has something valid to read — but until the wizard has been run
-// there is nothing the user put here, and saying "366 objects" before they have
-// loaded anything, or after they have cleared it, is the card claiming credit
-// for state they cannot see.
+// the app always has something valid to read — but until an extract has been
+// built there is nothing the user put here, and saying "366 objects" before
+// they have loaded anything, or after they have cleared it, is the card
+// claiming credit for state they cannot see.
 function updateLoadCard() {
   const s = state.source;
   $('clear-all').hidden = !state.hasRun;
   $('load-card').classList.toggle('is-empty', !state.hasRun);
-  $('start-wizard').textContent = state.hasRun ? 'Load a different extract' : 'Load an extract';
+  $('start-load').textContent = state.hasRun ? 'Load a different extract' : 'Load an extract';
 
   if (!state.hasRun) {
     $('load-what').textContent = 'No extract loaded';
@@ -251,14 +186,18 @@ function updateLoadCard() {
   $('load-files').textContent = s.files.length ? s.files.join(' · ') : 'objects.csv · usage.csv · dependencies.csv · transactions.csv';
 }
 
+// Everything the run reveals, in one place so clearAll and buildSlice cannot
+// disagree about what "has been run" means on screen.
+const RUN_SECTIONS = ['sec-boundary', 'sec-evidence', 'sec-scope'];
+
 // Back to the empty state, for running the demo again from the top without a
 // page reload. Deliberately not on a single rail click: returning to this page
-// to re-read Evidence coverage is a normal thing to do and must not wipe
-// anything. Double-click the rail icon, or use the button that appears here
-// once a run has happened.
+// to re-read Coverage is a normal thing to do and must not wipe anything.
+// Double-click the rail icon, or use the button that appears here once a run
+// has happened.
 function clearAll() {
   state.hasRun = false;
-  state.wizard = { open: false, step: 0, tables: [], mapping: [], error: null };
+  state.load = { open: false, tables: [], mapping: [], error: null };
   state.overrides = {};
   state.filter = 'all';
   state.sort = { key: null, dir: 'desc' };
@@ -266,56 +205,53 @@ function clearAll() {
   state.lens = 'undecided';
   state.ai = { open: false, audience: DEFAULT_AUDIENCE };
   state.source = { label: 'Shipped extract', files: [] };
-  $('sec-wizard').hidden = true;
-  $('sec-evidence').hidden = true;
+  $('load-panel').hidden = true;
+  for (const id of RUN_SECTIONS) $(id).hidden = true;
   closeModal();
   closeAssistant();
   buildAudienceSeg();
 
   // Rebuild from the shipped extract so the app is in a valid state; hasRun
-  // stays false, so the footprint shows its empty state until the wizard runs.
+  // stays false, so the footprint shows its empty state until a slice is built.
   runPipeline(state.shipped);
   goto('extract');
   recompute();
 }
 
 function useShipped() {
-  const w = state.wizard;
+  const w = state.load;
   const names = { objects: 'objects.csv', usage: 'usage.csv', dependencies: 'dependencies.csv', transactions: 'transactions.csv' };
   w.tables = ROLES.map((r) => ({ name: names[r], rows: state.shipped[r], detected: r }));
   w.mapping = [...ROLES];
   w.error = null;
-  renderWizard();
+  renderLoad();
 }
 
-function wizardNext() {
-  const w = state.wizard;
-  if (!wizardCanAdvance()) return;
+// One action instead of three Next clicks. The mapping is already settled by
+// column signature or by hand, so this is where the pipeline actually runs and
+// where the rest of the page appears.
+function buildSlice() {
+  if (!canBuild()) return;
 
-  // Leaving the load step is where the pipeline actually runs — the mapping is
-  // already settled there, by column signature or by hand.
-  if (w.step === 0) {
-    runPipeline(extractFromMapping());
-    state.overrides = {};
-    const used = w.mapping.map((r, i) => (r ? w.tables[i].name : null)).filter(Boolean);
-    state.source = { label: w.tables[0].name === 'objects.csv' ? 'Shipped extract' : 'Uploaded extract', files: used };
-    recompute();
-  }
+  runPipeline(extractFromMapping());
+  state.overrides = {};
+  const w = state.load;
+  const used = w.mapping.map((r, i) => (r ? w.tables[i].name : null)).filter(Boolean);
+  state.source = { label: w.tables[0].name === 'objects.csv' ? 'Shipped extract' : 'Uploaded extract', files: used };
+  recompute();
 
-  if (w.step === STEPS.length - 1) {
-    state.hasRun = true;
-    $('sec-evidence').hidden = false;
-    renderCoverage();
-    render();
-    $('sec-evidence').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    return;
-  }
-
-  w.step += 1;
-  renderWizard();
+  // The loader collapses once it has done its job. Leaving it open pushes
+  // everything the page is actually for below the fold, which is the wrong
+  // thing to be looking at the moment the slice exists. "Load a different
+  // extract" opens it again.
+  state.load.open = false;
+  state.hasRun = true;
+  for (const id of RUN_SECTIONS) $(id).hidden = false;
+  $('boundary').innerHTML = renderBoundary(modelStats());
+  renderCoverage();
+  render();
+  $('sec-boundary').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
-
-// ---------------------------------------------------------------- helpers
 
 function callTip(pack) {
   const call = callFor(pack);
@@ -354,7 +290,7 @@ function objectsByCall() {
 // ---------------------------------------------------------------- coverage
 
 // Hoisted out of renderCoverage so the Scope card can show the same picture the
-// wizard's Evidence step does — drawn by this code rather than by a second
+// Coverage section does — drawn by this code rather than by a second
 // implementation, because two bars of the same 106 objects that disagree would
 // be worse than one bar shown once.
 const EV_ORDER = [EVIDENCE.ACTIVE, EVIDENCE.DEAD, EVIDENCE.UNMEASURED, EVIDENCE.UNMEASURABLE];
@@ -654,7 +590,7 @@ function syncLensSeg() {
 }
 
 function render() {
-  renderWizard();
+  renderLoad();
   updateLoadCard();
   if (state.graph && state.hasRun) renderCoverage();
 
@@ -679,7 +615,7 @@ function goto(page) {
   state.page = page;
   $('page-extract').hidden = page !== 'extract';
   $('page-footprint').hidden = page !== 'footprint';
-  $('crumb-here').textContent = page === 'extract' ? 'Extract Wizard' : 'Landscape Footprint';
+  $('crumb-here').textContent = page === 'extract' ? 'Context Slice' : 'Landscape Footprint';
   for (const b of document.querySelectorAll('[data-page]')) {
     b.setAttribute('aria-current', String(b.dataset.page === page));
   }
@@ -782,7 +718,7 @@ function tileDetail(id) {
           ${evidenceRow('Custom code', `${custom.length} objects — what you decide about`, custom)}
           ${evidenceLegend()}
         </div></div>
-        <p class="next" style="margin-top:10px">The same bar the wizard's Evidence step shows, drawn by the same code. Four states, not two — collapsing the last two is the fastest route to a confident, wrong retirement list.</p>` };
+        <p class="next" style="margin-top:10px">The same bar the Coverage section shows, drawn by the same code. Four states, not two — collapsing the last two is the fastest route to a confident, wrong retirement list.</p>` };
   }
   if (id === 'phantoms') {
     return { title: 'Inventory exceptions',
@@ -988,32 +924,29 @@ function wire() {
   }
   document.querySelector('[data-page="extract"]').addEventListener('dblclick', clearAll);
   on('clear-all', 'click', clearAll);
-  on('go-wizard', 'click', () => {
+  on('go-load', 'click', () => {
     goto('extract');
-    state.wizard.open = true;
-    renderWizard();
+    state.load.open = true;
+    renderLoad();
   });
 
-  on('start-wizard', 'click', () => {
-    state.wizard.open = true;
-    renderWizard();
-    $('sec-wizard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  on('start-load', 'click', () => {
+    state.load.open = true;
+    renderLoad();
+    $('load-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
-  on('wiz-back', 'click', () => {
-    if (state.wizard.step > 0) { state.wizard.step -= 1; renderWizard(); }
-  });
-  on('wiz-next', 'click', wizardNext);
+  on('build-slice', 'click', buildSlice);
 
-  on('wiz-body', 'click', (e) => {
+  on('load-body', 'click', (e) => {
     if (e.target.closest('#use-shipped')) return useShipped();
     if (e.target.closest('#dropzone')) $('file-input').click();
   });
-  on('wiz-body', 'change', (e) => {
+  on('load-body', 'change', (e) => {
     const sel = e.target.closest('[data-map]');
     if (!sel) return;
-    state.wizard.mapping[Number(sel.dataset.map)] = sel.value;
-    renderWizard();
+    state.load.mapping[Number(sel.dataset.map)] = sel.value;
+    renderLoad();
   });
   on('file-input', 'change', (e) => acceptFiles(e.target.files));
 
@@ -1021,7 +954,7 @@ function wire() {
   document.addEventListener('dragover', (e) => {
     if (!dz()) return;
     e.preventDefault();
-    state.wizard.dragging = true;
+    state.load.dragging = true;
     dz().classList.add('is-drop');
   });
   document.addEventListener('dragleave', () => dz()?.classList.remove('is-drop'));
@@ -1167,8 +1100,8 @@ async function boot() {
   state.shipped = extract;
 
   // The graph is built at boot so the footprint has something to show the
-  // moment the wizard finishes, but hasRun stays false: the wizard is the way
-  // in, and an empty second page is the honest state until it has been run.
+  // moment a slice is built, but hasRun stays false: loading an extract is the
+  // way in, and an empty second page is the honest state until it has happened.
   runPipeline(extract);
   buildLensSeg();
   buildAudienceSeg();

@@ -106,7 +106,7 @@
   .pagecard ul { margin:0; padding-left:18px; color:var(--ink-2); font-size:var(--t-sm); }
   .pagecard li { margin:3px 0; }
 
-  /* wizard steps */
+  /* flow steps */
   .flow { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
   .fstep {
     background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg);
@@ -220,7 +220,7 @@
     <ol>
       <li><a href="#what">What it is</a></li>
       <li><a href="#pages">The two pages</a></li>
-      <li><a href="#wizard">The Extract Wizard</a></li>
+      <li><a href="#slice">The Context Slice</a></li>
       <li><a href="#runs">How it actually runs</a></li>
       <li><a href="#know">What we know</a></li>
       <li><a href="#calls">How a call is made</a></li>
@@ -285,43 +285,48 @@
       <div class="pages">
         <div class="pagecard">
           <div class="icon" aria-hidden="true">&#8679;</div>
-          <h3>Extract Wizard</h3>
-          <p>Where you bring your own data in and watch what happens to it. Nothing here is hidden behind a loading spinner.</p>
+          <h3>Context Slice</h3>
+          <p>What your extract can and cannot tell you, and the estate it describes. Everything on the other page rests on what is here.</p>
           <ul>
             <li>Load your files &#8212; each one identified and mapped as it arrives</li>
-            <li>See how every call is made</li>
-            <li>See exactly where the Discovery Agent writes</li>
-            <li>Finish, then see what the data can and cannot tell you</li>
+            <li>How this is computed &#8212; and exactly where AI is, and is not</li>
+            <li>Coverage &#8212; four evidence states, not two</li>
+            <li>Scope &#8212; the estate the decisions are built from</li>
           </ul>
         </div>
         <div class="pagecard">
           <div class="icon" aria-hidden="true">&#9704;</div>
           <h3>Landscape Footprint</h3>
-          <p>Where you decide. Empty until the wizard has been run once &#8212; an empty page is more honest than a page of numbers with no source.</p>
+          <p>Where you decide. Empty until an extract has been loaded once &#8212; an empty page is more honest than a page of numbers with no source.</p>
           <ul>
-            <li><b>Position</b> &#8212; what it all adds up to, drawn as a map. First, not last.</li>
-            <li><b>Scope</b> &#8212; the estate the decisions are built from</li>
+            <li><b>Position</b> &#8212; what it all adds up to, drawn as a map</li>
             <li><b>Decisions</b> &#8212; the eleven calls to make</li>
           </ul>
         </div>
       </div>
     </section>
 
-    <section id="wizard">
-      <h2>The Extract Wizard</h2>
+    <section id="slice">
+      <h2>The Context Slice</h2>
       <p>
-        Three steps, each named after what is on it. The point of showing them is trust: a tool that swallows your data and returns
-        confident advice is asking to be believed. One that shows its working can be checked.
+        The page that establishes what your extract supports, before anything is decided on it. A tool that swallows your data
+        and returns confident advice is asking to be believed; one that says what it can and cannot see can be checked.
+      </p>
+      <p>
+        <b>Why that name.</b> What this builds is a <em>context slice</em> &#8212; the interpretation of your data, held in one
+        place, that every screen after it reads from. It is not the Celonis Context Model, which is a platform artifact spanning
+        business objects as well as technical ones. The relationship is the point rather than a caveat: the technical layer is the
+        cheapest part of a Context Model to seed first, and this is what you get the moment it exists.
       </p>
 
       <div class="flow">
         <div class="fstep">
           <div class="fstep-n">01</div>
           <div>
-            <h3>Load your files</h3>
+            <h3>Load an extract</h3>
             <p>Drag in the CSV files your Basis team exported. Nothing is cleaned or corrected on the way in &#8212; the messy parts of an export are usually findings, not mistakes to tidy away before anyone sees them.</p>
             <p>The tool works out which file is which by looking at the <b>column headings</b>, not the filename. That matters because a real export is called something like <code>ZOBJ_DUMP_PRD1_0714.CSV</code>, never <code>objects.csv</code>. Each file shows what it matched on and what it will be used as, and either can be corrected on the spot &#8212; there is no separate confirmation screen, because the matching is not a judgement anybody needs to make twice.</p>
-            <p>This is also the point where a different data source plugs in: give it the same four kinds of file from SAP Readiness Check instead, and everything after this step is unchanged.</p>
+            <p>This is also the point where a different data source plugs in: give it the same four kinds of file from SAP Readiness Check instead, and everything after this is unchanged.</p>
             <p>There is also a one-click option to use the sample data, so a demo never stalls on a file dialog.</p>
           </div>
         </div>
@@ -329,22 +334,38 @@
         <div class="fstep">
           <div class="fstep-n">02</div>
           <div>
-            <h3>See how every call is made</h3>
-            <p>Your four files become one connected picture: what exists, what calls what, and what is known about each thing. Then every object is scored and given a recommended call.</p>
-            <p><b>A word on what that picture is.</b> It is a <em>context slice</em> &#8212; the interpretation of your data, held in one place, that every screen after this reads from. It is not the Celonis Context Model, which is a platform artifact spanning business objects as well as technical ones. The relationship is the point rather than a caveat: the technical layer is the cheapest part of a Context Model to seed first, and this is what you get the moment it exists. The step is where you watch that interpretation being built &#8212; the interpretation itself is not a step, it is everything downstream.</p>
-            <p><b>All of this comes from a rules file you can open and read.</b> Same data in, same answer out, every time.</p>
-            <p>The step draws it as one strip: the same 106 objects moving through <b>evidence &rarr; rule &rarr; confidence &rarr; the call</b>, so the derivation is visible in the counts rather than asserted. Two real objects are then walked the whole way &#8212; one reaching &ldquo;retire&rdquo; on a measurement, one reaching &ldquo;investigate&rdquo; on an absence, identical until you read the middle. All eleven rules are one click away.</p>
+            <h3>How this is computed</h3>
+            <p>Your four files become one connected picture &#8212; what exists, what calls what, and what is known about each thing &#8212; and then every object is given a recommended call. <b>All of it comes from a rules file you can open and read.</b> Same data in, same answer out, every time.</p>
+            <p>Twelve ordered rules, first match wins, and each one declares whether it stands on a fact, a measurement, an inference or a gap. Nothing is ever retired on evidence weaker than a measurement, and the engine refuses to start if a rule breaks that.</p>
+            <p><b>Then the boundary, as a closed list.</b> A model writes words in exactly three places: the summary sentences on each decision, the sentence at the top of the Landscape Footprint, and the Discovery Agent itself. Nowhere else, and never a number. A boundary you can state as a closed list is one somebody can check; one you gesture at is not.</p>
           </div>
         </div>
 
         <div class="fstep">
           <div class="fstep-n">03</div>
           <div>
-            <h3>See exactly where the Discovery Agent writes</h3>
-            <p>106 custom objects is a list, and nobody funds a list. Grouping them into eleven decisions is done <b>by rule</b> &#8212; each object lands in exactly one group, so nothing is counted or paid for twice.</p>
-            <p>Only then does AI get involved, and only to write words. The step names all three places it does: the summary sentences on each decision, the sentence at the top of the Landscape Footprint, and the assistant. A boundary you can state as a closed list is one somebody can check; one you gesture at is not. The cached text is written once and saved, so the live page never depends on a network connection.</p>
+            <h3>Coverage</h3>
+            <p>What the extract can and cannot tell you, split three ways: everything, the custom code you decide about, and SAP&rsquo;s own code. Four evidence states rather than two &#8212; ran, measured and did not run, never measured, and cannot be measured.</p>
+            <p>This is the first thing to argue with, because every call downstream rests on it.</p>
           </div>
         </div>
+
+        <div class="fstep">
+          <div class="fstep-n">04</div>
+          <div>
+            <h3>Scope</h3>
+            <p>Six tiles describing the estate the decisions are built from: how much is custom, what the export appears to have missed, how much of it has usage evidence, how the business reaches it, what already blocks a clean core, and how many decisions come out.</p>
+            <p>Every tile opens onto the rows behind it. None of them is a number you have to take on trust.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <b>This was a three-step wizard.</b> Load, then a walkthrough of the rules deciding, then a screen naming where the
+        Discovery Agent writes. It was the most-built and least-differentiating thing in the prototype: the ability to ingest and
+        compute data is the one claim nobody in this room doubts, so proving it cost minutes from a short demo and bought nothing.
+        What the middle steps showed did not disappear &#8212; it moved to where somebody actually asks for it. Every call carries
+        its named rule and its rationale inside the decision that funds it.
       </div>
     </section>
 
@@ -673,7 +694,7 @@
         give a model and the wrong job to give the rulepack.
       </p>
       <p>
-        So there is a button in the corner of both pages &#8212; the <b>Discovery Agent</b>, named for the first of the agent types the Celonis vision paper describes, working in the phase that paper names first: value discovery. On the Extract Wizard it says what just
+        So there is a button in the corner of both pages &#8212; the <b>Discovery Agent</b>, named for the first of the agent types the Celonis vision paper describes, working in the phase that paper names first: value discovery. On the Context Slice it says what just
         happened to your data and what to know about it before going further. On the Landscape
         Footprint it says where you stand and how to decide from here.
       </p>
@@ -903,7 +924,7 @@
   <span class="dir">src/core/</span>          <span class="note">reads files, builds the picture, works out what is known</span>
   <span class="dir">src/engine/</span>        <span class="note">the scoring and the rules</span>
     <span class="f">rulepack.json</span>     <span class="note">every number and threshold, in one editable file</span>
-  <span class="dir">src/workspace/</span>     <span class="note">the wizard and the board</span>
+  <span class="dir">src/workspace/</span>     <span class="note">the slice page and the board</span>
   <span class="dir">tools/</span>
     <span class="f">check.mjs</span>         <span class="note">re-checks every headline number against the raw files</span>
     <span class="f">serve.py</span>          <span class="note">runs it locally</span>

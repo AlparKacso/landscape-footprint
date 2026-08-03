@@ -49,18 +49,21 @@ The spine is an evidence model with **four states, not two**:
 
 Collapsing the last two into "unused" is the fastest way to produce a confident, wrong retirement list. 175 of 366 objects have no usage row; 32 more are tables that `usage.csv` cannot cover by construction. Both are shown on the face of the output rather than in a footnote.
 
-## The wizard, in three steps
+## The Context Slice page
 
-**Load → Rules → Narrative.** Each step is named after what is on it.
+**Load → How this is computed → Coverage → Scope.**
 
-- **Load** — files matched to adapters by column signature, not filename, as they arrive. What each file matched on and what it will be used as are both on the row, and either can be corrected there. There is no separate confirmation screen; the matching is not a judgement anyone needs to make twice.
-- **Rules** — *how every call is made.* One strip walking the same 106 objects through evidence → rule → confidence → call, so the derivation is legible in the counts. Two real objects are walked end to end; all eleven rules are one click away. Not called "Scoring", because the scores are the one thing this step deliberately does not show.
-- **Narrative** — where the Discovery Agent writes, and where it does not, as a closed list of three places.
+- **Load** — files matched to adapters by column signature, not filename, as they arrive. What each file matched on and what it will be used as are both on the row, and either can be corrected there. The matching is not a judgement anyone needs to make twice, so there is no confirmation screen.
+- **How this is computed** — the boundary, stated exhaustively: everything that decides is deterministic, and the Discovery Agent writes words in exactly three named places.
+- **Coverage** — the four evidence states across the whole extract, the custom estate and the standard estate.
+- **Scope** — six tiles, each opening onto the rows behind it.
+
+This was a three-step wizard — load, then the rules deciding, then where the agent writes. It was the most-built and least-differentiating thing here: Celonis's ability to ingest and compute data is the one claim nobody in the room doubts, so walking it cost minutes from a ten-minute demo and bought nothing. What the middle steps showed is still reachable, in the place someone actually asks for it — every call carries its named rule and its rationale inside the decision modal.
 
 ## What it deliberately does not do
 
 A risk dial, a per-object browser, on-screen risk scores, effort estimates in days, a picture of all
-366 objects at once, and a separate step for confirming which file is which. Most were built and then
+366 objects at once, and a walkthrough of the pipeline. Most were built and then
 removed; each removal is recorded with its reason in
 [`3_Build_Log.html`](../3_Build_Log.html) and in the handbook's *What it does not do*.
 
@@ -133,4 +136,4 @@ That is a property of the tool rather than a setting to find. An earlier version
 
 `unmeasuredMeans` is the one that matters: flip it from `not_measured` to `dead` and the whole estate re-scores, and 11 decisions fold into 8. That is working assumption 5, still open with the customer, built as a switch rather than a branch so the answer costs a string change.
 
-It is deliberately not a control in the interface. It is a question for the customer's team, not a setting for the reader to guess at — and the wizard and the coverage strip both state the assumption on the face of the output.
+It is deliberately not a control in the interface. It is a question for the customer's team, not a setting for the reader to guess at — and the boundary card and the coverage strip both state the assumption on the face of the output.

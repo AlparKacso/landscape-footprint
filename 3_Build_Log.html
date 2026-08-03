@@ -107,7 +107,7 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
 <div class="page" id="doc">
   <div class="eyebrow">Deliverable 4 · Build Log</div>
   <h1>Build log</h1>
-  <p class="dek">Three prototypes, one shipped. What I built, what I cut, and where the eight hours went.</p>
+  <p class="dek">Three prototypes, one shipped. What I built, what I cut, and where the time went against an eight-hour cap.</p>
   <div class="meta">
     <span><b>Stack:</b> plain ES modules in the browser, no build step, no dependencies</span>
     <span><b>AI assist:</b> Claude Code (profiling, build, copy)</span>
@@ -172,10 +172,11 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
 
   <h2>What I built</h2>
   <ul>
-    <li><strong>An Extract Wizard</strong> — a page where a customer loads their own four files and
-      watches what happens to them. Files are matched to adapters by <em>column signature</em>, not
-      filename, because a Basis team exports <span class="mono">ZOBJ_DUMP_PRD1_0714.CSV</span>, never
-      <span class="mono">objects.csv</span>. Three steps: load, rules, and where AI is involved.</li>
+    <li><strong>A Context Slice page</strong> — where a customer loads their own four files and sees
+      what the extract can and cannot support. Files are matched to adapters by <em>column
+      signature</em>, not filename, because a Basis team exports
+      <span class="mono">ZOBJ_DUMP_PRD1_0714.CSV</span>, never <span class="mono">objects.csv</span>.
+      Load, the boundary between what is computed and what a model wrote, coverage, and scope.</li>
     <li><strong>A rules engine, not a model.</strong> Twelve ordered rules decide, first match wins,
       and every weight they read sits in one editable rulepack file — so "why does it say retire?" is
       answered with a named rule and rows from the customer's own extract. Five calls:
@@ -264,15 +265,16 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
       <tr><td><b>View-settings popover</b></td><td>built &rarr; cut</td><td>With the other two gone it held one control — and hiding the single consequential lever in a popover was the wrong trade. It moved onto the page.</td></tr>
       <tr><td><b>Risk scores on screen</b></td><td>built &rarr; cut</td><td>"Why 72?" buys a question that costs five minutes of a seven-minute pitch and lands on facts the rule's own rationale states in a sentence. Still used for ordering.</td></tr>
       <tr><td><b>Object inventory tab</b> and <b>per-object detail drawer</b></td><td>added from V2 &rarr; cut</td><td>Taken from V2 because "where is my object" is the first question anyone asks. Cut on the next read-through: a browsable list of 106 rows is exactly the artifact the eleven decisions exist to replace, and offering one beside them invites re-litigating the grouping one object at a time.</td></tr>
-      <tr><td><b>Mapping step</b> in the wizard</td><td>built &rarr; cut</td><td>The matching is deterministic and happens on upload. A screen to confirm a conclusion already reached is ceremony; the override moved onto the file row. Four steps became three.</td></tr>
+      <tr><td><b>Mapping step</b> in the loader</td><td>built &rarr; cut</td><td>The matching is deterministic and happens on upload. A screen to confirm a conclusion already reached is ceremony; the override moved onto the file row. Four steps became three.</td></tr>
       <tr><td><b>Card view</b> for the decisions, <b>bar charts</b> in the scoring strip</td><td>built &rarr; cut</td><td>The card view duplicated the list. The bars were four stacked views of the same 106 objects, reading as four near-identical grey smears. The counts already carried it.</td></tr>
       <tr><td><b>Standalone "rules that fired" section</b></td><td>built &rarr; folded in</td><td>Load-bearing transparency, but the tallest thing on the step. Folded into the stage it belongs to behind a <em>see all</em> disclosure — one click, no permanent cost.</td></tr>
       <tr><td><b>Detail slider</b> (less / medium / more) on the Discovery Agent</td><td>designed &rarr; replaced</td><td>My original spec. Nobody knows which verbosity they are. Became audience — for the board, the programme, the engineer — which is a question anyone can answer, and which hands you a slide sentence.</td></tr>
       <tr><td><b>Live API call</b> from the Discovery Agent</td><td>rejected</td><td>A network round trip inside a live pitch is a single point of failure for no benefit — and a cached summary would have contradicted the page the first time anyone switched transition path. Composing from live state at open time solves both.</td></tr>
       <tr><td><b>V2's risk matrix</b> and its <b>per-object engine</b></td><td>rejected</td><td>The matrix restates fan-in and executions as a picture the decision modal already answers with attribution. The engine called 61 of 106 objects "decommission" on <span class="mono">exec &lt; 50 &amp;&amp; users &lt;= 2</span> — the confident, wrong retirement list this whole model exists to prevent. V2's positioning sentence was worth taking, and was.</td></tr>
       <tr><td><b>Force-directed graph</b> of all 366 objects</td><td>cut early</td><td>Impressive, inert, and the exact category the vision paper distinguishes Celonis from. The graph survives only inside one decision, answering one question: if we act on this, what else moves?</td></tr>
+      <tr><td><b>The Extract Wizard</b> — the three-step walkthrough of the pipeline</td><td>built &rarr; cut</td><td>The largest single cut in the project, made last. Celonis's ability to ingest and compute data is the one claim nobody in the room doubts, so proving it over three screens cost minutes from a short demo and bought nothing. The load step and the AI-boundary statement survive as two sections; the two in between are gone. What they showed is still reachable in the decision modal, where somebody actually asks for it.</td></tr>
       <tr><td><b>Landing page</b> for the published site</td><td>built &rarr; cut</td><td>An interstitial between a reviewer and the thing they came to look at earns nothing.</td></tr>
-      <tr><td><b>"Context Model"</b> as a wizard step name</td><td>renamed</td><td>The prototype builds a <em>context slice</em>, not the Celonis Context Model, which spans business objects as well as technical ones. Having been careful about that in the README, the app should not have undone it on its first screen. The step is called <b>Rules</b>, because what is on it is a rule deciding.</td></tr>
+      <tr><td><b>"Context Model"</b> as a wizard step name</td><td>renamed</td><td>The prototype builds a <em>context slice</em>, not the Celonis Context Model, which spans business objects as well as technical ones. Having been careful about that in the README, the app should not have undone it on its first screen. The page now carries that name, which is what the README always said it should.</td></tr>
     </tbody>
   </table>
 
@@ -282,7 +284,7 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
       file for ten minutes <em>independently</em>. A visitor held a new <span class="mono">index.html</span>
       beside a stale <span class="mono">app.js</span>, which died on boot — and the error handler blamed
       the local server, the one thing that was fine. Versioning the <span class="mono">&lt;script&gt;</span>
-      tag only busted the entry, so it happened again with a stale <span class="mono">wizard.js</span>.
+      tag only busted the entry, so it happened again with a stale sibling module.
       Fixed properly with an <b>import map</b> pinning all twelve modules plus the entry, and
       <span class="mono">bump.mjs</span> to rewrite all thirteen numbers at once.</li>
     <li><strong>The sharper half of the same bug.</strong> The data files were unversioned too, and a
@@ -317,23 +319,23 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
   </div>
 
   <div class="callout warn">
-    <b>Eighty minutes over, and where they went.</b> Rehearsing is how I found the one scoping gap
-    the artifact could not see: these four files cannot record a modification or an enhancement to SAP
+    <b>Two hours and twenty minutes over, and where they went.</b> All of it after the cap, all of it
+    found by rehearsing rather than by building. Reading the scoping back surfaced the one gap the
+    artifact could not see: these four files cannot record a modification or an enhancement to SAP
     standard, so 106 is every custom object in <em>this extract</em> rather than the system's whole
-    custom footprint. Naming it on the Scope card was ten minutes. The other forty went on the
-    walkthrough — Scope now leads the page, because a demo has to establish the ground before it
-    shows a conclusion drawn on it, and three Scope cards gained the picture behind the number rather
-    than leaving it as an assertion. The last ten closed an ownership leak the same reading found:
-    four rules were missing their <span class="mono">isCustom</span> guard, so eight SAP objects
-    carried a call the customer cannot take on code they do not own — invisible in every reported
-    number, because every reported number is custom-only. The last ten gave the transition path's
-    priority labels a verb and a direction, because <em>Deferred</em> reads as a status and a Head of
-    Transformation needs an instruction. The last ten stopped a Discovery Agent sentence asserting a
-    trigger mechanism no column in the extract records — the one kind of overreach this artifact
-    cannot afford, found by reading its own output closely enough to notice that twenty-one of those
-    thirty-three objects have twenty or more distinct users, which is not what batch looks like.
-    Reading the artifact back was free; changing it was not, so it is counted, and the total says
-    9h 20m against an 8h cap.
+    custom footprint. Reordering the Footprint for the walkthrough, and giving three Scope cards the
+    picture behind the number instead of an assertion, took forty. Ten closed an ownership leak the
+    same reading found &mdash; four rules missing an <span class="mono">isCustom</span> guard, so eight
+    SAP objects carried a call the customer cannot take on code they do not own. Ten gave the
+    transition path's priorities a verb and a direction, because <em>Deferred</em> reads as a status
+    and a Head of Transformation needs an instruction. Ten stopped a Discovery Agent sentence
+    asserting a trigger mechanism no column records. And the last hour cut the Extract Wizard, which
+    was the largest single removal in the project and the one most consistent with everything else in
+    this table.
+
+    <br><br>Reading the artifact back was free; changing it was not, so all of it is counted. The
+    total says 10h 20m against an 8h cap &mdash; and the honest reading of that number is that the
+    last two hours removed more than they added.
   </div>
 
   <div class="callout">
@@ -369,10 +371,10 @@ const DEFAULT_ROWS = [
     act:"V2 — a second prototype built autonomously, with no steering, as a control",
     sub:"Cheap check on my own judgement. Two ideas came back from it; the engine underneath did not.", mins:30 },
   { ph:"Build",
-    act:"V3 — the merged build: Extract Wizard, the two-page split, the decision modal, treemap, override",
+    act:"V3 — the merged build: the loader, the two-page split, the decision modal, treemap, override",
     sub:"Driven by clicking through a working build rather than by a plan.", mins:70 },
   { ph:"Build",
-    act:"Discovery Agent, its provenance marks, and the wizard compacted to match",
+    act:"Discovery Agent, its provenance marks, and the load steps compacted to match",
     sub:"Composed from live state so it tracks the route lever. Customer answers folded in.", mins:50 },
   { ph:"Build",
     act:"Verification harness, written before the UI existed",
@@ -400,6 +402,9 @@ const DEFAULT_ROWS = [
   { ph:"Spillover — found while rehearsing",
     act:"Gave the transition path's priority labels a verb and a direction",
     sub:"“Deferred” read as a status rather than an instruction. Now ↑ Do first, ↓ Later, ⊘ Falls away — the arrow says which way the route moved it, the word says what to do.", mins:10 },
+  { ph:"Spillover — found while rehearsing",
+    act:"Cut the Extract Wizard; the page became the Context Slice",
+    sub:"The last big cut, on the same argument as every other one: it proved a thing nobody doubts. Load and the AI boundary survive; Scope moved here from the Footprint, which is left carrying only the decisions.", mins:60 },
   { ph:"Spillover — found while rehearsing",
     act:"Stopped one Discovery Agent sentence asserting a mechanism the extract cannot see",
     sub:"“Reached by batch, interface or RFC” named a trigger no column records — and 21 of those 33 objects have 20+ distinct users, which is not batch. It now says what is true: reached some other way, including an entry point this extract does not record.", mins:10 },

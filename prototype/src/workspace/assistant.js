@@ -309,8 +309,8 @@ export function renderAssistant(page, audience, ctx) {
         <span class="mono">src/workspace/assistant.js</span>; every figure in it is read from your
         extract at the moment you opened this, not generated. No score, no call and no grouping on
         this page was produced by a model — those come from
-        <span class="mono">src/engine/rulepack.json</span> and can be replayed. Open the Extract
-        Wizard to watch that happen.
+        <span class="mono">src/engine/rulepack.json</span> and can be replayed. The Context Slice
+        page states that boundary in full.
       </footer>`,
   };
 }
