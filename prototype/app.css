@@ -437,6 +437,11 @@ button.tile:focus-visible { outline: 2px solid var(--primary); outline-offset: 1
 .wizard { padding: 0; overflow: hidden; }
 #load-body { padding: 20px 22px 24px; }
 
+/* The pipeline as a chain rather than a sentence — it is a sequence, and a
+   sequence reads faster drawn than described. */
+.chain { margin: 0 0 10px; }
+.chain code { font-size: 12px; letter-spacing: .02em; white-space: nowrap; }
+
 .wiz-lede { color: var(--ink-2); font-size: 13.5px; line-height: 1.65; margin: 0 0 16px; }
 .wiz-error {
   margin-top: 14px; padding: 10px 12px; border-radius: var(--radius);

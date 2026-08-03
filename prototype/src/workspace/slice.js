@@ -102,29 +102,25 @@ export function renderUpload(w) {
 
 export function renderBoundary(stats) {
   return `
-    <p class="wiz-lede">${stats.objects} objects arrive as four tables and leave as
-      ${stats.packages} decisions. Everything in between is one sequential, deterministic pass:
-      evidence state per object, then the first rule that fits, then the call it proposes, then
-      grouping into decisions. Same extract, same answer, every time &mdash;
-      <code>tools/check.mjs</code> re-derives every number below from the raw files to prove it.</p>
+    <p class="wiz-lede">${stats.objects} objects in, ${stats.packages} decisions out. Replayable from
+      the raw files with <code>tools/check.mjs</code>.</p>
 
     <div class="split-two">
       <div class="mcard">
         <h4>Deterministic &mdash; everything that decides</h4>
-        <p style="margin-bottom:0">Every score, every call, every grouping. Twelve ordered rules,
-          first match wins, and each one declares whether it rests on a fact, a measurement, an
-          inference or a gap. Nothing is ever retired on evidence weaker than a measurement, and the
-          engine refuses to start if a rule breaks that.</p>
+        <p class="chain"><code>evidence &rarr; rule &rarr; call &rarr; decision</code></p>
+        <p style="margin-bottom:0">Twelve ordered rules, first match wins, each declaring what it
+          rests on: a fact, a measurement, an inference or a gap. <b>Nothing is retired on evidence
+          weaker than a measurement</b> &mdash; enforced at run time.</p>
       </div>
       <div class="mcard is-ai">
         <h4>The Discovery Agent &mdash; words, in three places</h4>
         <ol class="ai-places">
-          <li>The headline, decision and watch-out on each of the ${stats.packages} decisions.</li>
-          <li>The sentence at the top of the Landscape Footprint.</li>
-          <li>The Discovery Agent itself, which explains either page at the register you pick.</li>
+          <li>Headline, decision and watch-out, per decision.</li>
+          <li>The sentence atop the Landscape Footprint.</li>
+          <li>The agent itself, at the register you pick.</li>
         </ol>
-        <p style="margin:8px 0 0">Wherever a model wrote something the page says so, and says what it
-          was written <i>from</i>. The number of figures written by a model is zero.</p>
+        <p style="margin:8px 0 0">Marked wherever it appears. <b>Figures written by a model: zero.</b></p>
       </div>
     </div>`;
 }
