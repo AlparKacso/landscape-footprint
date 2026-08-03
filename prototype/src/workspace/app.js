@@ -692,8 +692,20 @@ function tileDetail(id) {
   if (id === 'custom') {
     const byType = {};
     for (const o of custom) byType[o.type] = (byType[o.type] ?? 0) + 1;
+    // Both scoping claims are re-derived here rather than asserted, so the card
+    // cannot drift from the extract it is describing. The inbound count is the
+    // load-bearing one: it is what makes excluding the standard estate safe.
+    const standard = all.filter((o) => !o.isCustom);
+    const sapAuthored = standard.filter((o) => o.developerId === 'SAP').length;
+    const inbound = g.edges.filter((e) => {
+      const from = g.objects.get(e.from);
+      const to = g.objects.get(e.to);
+      return from && to && !from.isCustom && to.isCustom;
+    }).length;
     return { title: 'Custom objects',
-      body: `<p>${custom.length} of ${all.length} objects carry a Custom namespace. Standard objects appear throughout for dependency context, but they are SAP's to decide about.</p>` +
+      body: `<p>${custom.length} of ${all.length} objects carry a Custom namespace. Standard objects appear throughout for dependency context, but they are SAP's to decide about.</p>
+        <p><b>Why the other ${standard.length} are out of scope.</b> Both reasons are in the extract rather than in an assumption. Not one of the ${g.edges.length} dependencies runs from standard code into custom code — <b>${inbound} inbound edges</b> — so retiring custom code cannot break SAP; what stops you is people using it, which is a far easier thing to check. And all ${sapAuthored} standard objects are authored by SAP, so retire, rebuild and remediate are not calls the customer can make at all: that code is replaced at system level by the conversion itself.</p>
+        <p><b>What ${custom.length} does not mean.</b> It is the right denominator for this extract, not necessarily for the system. Modifications and enhancements to SAP standard — user exits, BAdI implementations, enhancement points, append structures on standard tables — are part of a real custom-code footprint and among the most expensive things in a conversion, and nothing in these four files could record one. A real engagement closes that with the SSCR modification list and the Custom Code Migration app, not with a metadata extract. Read ${custom.length} as every custom object this export contains, and see <b>Inventory exceptions</b> for what an export can miss.</p>` +
         table(['Type', 'Custom', 'Standard'], Object.keys(byType).map((t) =>
           `<tr><td>${esc(t)}</td><td class="obj">${byType[t]}</td><td class="obj">${all.filter((o) => o.type === t && !o.isCustom).length}</td></tr>`).join('')) };
   }
@@ -731,7 +743,8 @@ function tileDetail(id) {
   if (id === 'phantoms') {
     return { title: 'Inventory exceptions',
       body: `<p>Programs the other three files reference and the inventory does not contain. Read as data quality they are join failures; read as findings they are live transaction codes pointing at code with no inventory record and no owner.</p>
-        <p><b>Treat this number as a floor, not a count.</b> The Basis team has said the extract may be incomplete, so these are the exceptions this export happens to reveal rather than the exceptions that exist. It is also the clearest argument for why nothing here is retired on evidence weaker than a measurement.</p>` +
+        <p><b>Treat this number as a floor, not a count.</b> The Basis team has said the extract may be incomplete, so these are the exceptions this export happens to reveal rather than the exceptions that exist. It is also the clearest argument for why nothing here is retired on evidence weaker than a measurement.</p>
+        <p>Read alongside <b>Custom objects</b>, these are why that count is a floor too. An export that misses a custom program a user can still reach by transaction code can miss others — and it cannot record a modification to SAP standard at all.</p>` +
         table(['Object', 'Seen in', 'Transaction'], state.graph.phantoms.map((p) => {
           const tx = state.graph.transactions.filter((t) => t.program === p.name);
           return `<tr><td class="obj">${esc(p.name)}</td><td class="why">${esc(p.sources.join(', '))}</td>
