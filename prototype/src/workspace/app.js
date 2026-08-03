@@ -3,9 +3,11 @@
 // Neither holds opinions of its own — every number traces to a rule in the
 // rulepack and a row in the extract, and every one of them can be opened.
 //
-// The Footprint reads position first, then the scope it rests on, then the
-// decisions. That order is the argument: a transformation lead should be able
-// to stop reading after the first card and still have the answer.
+// The Footprint reads scope, then the position drawn from it, then the
+// decisions that move it. That order is for the walkthrough: establish the
+// ground, then show the conclusion standing on it. The seven-minute pitch runs
+// the other way round and starts from the outcome — but the pitch is spoken,
+// and a page that has to be talked through is not the same artifact.
 
 import { loadExtract, parseCsv, classifyTable } from '../core/parse.js';
 import { buildGraph } from '../core/graph.js';
@@ -351,48 +353,53 @@ function objectsByCall() {
 
 // ---------------------------------------------------------------- coverage
 
+// Hoisted out of renderCoverage so the Scope card can show the same picture the
+// wizard's Evidence step does — drawn by this code rather than by a second
+// implementation, because two bars of the same 106 objects that disagree would
+// be worse than one bar shown once.
+const EV_ORDER = [EVIDENCE.ACTIVE, EVIDENCE.DEAD, EVIDENCE.UNMEASURED, EVIDENCE.UNMEASURABLE];
+const EV_CLASS = {
+  [EVIDENCE.ACTIVE]: 'e-active',
+  [EVIDENCE.DEAD]: 'e-dead',
+  [EVIDENCE.UNMEASURED]: 'e-unmeasured',
+  [EVIDENCE.UNMEASURABLE]: 'e-unmeasurable',
+};
+
+// All four counts, always, in the same order as the bar and the legend —
+// including zeros. Position carries the meaning, so the numbers stay short
+// instead of repeating what the legend already says.
+function evidenceRow(name, note, list, child = false) {
+  const set = {};
+  for (const k of EV_ORDER) set[k] = list.filter((o) => o.evidence === k).length;
+  const total = list.length || 1;
+  const bar = EV_ORDER.filter((k) => set[k] > 0)
+    .map((k) => `<span class="${EV_CLASS[k]}" style="width:${(set[k] / total) * 100}%" title="${esc(EVIDENCE_LABEL[k])}: ${set[k]}"></span>`).join('');
+  return `<div class="coverage-row${child ? ' is-child' : ''}">
+    <div class="name">${esc(name)}<small>${esc(note)}</small></div>
+    <div class="bar">${bar}</div>
+    <div class="tally">${esc(EV_ORDER.map((k) => set[k]).join(' · '))}</div>
+  </div>`;
+}
+
+const evidenceLegend = () => `<div class="legend">${EV_ORDER.map((k) =>
+  `<div class="item"><span class="swatch ${EV_CLASS[k]}"></span><span><b>${esc(EVIDENCE_LABEL[k])}</b>${esc(EVIDENCE_NOTE[k])}</span></div>`).join('')}</div>`;
+
 function renderCoverage() {
   if (!state.graph) return;
-  const order = [EVIDENCE.ACTIVE, EVIDENCE.DEAD, EVIDENCE.UNMEASURED, EVIDENCE.UNMEASURABLE];
-  const cls = {
-    [EVIDENCE.ACTIVE]: 'e-active',
-    [EVIDENCE.DEAD]: 'e-dead',
-    [EVIDENCE.UNMEASURED]: 'e-unmeasured',
-    [EVIDENCE.UNMEASURABLE]: 'e-unmeasurable',
-  };
   const all = [...state.graph.objects.values()];
-  const bar = (set, total) => order.filter((k) => set[k] > 0)
-    .map((k) => `<span class="${cls[k]}" style="width:${(set[k] / total) * 100}%" title="${esc(EVIDENCE_LABEL[k])}: ${set[k]}"></span>`).join('');
-  // All four counts, always, in the same order as the bar and the legend —
-  // including zeros. Position carries the meaning, so the numbers stay short
-  // instead of repeating what the legend already says.
-  const tally = (set) => order.map((k) => set[k]).join(' · ');
-  const tallyOf = (list) => {
-    const t = {};
-    for (const k of order) t[k] = list.filter((o) => o.evidence === k).length;
-    return t;
-  };
-
-  const totals = tallyOf(all);
   const custom = all.filter((o) => o.isCustom);
   const standard = all.filter((o) => !o.isCustom);
 
   // One estate-wide bar, with its two parts indented beneath it. The split that
   // carries the argument is custom against standard — 61% of SAP's own code is
   // unmeasured against 16% of the custom code — so nothing else competes with it.
-  const layer = (name, note, set, total, child) => `<div class="coverage-row${child ? ' is-child' : ''}">
-    <div class="name">${esc(name)}<small>${esc(note)}</small></div>
-    <div class="bar">${bar(set, total)}</div>
-    <div class="tally">${esc(tally(set))}</div>
-  </div>`;
-
   $('coverage').innerHTML = `<div class="coverage">
-    ${layer('Everything', `all ${all.length} objects in the export`, totals, all.length)}
+    ${evidenceRow('Everything', `all ${all.length} objects in the export`, all)}
     <div class="cov-group">
-      ${layer('Custom code', `${custom.length} objects — what you decide about`, tallyOf(custom), custom.length, true)}
-      ${layer('SAP standard', `${standard.length} objects — SAP's to decide about`, tallyOf(standard), standard.length, true)}
+      ${evidenceRow('Custom code', `${custom.length} objects — what you decide about`, custom, true)}
+      ${evidenceRow('SAP standard', `${standard.length} objects — SAP's to decide about`, standard, true)}
     </div>
-    <div class="legend">${order.map((k) => `<div class="item"><span class="swatch ${cls[k]}"></span><span><b>${esc(EVIDENCE_LABEL[k])}</b>${esc(EVIDENCE_NOTE[k])}</span></div>`).join('')}</div>
+    ${evidenceLegend()}
   </div>`;
 }
 
@@ -523,13 +530,18 @@ function renderTiles() {
   const writeEdges = g.edges.filter((e) => e.type === 'Write' && g.objects.get(e.from)?.isCustom && g.objects.get(e.to)?.namespace === 'Standard');
   const blockers = custom.filter((o) => o.writesStandard?.length);
 
+  // Ordered as a sentence: here is the estate, here is what the export may have
+  // missed from it, here is how well we can see what is left, here is who
+  // reaches it, here is what is already blocking — and here is what to do. The
+  // exceptions tile sits second on purpose, so the caveat on the denominator is
+  // read while the denominator is still on screen.
   const tiles = [
     { id: 'custom', label: 'Custom objects', value: custom.length, sub: `of ${all.length} in the extract` },
+    { id: 'phantoms', label: 'Inventory exceptions', value: g.phantoms.length, sub: 'that this extract reveals — a floor', alert: g.phantoms.length > 0 },
+    { id: 'coverage', label: 'Custom code with usage evidence', value: `${Math.round((measured.length / measurable.length) * 100)}<small>%</small>`, sub: `${measured.length} of ${measurable.length} non-table` },
     { id: 'tcodes', label: 'Entry points on custom code', value: tcodeCustom.length, sub: `of ${g.transactions.length} transaction codes` },
     { id: 'writes', label: 'Clean-core write paths', value: writeEdges.length, sub: `across ${plural(blockers.length, 'object')}`, alert: true },
     { id: 'decisions', label: 'Decisions to take', value: state.packages.length, sub: `covering all ${custom.length} custom objects` },
-    { id: 'coverage', label: 'Custom code with usage evidence', value: `${Math.round((measured.length / measurable.length) * 100)}<small>%</small>`, sub: `${measured.length} of ${measurable.length} non-table` },
-    { id: 'phantoms', label: 'Inventory exceptions', value: g.phantoms.length, sub: 'that this extract reveals — a floor', alert: g.phantoms.length > 0 },
   ];
 
   $('tiles').innerHTML = tiles.map((t) => `<button class="tile${t.alert ? ' tile--alert' : ''}" data-tile="${t.id}">
@@ -707,7 +719,27 @@ function tileDetail(id) {
         <p><b>Why the other ${standard.length} are out of scope.</b> Both reasons are in the extract rather than in an assumption. Not one of the ${g.edges.length} dependencies runs from standard code into custom code — <b>${inbound} inbound edges</b> — so retiring custom code cannot break SAP; what stops you is people using it, which is a far easier thing to check. And all ${sapAuthored} standard objects are authored by SAP, so retire, rebuild and remediate are not calls the customer can make at all: that code is replaced at system level by the conversion itself.</p>
         <p><b>What ${custom.length} does not mean.</b> It is the right denominator for this extract, not necessarily for the system. Modifications and enhancements to SAP standard — user exits, BAdI implementations, enhancement points, append structures on standard tables — are part of a real custom-code footprint and among the most expensive things in a conversion, and nothing in these four files could record one. A real engagement closes that with the SSCR modification list and the Custom Code Migration app, not with a metadata extract. Read ${custom.length} as every custom object this export contains, and see <b>Inventory exceptions</b> for what an export can miss.</p>` +
         table(['Type', 'Custom', 'Standard'], Object.keys(byType).map((t) =>
-          `<tr><td>${esc(t)}</td><td class="obj">${byType[t]}</td><td class="obj">${all.filter((o) => o.type === t && !o.isCustom).length}</td></tr>`).join('')) };
+          `<tr><td>${esc(t)}</td><td class="obj">${byType[t]}</td><td class="obj">${all.filter((o) => o.type === t && !o.isCustom).length}</td></tr>`).join('')) +
+        `<p style="margin-top:14px"><b>Nothing SAP owns depends on custom code.</b> The whole dependency extract, read by direction — which is the check that makes leaving the standard estate alone safe rather than merely convenient.</p>` +
+        table(['Direction', 'Edges', ''], (() => {
+          // Counted here rather than asserted, and phantoms are excluded from
+          // both ends: an edge whose caller is not in the inventory cannot be
+          // attributed to either namespace without guessing.
+          const dir = { 'Custom → Standard': 0, 'Custom → Custom': 0, 'Standard → Standard': 0, 'Standard → Custom': 0 };
+          let unattributed = 0;
+          for (const e of g.edges) {
+            const from = g.objects.get(e.from);
+            const to = g.objects.get(e.to);
+            if (!from || !to) { unattributed += 1; continue; }
+            dir[`${from.isCustom ? 'Custom' : 'Standard'} → ${to.isCustom ? 'Custom' : 'Standard'}`] += 1;
+          }
+          return Object.entries(dir).map(([k, v]) => {
+            const key = k === 'Standard → Custom';
+            return `<tr><td${key ? ' style="font-weight:650"' : ''}>${esc(k)}</td><td class="obj"${key ? ' style="font-weight:650"' : ''}>${v}</td>
+              <td class="why">${key ? 'Not one. Retiring custom code cannot break SAP — what stops you is people using it.' : ''}</td></tr>`;
+          }).join('') + (unattributed
+            ? `<tr><td class="why" colspan="3">${unattributed} edge(s) touch a program not in the inventory and are left unattributed — see Inventory exceptions.</td></tr>` : '');
+        })()) };
   }
   if (id === 'tcodes') {
     return { title: 'Transaction codes',
@@ -719,11 +751,18 @@ function tileDetail(id) {
         }).join('')) };
   }
   if (id === 'writes') {
+    // The same blast radius the Clean-core decision draws, shown here because
+    // this is where the finding is read. Same renderer, same package, so the
+    // two pictures cannot drift apart.
+    const pack = state.packages.find((p) => p.id === 'clean-core');
+    const sub = pack ? renderSubgraph(pack, g) : null;
     return { title: 'Clean-core write paths',
       body: `<p>Custom code writing directly into standard objects. This holds whether or not anyone runs the code, which is why it is the only decision in the set that needs no usage evidence at all. The counts differ deliberately: seven write paths across six objects, because one object writes to two tables.</p>` +
         table(['Custom object', 'Writes into', 'Package · author'], g.edges
           .filter((e) => e.type === 'Write' && g.objects.get(e.from)?.isCustom && g.objects.get(e.to)?.namespace === 'Standard')
-          .map((e) => `<tr><td class="obj">${esc(e.from)}</td><td class="obj">${esc(e.to)}</td><td class="why">${esc(g.objects.get(e.from).package)} · ${esc(g.objects.get(e.from).developerId)}</td></tr>`).join('')) };
+          .map((e) => `<tr><td class="obj">${esc(e.from)}</td><td class="obj">${esc(e.to)}</td><td class="why">${esc(g.objects.get(e.from).package)} · ${esc(g.objects.get(e.from).developerId)}</td></tr>`).join('')) +
+        (sub && !sub.isEmpty ? `<p style="margin-top:14px"><b>What moves if you act on these.</b> The blast radius of the Clean-core decision — the same picture that decision draws.</p>
+          <div class="card">${sub.svg}<p class="next" style="margin:6px 0 0">${esc(sub.caption)}</p></div>` : '') };
   }
   if (id === 'decisions') {
     return { title: 'Decisions to take',
@@ -738,7 +777,12 @@ function tileDetail(id) {
     const tables = custom.filter((o) => o.type === 'Table').length;
     return { title: 'Usage evidence coverage',
       body: `<p>${all.filter((o) => !o.usage).length} objects across the whole extract have no usage row, which reads as a fatal gap until you split it by what you are actually deciding about.</p>
-        <p>Tables cannot have execution semantics, so the ${tables} custom tables are excluded by construction rather than by omission. Of the remaining ${measurable.length} custom objects, <b>${measured.length} are measured</b> — ${Math.round((measured.length / measurable.length) * 100)}%. The blind spot is overwhelmingly SAP standard function modules, which nobody was deciding about.</p>` };
+        <p>Tables cannot have execution semantics, so the ${tables} custom tables are excluded by construction rather than by omission. Of the remaining ${measurable.length} custom objects, <b>${measured.length} are measured</b> — ${Math.round((measured.length / measurable.length) * 100)}%. The blind spot is overwhelmingly SAP standard function modules, which nobody was deciding about.</p>
+        <div class="card"><div class="coverage">
+          ${evidenceRow('Custom code', `${custom.length} objects — what you decide about`, custom)}
+          ${evidenceLegend()}
+        </div></div>
+        <p class="next" style="margin-top:10px">The same bar the wizard's Evidence step shows, drawn by the same code. Four states, not two — collapsing the last two is the fastest route to a confident, wrong retirement list.</p>` };
   }
   if (id === 'phantoms') {
     return { title: 'Inventory exceptions',
