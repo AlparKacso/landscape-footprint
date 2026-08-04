@@ -119,50 +119,48 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
   <div class="eyebrow">Deliverable 3 &middot; Deployment Design</div>
   <h1>The first four weeks with the real customer</h1>
   <p class="dek">Who I need, what access, the first milestone that proves value, and what would make me stop.</p>
-  <div class="meta"><span><b>Customer:</b> SAP ECC, three productive systems</span><span><b>Position:</b> step 0, before the SI is selected</span><span><b>Goal:</b> a scope decision, not a tool install</span></div>
+  <div class="meta"><span><b>Customer:</b> SAP ECC, three productive systems</span><span><b>Position:</b> step 0, before the transition path is selected</span><span><b>Goal:</b> a scope decision, not a tool install</span></div>
 
-  <p class="lead">Weeks 1&ndash;4 are not about deploying software &mdash; the prototype already runs, with no install and no production connection. They are about converting the footprint into <strong>decisions the customer will stand behind</strong>, and being equally clear about which the evidence does not yet support. I assume the system integrator is <strong>not yet selected</strong>, making this step 0: a small, separately funded discovery that sharpens scope before anyone bids. If an SI is already in place, we run alongside them instead of competing for their assessment.</p>
+  <p class="lead">Weeks 1&ndash;4 are not about deploying software &mdash; the prototype already runs, with no install and no production connection. They are about converting the footprint into <strong>decisions the customer will stand behind</strong>, and being equally clear about which the evidence does not yet support.</p>
+
+  <p class="lead">The transition path and the system integrator are <strong>not yet selected</strong>, making this step 0: a small, separately funded discovery that sharpens scope.</p>
 
   <h2>Who I need from their side</h2>
   <table>
     <thead><tr><th style="width:24%">Role</th><th style="width:46%">Why</th><th>Time ask</th></tr></thead>
     <tbody>
       <tr><td><span class="h">Head of Transformation</span> (sponsor)</td><td>Owns the decision to cut scope, unblocks access, and settles the transition type &mdash; genuinely their call, not ours, and the one input that visibly moves the position.</td><td>Kickoff + weekly 30&nbsp;min</td></tr>
-      <tr><td><span class="h">Basis / system lead</span></td><td>Produces the extracts across all three systems, and can say whether they are one consistent snapshot.</td><td>~1 day wk&nbsp;1, then on call</td></tr>
+      <tr><td><span class="h">Basis / system lead</span></td><td>Produces the extracts across all three systems, and confirms they are one consistent snapshot.</td><td>~1 day in week&nbsp;1 + direct contact</td></tr>
       <tr><td><span class="h">Custom-code architect</span></td><td>Sanity-checks the calls; knows the 2011 migration residue and the externally-authored code.</td><td>~&frac12; day / week</td></tr>
-      <tr><td><span class="h">Functional leads</span> &mdash; SD, FI, MM</td><td>Confirm what &ldquo;unused&rdquo; means in their area, sign off retirements, and resolve the live version forks.</td><td>1 workshop each</td></tr>
+      <tr><td><span class="h">Functional leads / process owners</span> &mdash; Sales &amp; Distribution, Financial Accounting, Materials Management</td><td>Confirm what &ldquo;unused&rdquo; means in their area and their process, sign off retirements, and resolve the live version forks.</td><td>One workshop each (&plusmn;1&nbsp;hr)</td></tr>
     </tbody>
   </table>
 
   <h2>What access</h2>
-  <p>Deliberately <strong>low</strong>, so the bar to start is near zero: read-only metadata extracts &mdash; object inventory, usage statistics, dependencies, and the transaction-to-program map &mdash; for all three productive systems. <strong>No source code and no production connection</strong>, so we can start before security review completes. One non-extract ask on day one: start a usage collection (SCMON&nbsp;/&nbsp;UPL) if none is running &mdash; it needs a full business cycle, and unlocks more undecidable objects than anything else we could do.</p>
+  <p>Deliberately <strong>low</strong>, so the bar to start is near zero: read-only metadata extracts &mdash; object inventory, usage statistics, dependencies, and the transaction-to-program map &mdash; for all three productive systems. <strong>No source code and no production connection</strong>, so we can start before security review completes.</p>
+
+  <p>One non-extract ask on day one: start a usage collection (SCMON&nbsp;/&nbsp;UPL) if none is running &mdash; it needs a full business cycle, and unlocks more undecidable objects than anything else we could do.</p>
 
   <h2>The four-week path</h2>
   <table>
     <thead><tr><th style="width:16%">Week</th><th style="width:48%">What happens</th><th>Output</th></tr></thead>
     <tbody>
-      <tr><td><span class="h">1 &middot; Ground truth</span></td><td>Secure the three-system extracts, build the Context Slice from real data, reconcile counts with Basis. Start the usage collection.</td><td>Footprint live on full data</td></tr>
-      <tr><td><span class="h">2 &middot; Validate</span></td><td>Walk each functional lead through the calls in their area. Resolve the inventory exceptions and the live version forks.</td><td>Calls confirmed or corrected</td></tr>
-      <tr><td><span class="h">3 &middot; Decide</span></td><td>Sponsor settles the transition type in the room, with the consequences of each route visible as they switch between them. Blast-radius review with the architect. The Discovery Agent is how a sponsor who has not seen the data reads the page unaided.</td><td>Committed backlog + remediation register</td></tr>
+      <tr><td><span class="h">1 &middot; Ground truth</span></td><td>Secure the three-system extracts, build the Context Slice from real data, confirm counts with Basis. Start the usage collection.</td><td>Footprint live on full data</td></tr>
+      <tr><td><span class="h">2 &middot; Validate</span></td><td>Walk each functional lead through the calls in their area. Resolve the inventory exceptions and the live version forks. Blast-radius review with the architect.</td><td>Calls confirmed or corrected</td></tr>
+      <tr><td><span class="h">3 &middot; Decide</span></td><td>Sponsor settles the transition type in the room, with the consequences of each route visible as they switch between them.</td><td>Committed backlog + remediation register</td></tr>
       <tr><td><span class="h">4 &middot; Prove value</span></td><td>Steering readout: what is decided, what is held, what it costs to resolve the rest.</td><td><b>Milestone, below</b></td></tr>
     </tbody>
   </table>
 
   <div class="callout">
-    <b>First milestone (end of week 4):</b> a <b>business-signed decision position</b> &mdash; and, underneath it, the seeded technical layer of a Context Model. The position is what the sponsor signs; the Context Model is what makes the position repeatable next quarter and on the other two systems. Not a report. On the sample extract that is <b>24 of 106 custom objects with an action against them</b> &mdash; 13 retirements on measured evidence, 6 objects remediated before they block a clean core, 5 into a fit-to-standard workshop &mdash; alongside <b>34 explicitly held</b>, each naming the evidence that would settle it. Nothing in that first number rests on anything weaker than a measurement, which is what makes it signable. Two numbers, not one: what we act on now, and what it costs to decide the rest.
-  </div>
-
-  <div class="callout warn">
-    <b>Why not a bigger number.</b> It would be easy to claim half the custom estate is retirable &mdash; 52 of 106 objects are not measurably running. But that merges three findings: 17 measured at zero, 17 never measured, and 18 tables that cannot carry an execution count. The smaller number is the one that survives someone checking it.
+    <b>First milestone (end of week 4):</b> a <b>business-signed decision position</b> &mdash; not a report, but a decision-making tool and, underneath it, the seeded technical layer of a Context Model. The position is what the sponsor signs; the Context Model is what makes the position repeatable next quarter and on the other systems.
   </div>
 
   <h2>What would make me stop</h2>
   <ul class="stop">
     <li><strong>Access will not come.</strong> No consistent extracts across all three systems within ~2 weeks and the footprint is partial and quietly misleading. Pause rather than decide on a fraction of the landscape.</li>
-    <li><strong>Usage data is missing or untrustworthy.</strong> Then this is a measurement project first, and I would say so rather than dress inference up as evidence.</li>
-    <li><strong>Nobody will sign off.</strong> If no one will approve a retirement, we are producing a report. That is an organisational problem a tool cannot fix.</li>
-    <li><strong>The transition type is locked without evidence.</strong> If a partner has fixed greenfield or brownfield and the customer will not reopen it, most of the value &mdash; showing what each path costs &mdash; is gone.</li>
-    <li><strong>They already have something they trust.</strong> Then we redirect to where we are additive rather than rebuild what exists.</li>
+    <li><strong>Nobody will sign off.</strong> If no one will approve a retirement, we are producing a report. That is an organisational and decision-making problem a tool cannot fix.</li>
+    <li><strong>Contact-person buy-in.</strong> If the people we depend on are sceptical about working with us, or biased towards an answer, that is not a full stop &mdash; but it is a sensitive conversation to open with the sponsor early rather than late.</li>
   </ul>
 
   <div class="foot"><span>Landscape Footprint &mdash; Deployment Design</span><span>First four weeks &middot; read-only, decision-first</span></div>
