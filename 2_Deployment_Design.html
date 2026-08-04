@@ -17,6 +17,7 @@ body{
 }
 .eyebrow{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--accent);font-weight:700}
 h1{font-size:25px;line-height:1.2;margin:6px 0 4px;letter-spacing:-.3px}
+.tight{margin-top:-9px}
 .dek{color:var(--ink2);font-size:14px;margin:0 0 20px}
 .meta{display:flex;gap:18px;flex-wrap:wrap;color:var(--ink3);font-size:11.5px;
   border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:9px 0;margin:0 0 24px}
@@ -69,7 +70,8 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
 @media print{
   body{font-size:10.2px;line-height:1.4}
   h1{font-size:19px;margin:4px 0 3px}
-  .dek{font-size:11px;margin:0 0 9px}
+  .tight{margin-top:-9px}
+.dek{font-size:11px;margin:0 0 9px}
   .eyebrow{font-size:9.5px}
   .meta{font-size:9px;padding:5px 0;margin:0 0 11px;gap:6px 14px}
   .lead{font-size:11px}
@@ -129,7 +131,7 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
   <table>
     <thead><tr><th style="width:24%">Role</th><th style="width:46%">Why</th><th>Time ask</th></tr></thead>
     <tbody>
-      <tr><td><span class="h">Head of Transformation</span> (sponsor)</td><td>Owns the decision to cut scope, unblocks access, and settles the transition type &mdash; genuinely their call, not ours, and the one input that visibly moves the position.</td><td>Kickoff + weekly 30&nbsp;min</td></tr>
+      <tr><td><span class="h">Head of Transformation</span> (sponsor)</td><td>Owns the decision to cut scope, unblocks access, and settles the transition type &mdash; the one input that visibly moves the position.</td><td>Kickoff + weekly 30&nbsp;min</td></tr>
       <tr><td><span class="h">Basis / system lead</span></td><td>Produces the extracts across all three systems, and confirms they are one consistent snapshot.</td><td>~1 day in week&nbsp;1 + direct contact</td></tr>
       <tr><td><span class="h">Custom-code architect</span></td><td>Sanity-checks the calls; knows the 2011 migration residue and the externally-authored code.</td><td>~&frac12; day / week</td></tr>
       <tr><td><span class="h">Functional leads / process owners</span> &mdash; Sales &amp; Distribution, Financial Accounting, Materials Management</td><td>Confirm what &ldquo;unused&rdquo; means in their area and their process, sign off retirements, and resolve the live version forks.</td><td>One workshop each (&plusmn;1&nbsp;hr)</td></tr>
@@ -138,8 +140,7 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
 
   <h2>What access</h2>
   <p>Deliberately <strong>low</strong>, so the bar to start is near zero: read-only metadata extracts &mdash; object inventory, usage statistics, dependencies, and the transaction-to-program map &mdash; for all three productive systems. <strong>No source code and no production connection</strong>, so we can start before security review completes.</p>
-
-  <p>One non-extract ask on day one: start a usage collection (SCMON&nbsp;/&nbsp;UPL) if none is running &mdash; it needs a full business cycle, and unlocks more undecidable objects than anything else we could do.</p>
+  <p class="tight">One non-extract ask on day one: start a usage collection (SCMON&nbsp;/&nbsp;UPL) if none is running &mdash; it needs a full business cycle, and unlocks more undecidable objects than anything else we could do.</p>
 
   <h2>The four-week path</h2>
   <table>
@@ -153,14 +154,18 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
   </table>
 
   <div class="callout">
-    <b>First milestone (end of week 4):</b> a <b>business-signed decision position</b> &mdash; not a report, but a decision-making tool and, underneath it, the seeded technical layer of a Context Model. The position is what the sponsor signs; the Context Model is what makes the position repeatable next quarter and on the other systems.
+    <b>First milestone (end of week 4):</b> a <b>business-signed decision position</b> &mdash; not a report, but a decision-making tool and, underneath it, the seeded technical layer of a Context Model. The position is what the sponsor signs; the Context Model is what makes the position repeatable next quarter and on the other systems. On the sample extract: <b>24 of 106 objects with an action against them</b> &mdash; 13 retirements, 6 clean-core remediations, 5 into a workshop &mdash; alongside <b>34 explicitly held</b>, each naming what would settle it.
+  </div>
+
+  <div class="callout warn">
+    <b>Why not a bigger number.</b> It would be easy to claim half the estate is retirable: <b>52 of 106 objects are not measurably running</b>. That merges three findings &mdash; <b>17</b> measured at zero, <b>17</b> never measured, and <b>18</b> tables that cannot carry an execution count, 15 of which are read and written daily. Only <b>13</b> survive checking.
   </div>
 
   <h2>What would make me stop</h2>
   <ul class="stop">
     <li><strong>Access will not come.</strong> No consistent extracts across all three systems within ~2 weeks and the footprint is partial and quietly misleading. Pause rather than decide on a fraction of the landscape.</li>
     <li><strong>Nobody will sign off.</strong> If no one will approve a retirement, we are producing a report. That is an organisational and decision-making problem a tool cannot fix.</li>
-    <li><strong>Contact-person buy-in.</strong> If the people we depend on are sceptical about working with us, or biased towards an answer, that is not a full stop &mdash; but it is a sensitive conversation to open with the sponsor early rather than late.</li>
+    <li><strong>Contact-person buy-in.</strong> If the people we depend on are sceptical, or biased towards an answer, that is not a full stop &mdash; but it is a conversation to open with the sponsor early.</li>
   </ul>
 
   <div class="foot"><span>Landscape Footprint &mdash; Deployment Design</span><span>First four weeks &middot; read-only, decision-first</span></div>
