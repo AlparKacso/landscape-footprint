@@ -206,8 +206,15 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
   const KEY = 'celonis-doc-' + document.title.replace(/\W+/g,'-');
   const ORIGINAL = doc.innerHTML;
 
+  /* Your edits are kept per document, but only for the version they were made
+     against. REV is a fingerprint of this file as shipped; if the file has been
+     changed since you last edited it, the stored copy is dropped rather than
+     shown over the top of new content — which is how an edited page can quietly
+     keep displaying a version that no longer exists on disk. */
+  const REV = '229adbcc79';
   const stored = localStorage.getItem(KEY);
-  if(stored) doc.innerHTML = stored;
+  if(stored && localStorage.getItem(KEY + ':rev') === REV) doc.innerHTML = stored;
+  else localStorage.removeItem(KEY);
 
 
   /* These two are meant to be one A4 sheet. Editing can quietly push them onto a
@@ -245,6 +252,7 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
     // it onto the attribute before serialising or the selection is lost.
     doc.querySelectorAll('select').forEach(s => [...s.options].forEach(o => o.toggleAttribute('selected', o.value === s.value)));
     localStorage.setItem(KEY, doc.innerHTML);
+    localStorage.setItem(KEY + ':rev', REV);
     checkFit();
     state.textContent = 'saved';
     clearTimeout(t);
@@ -266,6 +274,7 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
   document.getElementById('reset').addEventListener('click', () => {
     if(!confirm('Discard your edits and restore the original wording?')) return;
     localStorage.removeItem(KEY);
+    localStorage.removeItem(KEY + ':rev');
     doc.innerHTML = ORIGINAL;
     // Anything on the page holding its own state resets itself here.
     document.dispatchEvent(new CustomEvent('doc:reset'));

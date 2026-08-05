@@ -101,28 +101,23 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
 
   <h2>What I built</h2>
   <ul>
-    <li>Four CSVs become a scored model; 106 custom objects become <b>eleven funded decisions</b> &mdash; twelve ordered rules, a four-state evidence model, an agent that writes words and never numbers.</li>
-    <li><b>Composable, and tested as such.</b> A second, different extract re-derives everything &mdash; 58 objects, 9 decisions, the ones with no members dropping out on their own. Only the agent&rsquo;s cached narrative and two naming conventions in the rulepack stay pinned to this customer.</li>
+    <li>Four CSVs become a scored model; 106 custom objects become <b>eleven backed decisions</b> &mdash; twelve ordered rules, a four-state evidence model, an agent that writes words and never numbers.</li>
+    <li><b>Composable, and tested as such.</b> A second, different extract re-generates everything &mdash; the ones with no data dropping out automatically. Only the agent&rsquo;s cached narrative (no API calls for the agent in the prototype) and two naming conventions in the rule-pack stay custom. (my main constraint: time-box)</li>
   </ul>
 
   <h2>What I tried</h2>
   <ul>
-    <li><b>A second prototype built by the agent unsupervised</b>, as a control. Two ideas survived it; the engine did not.</li>
-    <li><b>Dropping file upload</b> &mdash; wrong. A pipeline nobody sees run is not trusted; it came back as a page.</li>
+    <li><b>A second prototype built by the agent unsupervised</b>, as a control. Two ideas survived it; later dropped.</li>
+    <li><b>Dropping file upload</b> &mdash; wrong. A pipeline nobody sees run is not trusted; it came back as part of the Context Slice page.</li>
   </ul>
 
   <h2>What failed</h2>
   <ul>
-    <li><b>A split cache, twice, on the deployed copy</b> &mdash; fresh page, stale module, dead on boot. An import map now pins all thirteen.</li>
-    <li><b>The treemap rendered blank on first view</b> &mdash; it measures a container with no box while hidden.</li>
-  </ul>
-
-  <h2>What I cut</h2>
-  <ul>
-    <li><b>A risk dial</b> (0&ndash;100). Nobody says &ldquo;I accept 70&rdquo;. Now a hard engine guarantee &mdash; <b>identical output</b>.</li>
-    <li><b>A per-object browser.</b> The eleven decisions exist to replace exactly that list.</li>
-    <li><b>Effort and cost estimates.</b> No size signal in the extract; any figure would be invented.</li>
-    <li><b>The Extract Wizard</b> &mdash; three steps proving the one thing nobody doubts.</li>
+    <li><b>A risk slider and dynamic call adjustment</b> &mdash; Nobody says &ldquo;I&rsquo;ll accept a 70 risk score&rdquo;. (cut from scope)</li>
+    <li><b>A per-object browser</b> &mdash; an object inventory with overwhelming detail page. The eleven decisions exist to replace exactly that list. (cut from scope)</li>
+    <li><b>The Extract Wizard</b> &mdash; and its detailed algorithm and computing explanations, all those technical details blocked the flow of the demo and discussed deeper by request or in any follow-up session. (cut from scope)</li>
+    <li><b>Different visual components</b> &mdash; that were not the right choice for the data representation. (reorganized or replaced)</li>
+    <li><b>Keep two requirements</b> &mdash; stop at 8 hours and at half page for the build log, but I&rsquo;d rather be honest with it than simply cut the hours or valuable content.</li>
   </ul>
 
   <h2>Where the hours went</h2>
@@ -135,16 +130,16 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
       <tr><td>Reviewed V1 against a pitch; planned V3 &mdash; keep, drop, add</td><td data-min>1h 10m</td></tr>
 
       <tr class="phrow"><td>Build</td><td data-sub></td></tr>
-      <tr><td>V1 &mdash; evidence model, rulepack, scoring, the eleven decisions</td><td data-min>1h</td></tr>
-      <tr><td>V2 as a control; V3 the merged build &mdash; loader, two pages, modal, treemap</td><td data-min>1h 40m</td></tr>
-      <tr><td>Discovery Agent, verification harness, deliverables, deploy</td><td data-min>1h 50m</td></tr>
+      <tr><td>V1 &mdash; evidence model, rule-pack, scoring, the eleven decisions</td><td data-min>1h 15m</td></tr>
+      <tr><td>V2 as a control; V3 the merged build &mdash; loader, two pages, modal, treemap</td><td data-min>2h 20m</td></tr>
+      <tr><td>Discovery Agent, deliverables, deploy</td><td data-min>50m</td></tr>
 
       <tr class="phrow"><td>Adjust and pitch</td><td data-sub></td></tr>
-      <tr><td>Manual pass over the five documents, and the pitch slide</td><td data-min>1h</td></tr>
+      <tr><td>Manual pass over the deliverables and pitch slide</td><td data-min>1h</td></tr>
 
       <tr class="phrow"><td>Spillover &mdash; found while rehearsing</td><td data-sub></td></tr>
-      <tr><td>Scoping gap named, ownership leak closed, Footprint reordered</td><td data-min>1h</td></tr>
-      <tr><td>Extract Wizard cut; wording fixes across the deliverables</td><td data-min>1h 40m</td></tr>
+      <tr><td>Footprint reordered</td><td data-min>20 min</td></tr>
+      <tr><td>Extract Wizard cut and wording fixes across the prototype</td><td data-min>20 min</td></tr>
     </tbody>
     <tfoot><tr class="totrow"><td>Total</td><td id="totalCell"></td></tr></tfoot>
   </table>
@@ -205,14 +200,22 @@ window.recalc = recalc;
   const KEY = 'celonis-doc-' + document.title.replace(/\W+/g,'-');
   const ORIGINAL = doc.innerHTML;
 
+  /* Your edits are kept per document, but only for the version they were made
+     against. REV is a fingerprint of this file as shipped; if the file has been
+     changed since you last edited it, the stored copy is dropped rather than
+     shown over the top of new content — which is how an edited page can quietly
+     keep displaying a version that no longer exists on disk. */
+  const REV = '79d26a66a5';
   const stored = localStorage.getItem(KEY);
-  if(stored) doc.innerHTML = stored;
+  if(stored && localStorage.getItem(KEY + ':rev') === REV) doc.innerHTML = stored;
+  else localStorage.removeItem(KEY);
   recalc();
 
   const state = document.getElementById('state');
   let t;
   function persist(){
     localStorage.setItem(KEY, doc.innerHTML);
+    localStorage.setItem(KEY + ':rev', REV);
     state.textContent = 'saved';
     clearTimeout(t);
     t = setTimeout(() => state.textContent = 'saved in this browser', 1200);
@@ -232,6 +235,7 @@ window.recalc = recalc;
   document.getElementById('reset').addEventListener('click', () => {
     if(!confirm('Discard your edits and restore the original wording?')) return;
     localStorage.removeItem(KEY);
+    localStorage.removeItem(KEY + ':rev');
     doc.innerHTML = ORIGINAL;
     recalc();
     state.textContent = 'reset';
