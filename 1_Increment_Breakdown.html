@@ -193,6 +193,10 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
       re-litigating the grouping object by object.</li>
     <li><b>A risk dial.</b> Any control letting a user relax the evidence bar until the tool agrees with
       them. The bar is a property of the engine, asserted at start-up.</li>
+    <li><b>The Extract Wizard.</b> Its detailed algorithm and computing explanations &mdash; that level
+      of technical detail blocked the flow of the demo, and it can be picked up in a follow-up
+      session.</li>
+  </ul>
   <div class="foot"><span>Landscape Footprint &mdash; Increment Breakdown</span><span>AI System Transformation · Celonis</span></div>
 </div>
 
@@ -211,7 +215,7 @@ body.editing .page :focus{outline:2px solid #2b4ee655;outline-offset:2px;border-
      changed since you last edited it, the stored copy is dropped rather than
      shown over the top of new content — which is how an edited page can quietly
      keep displaying a version that no longer exists on disk. */
-  const REV = '229adbcc79';
+  const REV = 'ebc1575b11';
   const stored = localStorage.getItem(KEY);
   if(stored && localStorage.getItem(KEY + ':rev') === REV) doc.innerHTML = stored;
   else localStorage.removeItem(KEY);

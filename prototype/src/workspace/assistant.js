@@ -301,16 +301,5 @@ export function renderAssistant(page, audience, ctx) {
       ${section.build(f, level).join('')}
     </section>`).join('');
 
-  return {
-    title: spec.title,
-    body: `${body}
-      <footer class="ai-prov">
-        <b>Where this came from.</b> The Discovery Agent's wording is kept in
-        <span class="mono">src/workspace/assistant.js</span>; every figure in it is read from your
-        extract at the moment you opened this, not generated. No score, no call and no grouping on
-        this page was produced by a model — those come from
-        <span class="mono">src/engine/rulepack.json</span> and can be replayed. The Context Slice
-        page states that boundary in full.
-      </footer>`,
-  };
+  return { title: spec.title, body };
 }

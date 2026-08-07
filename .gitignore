@@ -13,6 +13,17 @@ design language/
 # simply no reason for this repo to be the place it is hosted.
 SystemTransformation_Vision.pdf
 
+# The pitch deck and the PDF exports of the four deliverables. The deliverables
+# are already published here as HTML, which is the version anyone is asked to
+# read; a second copy as a binary is weight this repo carries for nobody.
+1_Keynote.key
+Deliverables/
+
+# Keynote source art, including the Celonis mark. Nothing in the app references
+# it — the design tokens are in prototype/app.css, and that is the whole of what
+# needed to survive.
+prototype/assets/
+
 # Local tooling
 .claude/
 .DS_Store
